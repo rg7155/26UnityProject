@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;   // ← 추가
 using static Define;
 
 public class PlayerController : MonoBehaviour
@@ -20,10 +21,23 @@ public class PlayerController : MonoBehaviour
 
     void HandleMove()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        // ▼ 변경된 부분
+        Vector2 dir = Vector2.zero;
 
-        Vector2 dir = new Vector2(h, v).normalized;
+        if (Keyboard.current != null)
+        {
+            float h = (Keyboard.current.dKey.isPressed ? 1f : 0f)
+                    - (Keyboard.current.aKey.isPressed ? 1f : 0f);
+            float v = (Keyboard.current.wKey.isPressed ? 1f : 0f)
+                    - (Keyboard.current.sKey.isPressed ? 1f : 0f);
+
+            dir = new Vector2(h, v).normalized;
+        }
+
+        // 게임패드 지원이 필요하면 아래 주석 해제
+        // if (Gamepad.current != null)
+        //     dir = Gamepad.current.leftStick.ReadValue().normalized;
+        // ▲ 변경된 부분
 
         if (dir != Vector2.zero)
         {
@@ -36,7 +50,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 외부에서 HP 등 추가 시 여기서 확장
     public void OnDamaged(int damage)
     {
         // 추후 HP 시스템 연결
