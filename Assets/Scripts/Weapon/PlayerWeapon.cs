@@ -1,0 +1,65 @@
+using UnityEngine;
+
+// 플레이어에 붙이는 자동 발사 무기
+// 가장 가까운 적을 향해 일정 주기로 발사체 발사
+public class PlayerWeapon : MonoBehaviour
+{
+    [SerializeField] GameObject _projectilePrefab;
+    [SerializeField] float _fireRate = 1f;      // 초당 발사 횟수
+    [SerializeField] int _damage = 20;
+    [SerializeField] float _range = 8f;         // 발사체 사거리
+    [SerializeField] float _detectRange = 10f;  // 적 탐지 범위
+
+    float _fireCooldown;
+
+    void Update()
+    {
+        if (Managers.Game.State != Define.GameState.Playing) return;
+
+        _fireCooldown -= Time.deltaTime;
+        if (_fireCooldown <= 0f)
+        {
+            TryFire();
+            _fireCooldown = 1f / _fireRate;
+        }
+    }
+
+    void TryFire()
+    {
+        EnemyBase nearest = FindNearest();
+        if (nearest == null) return;
+
+        Vector2 dir = (nearest.transform.position - transform.position).normalized;
+        Fire(dir);
+    }
+
+    void Fire(Vector2 dir)
+    {
+        if (_projectilePrefab == null) return;
+
+        GameObject go = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+        Projectile proj = go.GetComponent<Projectile>();
+        proj.Init(dir, _damage, _range);
+    }
+
+    EnemyBase FindNearest()
+    {
+        EnemyBase nearest = null;
+        float minDist = _detectRange;
+
+        // 추후 Spatial Hashing으로 교체할 부분
+        foreach (EnemyBase enemy in FindObjectsOfType<EnemyBase>())
+        {
+            if (!enemy.gameObject.activeSelf) continue;
+
+            float dist = Vector2.Distance(transform.position, enemy.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = enemy;
+            }
+        }
+
+        return nearest;
+    }
+}

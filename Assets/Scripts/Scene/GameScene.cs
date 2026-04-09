@@ -1,7 +1,10 @@
 using UnityEngine;
+using TMPro;
 
 public class GameScene : MonoBehaviour
 {
+    [SerializeField] TMP_Text _gameOverText;
+
     void Awake()
     {
         Managers.Init();
@@ -16,5 +19,17 @@ public class GameScene : MonoBehaviour
         if (cam == null) { Debug.LogError("[GameScene] CameraController not found"); return; }
 
         cam.SetTarget(player.transform);
+        player.OnDead += OnGameOver;
+
+        if (_gameOverText != null)
+            _gameOverText.gameObject.SetActive(false);
+    }
+
+    void OnGameOver()
+    {
+        if (_gameOverText != null)
+            _gameOverText.gameObject.SetActive(true);
+
+        Debug.Log("[GameScene] Game Over");
     }
 }
