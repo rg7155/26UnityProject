@@ -4,14 +4,14 @@ public class EnemyBase : MonoBehaviour
 {
     [SerializeField] protected float _speed = 2f;
     [SerializeField] protected int _hp = 3;
-    protected Transform _target;  // 플레이어
+    protected Transform _target;
 
-    public virtual void Init(Transform target, int hp = -1)
+    public virtual void Init(Transform target, int hp = -1, float speed = -1f)
     {
         _target = target;
-        if (hp >= 0)
-            _hp = hp;
-        // hp 미전달 시 Inspector SerializeField 값 유지
+        if (hp >= 0) _hp = hp;
+        if (speed >= 0f) _speed = speed;
+        // 미전달 시 Inspector SerializeField 값 유지
     }
 
     public virtual void OnDamaged(int damage)
@@ -22,6 +22,6 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void OnDead()
     {
-        gameObject.SetActive(false);  // 나중에 Pool 반납으로 교체
+        gameObject.SetActive(false);  // 추후 Pool 반납으로 교체
     }
 }
