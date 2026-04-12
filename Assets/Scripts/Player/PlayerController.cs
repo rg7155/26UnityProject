@@ -6,10 +6,15 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float _speed = 5f;
     [SerializeField] int _maxHp = 100;
-    [SerializeField] float _invincibleDuration = 1f;    // 피격 후 무적시간
+    [SerializeField] float _invincibleDuration = 1f;
 
     int _hp;
     float _invincibleTimer;
+
+    // 경험치 / 레벨
+    int _exp;
+    int _level = 1;
+    int _expToNextLevel = 10;
 
     public int Hp
     {
@@ -21,12 +26,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public int MaxHp { get { return _maxHp; } }
+    public int MaxHp   { get { return _maxHp; } }
     public float Speed { get { return _speed; } }
-    public bool IsInvincible { get { return _invincibleTimer > 0f; } }
+    public int Level   { get { return _level; } }
+    public int Exp     { get { return _exp; } }
+    public int ExpToNextLevel { get { return _expToNextLevel; } }
+    public bool IsInvincible  { get { return _invincibleTimer > 0f; } }
 
-    // HP 변경 시 UI에 알림 (HpBar가 구독)
-    public System.Action<int, int> OnHpChanged;
+    public System.Action<int, int> OnHpChanged;     // (current, max)
+    public System.Action<int, int> OnExpChanged;    // (current, expToNext)
+    public System.Action<int> OnLevelUp;            // (newLevel)
     public System.Action OnDead;
 
     CreatureState _state = CreatureState.Idle;
@@ -58,7 +67,6 @@ public class PlayerController : MonoBehaviour
                     - (Keyboard.current.aKey.isPressed ? 1f : 0f);
             float v = (Keyboard.current.wKey.isPressed ? 1f : 0f)
                     - (Keyboard.current.sKey.isPressed ? 1f : 0f);
-
             dir = new Vector2(h, v).normalized;
         }
 
@@ -85,10 +93,36 @@ public class PlayerController : MonoBehaviour
             HandleDead();
     }
 
+    public void AddExp(int exp)
+    {
+        _exp += exp;
+        OnExpChanged?.Invoke(_exp, _expToNextLevel);
+
+        if (_exp >= _expToNextLevel)
+            HandleLevelUp();
+    }
+
+    void HandleLevelUp()
+    {
+        _exp -= _expToNextLevel;
+        _level++;
+        _expToNextLevel = Mathf.RoundToInt(_expToNextLevel * 1.3f); // 레벨마다 요구 경험치 30% 증가
+
+        OnLevelUp?.Invoke(_level);  // Pause는 구독자(UpgradeManager)가 담당
+    }
+
     void HandleDead()
     {
         _state = CreatureState.Dead;
         Managers.Game.State = GameState.GameOver;
         OnDead?.Invoke();
+    }
+
+    // --- 업그레이드 적용 메서드 ---
+    public void UpgradeSpeed(float multiplier)  { _speed *= multiplier; }
+    public void UpgradeMaxHp(int amount)
+    {
+        _maxHp += amount;
+        Hp += amount;   // 즉시 회복 포함
     }
 }

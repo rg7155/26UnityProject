@@ -35,4 +35,13 @@ public class Define
         Click,
         Press,
     }
+
+    public enum UpgradeType
+    {
+        MoveSpeed,
+        FireRate,
+        Damage,
+        MaxHp,
+        Range,
+    }
 }

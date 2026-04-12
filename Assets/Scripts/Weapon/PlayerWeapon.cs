@@ -42,6 +42,11 @@ public class PlayerWeapon : MonoBehaviour
         proj.Init(dir, _damage, _range);
     }
 
+    // --- 업그레이드 적용 메서드 ---
+    public void UpgradeFireRate(float multiplier) { _fireRate *= multiplier; }
+    public void UpgradeDamage(float multiplier)   { _damage = Mathf.RoundToInt(_damage * multiplier); }
+    public void UpgradeRange(float multiplier)    { _range *= multiplier; _detectRange *= multiplier; }
+
     EnemyBase FindNearest()
     {
         EnemyBase nearest = null;

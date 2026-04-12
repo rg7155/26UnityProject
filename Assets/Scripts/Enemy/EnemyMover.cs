@@ -8,6 +8,7 @@ public class EnemyMover : EnemyBase
     void Update()
     {
         if (_target == null) return;
+        if (Managers.Game.State != Define.GameState.Playing) return;
 
         Vector2 dir = (_target.position - transform.position).normalized;
         transform.position += (Vector3)(dir * _speed * Time.deltaTime);

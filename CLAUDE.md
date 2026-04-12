@@ -28,6 +28,10 @@ SerializeField:  _camelCase     (예: [SerializeField] float _speed)
 ### 1인 소규모 프로젝트 구조 원칙
 - **UI는 자기 자신이 등록** — UI 컴포넌트가 `Start()`에서 직접 플레이어/매니저를 찾아 이벤트 구독. Inspector 드래그 연결 최소화
 - **Inspector 연결은 Prefab 내부로 한정** — 씬 간 참조는 코드로 처리
+- **Inspector vs 코드 참조 기준:**
+  - 같은 오브젝트/프리팹 내부 자식 → **Inspector 드래그** (항상 함께 존재하므로 끊길 일 없음)
+  - 씬의 다른 오브젝트 → **`FindObjectOfType` / `Resources.Load`** (씬 구성이 바뀌어도 코드가 알아서 찾음)
+  - 예: UI_UpgradePanel 안의 Button[], TMP_Text[] → Inspector / UpgradeManager, PlayerController → FindObjectOfType
 - **추상화는 실제로 재사용될 때만** — 한 번만 쓰이는 코드는 추상화하지 않음
 - **스텁은 주석으로 교체 시점 명시** — `// 추후 Pool 반납으로 교체` 형태
 
@@ -56,6 +60,11 @@ Assets/Scripts/
 - **4개월차:** Time Rewind (Circular Buffer + State Snapshot)
 - **5개월차:** 폴리싱
 - **6개월차:** GitHub README, Profiler 캡처, GIF 문서화
+
+## 커밋 규칙
+- 커밋 + 푸시 시 `개발_진행상황.md` 도 함께 업데이트해서 포함할 것
+- 완료된 항목은 `⬜ → ✅` 로 변경, 비고란에 핵심 구현 방식 한 줄 기재
+- 커밋 메시지 형식: `feat: 한 줄 요약` (간략하게)
 
 ## 코드 작성 시 주의사항
 - 현재 `Instantiate` / `SetActive(false)` 로 처리하는 부분은 3개월차에 Object Pool로 교체 예정. 지금은 그대로 둘 것

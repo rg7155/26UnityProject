@@ -4,6 +4,7 @@ public class EnemyBase : MonoBehaviour
 {
     [SerializeField] protected float _speed = 2f;
     [SerializeField] protected int _hp = 3;
+    [SerializeField] protected int _expReward = 1;
     protected Transform _target;
 
     public virtual void Init(Transform target, int hp = -1, float speed = -1f)
@@ -22,6 +23,7 @@ public class EnemyBase : MonoBehaviour
 
     protected virtual void OnDead()
     {
+        _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
         gameObject.SetActive(false);  // 추후 Pool 반납으로 교체
     }
 }

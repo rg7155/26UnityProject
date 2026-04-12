@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3898503792215113050}
   - component: {fileID: 6694468541082683009}
   - component: {fileID: 2539780182042367105}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,6 +107,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMover
   _speed: 2
   _hp: 3
+  _expReward: 1
   _contactDamage: 10
 --- !u!58 &2539780182042367105
 CircleCollider2D:
