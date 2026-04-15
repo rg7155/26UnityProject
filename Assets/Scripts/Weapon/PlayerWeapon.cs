@@ -51,22 +51,6 @@ public class PlayerWeapon : MonoBehaviour
 
     EnemyBase FindNearest()
     {
-        EnemyBase nearest = null;
-        float minDist = _detectRange;
-
-        // 추후 Spatial Hashing으로 교체할 부분
-        foreach (EnemyBase enemy in FindObjectsOfType<EnemyBase>())
-        {
-            if (!enemy.gameObject.activeSelf) continue;
-
-            float dist = Vector2.Distance(transform.position, enemy.transform.position);
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = enemy;
-            }
-        }
-
-        return nearest;
+        return SpatialHashGrid.Instance?.FindNearest(transform.position, _detectRange);
     }
 }

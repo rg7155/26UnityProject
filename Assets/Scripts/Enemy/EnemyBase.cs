@@ -17,6 +17,8 @@ public class EnemyBase : MonoBehaviour
         if (hp >= 0) _hp = hp;
         if (speed >= 0f) _speed = speed;
         _originHp = _hp;
+
+        SpatialHashGrid.Instance?.Add(this);
     }
 
     public virtual void OnDamaged(int damage)
@@ -28,6 +30,7 @@ public class EnemyBase : MonoBehaviour
     protected virtual void OnDead()
     {
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
+        SpatialHashGrid.Instance?.Remove(this);
         _hp = _originHp;  // HP 리셋 후 반납
         Managers.Object.Return(gameObject, _originPrefab);
     }

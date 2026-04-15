@@ -66,6 +66,9 @@ Assets/Scripts/
 - 완료된 항목은 `⬜ → ✅` 로 변경, 비고란에 핵심 구현 방식 한 줄 기재
 - 커밋 메시지 형식: `feat: 한 줄 요약` (간략하게)
 
+## 구현 방식
+- **복잡한 기능은 단계별로 나눠서 구현** — 한 번에 여러 파일을 바꾸지 않고, 단계마다 동작 확인 후 다음 단계 진행
+
 ## 코드 작성 시 주의사항
 - 현재 `Instantiate` / `SetActive(false)` 로 처리하는 부분은 3개월차에 Object Pool로 교체 예정. 지금은 그대로 둘 것
 - `FindObjectsOfType` 사용 중인 부분 (`PlayerWeapon.FindNearest`)은 3개월차 Spatial Hashing으로 교체 예정

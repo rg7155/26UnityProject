@@ -10,8 +10,11 @@ public class EnemyMover : EnemyBase
         if (_target == null) return;
         if (Managers.Game.State != Define.GameState.Playing) return;
 
+        Vector2 prevPos = transform.position;
         Vector2 dir = (_target.position - transform.position).normalized;
         transform.position += (Vector3)(dir * _speed * Time.deltaTime);
+
+        SpatialHashGrid.Instance?.Move(this, prevPos);
 
         if (_attackCooldown > 0f)
             _attackCooldown -= Time.deltaTime;
