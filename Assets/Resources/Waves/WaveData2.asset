@@ -15,5 +15,6 @@ MonoBehaviour:
   startTime: 5
   spawnInterval: 2
   spawnCountPerBurst: 1
+  enemyPrefab: {fileID: 4243169767101499499, guid: ec34b518074a64b4db8959a76fc57ad5, type: 3}
   enemyHp: 5
   enemySpeed: 2.5

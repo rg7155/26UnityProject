@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: Upgrade_Range
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: "\uC0AC\uAC70\uB9AC \uC99D\uAC00\t"
-  description: "\uC0AC\uAC70\uB9AC 20% \uC99D\uAC00\t"
+  upgradeName: "Range Up\t"
+  description: 'Range x1.3
+
+'
   type: 4
   value: 1.2

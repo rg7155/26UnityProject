@@ -75,6 +75,6 @@ public class WaveManager : MonoBehaviour
     void SpawnBurst()
     {
         for (int i = 0; i < CurrentWave.spawnCountPerBurst; i++)
-            _spawner.Spawn(CurrentWave.enemyHp, CurrentWave.enemySpeed);
+            _spawner.Spawn(CurrentWave.enemyPrefab, CurrentWave.enemyHp, CurrentWave.enemySpeed);
     }
 }

@@ -10,6 +10,9 @@ public class WaveData : ScriptableObject
     public float spawnInterval;     // 스폰 간격 (초)
     public int spawnCountPerBurst;  // 한 번에 스폰할 적 수
 
+    [Header("적 프리팹")]
+    public GameObject enemyPrefab;   // 이 웨이브에서 스폰할 적 프리팹
+
     [Header("적 스탯")]
     public int enemyHp;
     public float enemySpeed;
