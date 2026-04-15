@@ -108,6 +108,7 @@ public class PlayerController : MonoBehaviour
         _level++;
         _expToNextLevel = Mathf.RoundToInt(_expToNextLevel * 1.3f); // 레벨마다 요구 경험치 30% 증가
 
+        OnExpChanged?.Invoke(_exp, _expToNextLevel);  // ExpBar 리셋용
         OnLevelUp?.Invoke(_level);  // Pause는 구독자(UpgradeManager)가 담당
     }
 

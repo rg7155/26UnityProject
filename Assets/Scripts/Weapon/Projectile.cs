@@ -8,22 +8,23 @@ public class Projectile : MonoBehaviour
     Vector2 _dir;
     float _range;
     Vector3 _startPos;
+    GameObject _originPrefab;
 
-    public void Init(Vector2 dir, int damage, float range)
+    public void Init(Vector2 dir, int damage, float range, GameObject originPrefab)
     {
         _dir = dir;
         _damage = damage;
         _range = range;
         _startPos = transform.position;
+        _originPrefab = originPrefab;
     }
 
     void Update()
     {
         transform.position += (Vector3)(_dir * _speed * Time.deltaTime);
 
-        // 사거리 초과 시 비활성화 (추후 Pool 반납으로 교체)
         if (Vector3.Distance(transform.position, _startPos) >= _range)
-            gameObject.SetActive(false);
+            ReturnToPool();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -32,6 +33,12 @@ public class Projectile : MonoBehaviour
         if (enemy == null) return;
 
         enemy.OnDamaged(_damage);
-        gameObject.SetActive(false);  // 추후 Pool 반납으로 교체
+        ReturnToPool();
+    }
+
+    void ReturnToPool()
+    {
+        if (!gameObject.activeSelf) return;  // 이미 반납됐으면 무시
+        Managers.Object.Return(gameObject, _originPrefab);
     }
 }

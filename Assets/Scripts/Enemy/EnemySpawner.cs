@@ -22,7 +22,8 @@ public class EnemySpawner : MonoBehaviour
         Vector2 randomDir = Random.insideUnitCircle.normalized;
         Vector3 spawnPos = _player.position + (Vector3)(randomDir * _spawnRadius);
 
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
-        obj.GetComponent<EnemyBase>().Init(_player, hp, speed);
+        GameObject obj = Managers.Object.Get(prefab);
+        obj.transform.position = spawnPos;
+        obj.GetComponent<EnemyBase>().Init(_player, prefab, hp, speed);
     }
 }

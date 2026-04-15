@@ -37,9 +37,11 @@ public class PlayerWeapon : MonoBehaviour
     {
         if (_projectilePrefab == null) return;
 
-        GameObject go = Instantiate(_projectilePrefab, transform.position, Quaternion.identity);
+        GameObject go = Managers.Object.Get(_projectilePrefab);
+        go.transform.position = transform.position;
+        go.transform.rotation = Quaternion.identity;
         Projectile proj = go.GetComponent<Projectile>();
-        proj.Init(dir, _damage, _range);
+        proj.Init(dir, _damage, _range, _projectilePrefab);
     }
 
     // --- 업그레이드 적용 메서드 ---
