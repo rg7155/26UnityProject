@@ -41,6 +41,42 @@ SerializeField:  _camelCase     (예: [SerializeField] float _speed)
 - 과도한 인터페이스/제네릭 추상화 금지
 - 없어도 되는 디자인 패턴 추가 금지
 
+## Hierarchy 구조 및 네이밍 규칙
+
+### 네이밍
+- `--- GroupName ---` — 씬 정리용 빈 오브젝트 (Separator)
+- `@Name` — 씬 전역 매니저/시스템 싱글톤 (예: @Managers, @Pool, @Renderers)
+- `PascalCase` — 일반 게임플레이 오브젝트 (예: Player, EnemySpawner)
+
+### 씬 Hierarchy 구성
+```
+--- Managers ---
+  @Managers          (Managers 스크립트 — DontDestroyOnLoad)
+  GameScene
+  EnemySpawner
+  WaveManager
+  UpgradeManager
+  SpatialHashGrid
+  @Renderers
+    Renderer_Basic
+    Renderer_Tanker
+    Renderer_Speeder
+
+--- World ---
+  Player
+
+--- UI ---
+  Canvas
+    HpBar
+    UpgradePanel
+    GameOverText
+    ExpBar
+    LevelText
+  EventSystem
+  Main Camera
+  Global Light 2D
+```
+
 ## 폴더 구조
 ```
 Assets/Scripts/

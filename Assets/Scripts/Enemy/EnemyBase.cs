@@ -19,6 +19,7 @@ public class EnemyBase : MonoBehaviour
         _originHp = _hp;
 
         SpatialHashGrid.Instance?.Add(this);
+        EnemyInstanceRenderer.Register(this, originPrefab);
     }
 
     public virtual void OnDamaged(int damage)
@@ -31,6 +32,7 @@ public class EnemyBase : MonoBehaviour
     {
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
         SpatialHashGrid.Instance?.Remove(this);
+        EnemyInstanceRenderer.Unregister(this, _originPrefab);
         _hp = _originHp;  // HP 리셋 후 반납
         Managers.Object.Return(gameObject, _originPrefab);
     }
