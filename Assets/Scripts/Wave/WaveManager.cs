@@ -12,8 +12,9 @@ public class WaveManager : MonoBehaviour
     WaveData[] _waves;
     EnemySpawner _spawner;
 
-    public int WaveIndex { get { return _waveIndex; } }
-    public float GameTime { get { return _gameTime; } }
+    public int   WaveIndex  { get { return _waveIndex; } }
+    public float GameTime   { get { return _gameTime; } }
+    public float SpawnTimer { get { return _spawnTimer; } }
 
     public System.Action<int> OnWaveChanged;
 
@@ -76,5 +77,12 @@ public class WaveManager : MonoBehaviour
     {
         for (int i = 0; i < CurrentWave.spawnCountPerBurst; i++)
             _spawner.Spawn(CurrentWave.enemyPrefab, CurrentWave.enemyHp, CurrentWave.enemySpeed);
+    }
+
+    public void RestoreSnapshot(WaveSnapshot s)
+    {
+        _gameTime   = s.gameTime;
+        _spawnTimer = s.spawnTimer;
+        _waveIndex  = s.waveIndex;
     }
 }

@@ -5,6 +5,8 @@ public class EnemyMover : EnemyBase
     [SerializeField] int _contactDamage = 10;
     float _attackCooldown = 0f;
 
+    public float AttackCooldown { get { return _attackCooldown; } }
+
     void Update()
     {
         if (_target == null) return;

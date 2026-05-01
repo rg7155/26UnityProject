@@ -7,8 +7,12 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected int _expReward = 1;
     protected Transform _target;
 
-    int _originHp;  // Init 시 전달받은 HP 저장 (반납 후 재사용 시 리셋용 — Init은 항상 hp >= 0으로 호출할 것)
-    GameObject _originPrefab;  // 풀 반납 시 사용
+    int _originHp;
+    GameObject _originPrefab;
+
+    public int        Hp          { get { return _hp; } }
+    public float      Speed       { get { return _speed; } }
+    public GameObject OriginPrefab { get { return _originPrefab; } }
 
     public virtual void Init(Transform target, GameObject originPrefab, int hp = -1, float speed = -1f)
     {
@@ -33,7 +37,14 @@ public class EnemyBase : MonoBehaviour
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
         SpatialHashGrid.Instance?.Remove(this);
         EnemyInstanceRenderer.Unregister(this, _originPrefab);
-        _hp = _originHp;  // HP 리셋 후 반납
+        _hp = _originHp;
         Managers.Object.Return(gameObject, _originPrefab);
+    }
+
+    public virtual void RestoreSnapshot(EnemySnapshot s)
+    {
+        _hp    = s.hp;
+        _speed = s.speed;
+        transform.position = s.position;
     }
 }

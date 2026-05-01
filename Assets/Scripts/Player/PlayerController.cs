@@ -115,8 +115,7 @@ public class PlayerController : MonoBehaviour
     void HandleDead()
     {
         _state = CreatureState.Dead;
-        Managers.Game.State = GameState.GameOver;
-        OnDead?.Invoke();
+        OnDead?.Invoke();  // RewindManager가 구독 — Auto-Rewind 없으면 GameOver 처리
     }
 
     // --- 업그레이드 적용 메서드 ---
@@ -125,5 +124,25 @@ public class PlayerController : MonoBehaviour
     {
         _maxHp += amount;
         Hp += amount;   // 즉시 회복 포함
+    }
+
+    // --- Rewind 복원 ---
+    public void RestoreSnapshot(PlayerSnapshot s)
+    {
+        _speed         = s.speed;
+        _maxHp         = s.maxHp;
+        _exp           = s.exp;
+        _level         = s.level;
+        _expToNextLevel = s.expToNextLevel;
+        _state         = CreatureState.Idle;
+
+        transform.position = s.position;
+
+        _hp = Mathf.Clamp(s.hp, 0, _maxHp);
+        OnHpChanged?.Invoke(_hp, _maxHp);
+        OnExpChanged?.Invoke(_exp, _expToNextLevel);
+
+        if (Managers.Game.State == Define.GameState.GameOver)
+            Managers.Game.State = Define.GameState.Rewinding;
     }
 }

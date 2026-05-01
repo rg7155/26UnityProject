@@ -7,6 +7,7 @@ public class Define
         Playing,
         Paused,
         GameOver,
+        Rewinding,
     }
 
     public enum CreatureState
