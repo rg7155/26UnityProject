@@ -14,13 +14,13 @@ public struct PlayerSnapshot
 
 public struct EnemySnapshot
 {
+    public int        entityId;     // 논리적 동일성 추적 (Pool 재사용 감지용)
     public EnemyBase  enemy;        // 오브젝트 참조
     public GameObject prefab;       // Pool 반납/복원용
     public Vector3    position;
     public int        hp;
     public float      speed;
     public float      attackCooldown;
-    public bool       isActive;     // 해당 시점에 살아있었는지
 }
 
 public struct WaveSnapshot

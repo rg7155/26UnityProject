@@ -108,22 +108,22 @@ public class RewindManager : MonoBehaviour
 
     EnemySnapshot[] CaptureEnemies()
     {
-        EnemyBase[] allEnemies = FindObjectsOfType<EnemyBase>(true);  // 비활성 포함
-        EnemySnapshot[] snapshots = new EnemySnapshot[allEnemies.Length];
+        var registry = EnemyBase.Registry;
+        EnemySnapshot[] snapshots = new EnemySnapshot[registry.Count];
 
-        for (int i = 0; i < allEnemies.Length; i++)
+        int i = 0;
+        foreach (EnemyBase e in registry.Values)
         {
-            EnemyBase e = allEnemies[i];
             EnemyMover mover = e as EnemyMover;
-            snapshots[i] = new EnemySnapshot
+            snapshots[i++] = new EnemySnapshot
             {
+                entityId       = e.EntityId,
                 enemy          = e,
                 prefab         = e.OriginPrefab,
                 position       = e.transform.position,
                 hp             = e.Hp,
                 speed          = e.Speed,
                 attackCooldown = mover != null ? mover.AttackCooldown : 0f,
-                isActive       = e.gameObject.activeSelf,
             };
         }
 
@@ -191,29 +191,57 @@ public class RewindManager : MonoBehaviour
 
     void ApplyEnemies(EnemySnapshot[] snapshots)
     {
+        // 스냅샷 entityId 집합
+        var snapshotIds = new HashSet<int>();
+        foreach (var s in snapshots)
+            snapshotIds.Add(s.entityId);
+
+        // Case C: 현재 살아있지만 스냅샷에 없음 → 풀 반납
+        var toRemove = new List<EnemyBase>(EnemyBase.Registry.Values);
+        foreach (EnemyBase e in toRemove)
+        {
+            if (snapshotIds.Contains(e.EntityId)) continue;
+            EnemyInstanceRenderer.Unregister(e, e.OriginPrefab);
+            SpatialHashGrid.Instance?.Remove(e);
+            EnemyBase.UnregisterForRewind(e.EntityId);
+            Managers.Object.Return(e.gameObject, e.OriginPrefab);
+        }
+
+        // Case A / B: 스냅샷의 적 복원
         foreach (EnemySnapshot s in snapshots)
         {
-            if (s.enemy == null) continue;
-
-            if (s.isActive && !s.enemy.gameObject.activeSelf)
+            if (EnemyBase.Registry.ContainsKey(s.entityId))
             {
-                // 죽어있던 적 부활
-                GameObject obj = Managers.Object.Get(s.prefab);
-                // Get이 새 오브젝트를 줄 수 있으므로 s.enemy 직접 활성화
-                s.enemy.gameObject.SetActive(true);
-                EnemyInstanceRenderer.Register(s.enemy, s.prefab);
-                SpatialHashGrid.Instance?.Add(s.enemy);
+                // Case A: 현재 살아있음 → 상태만 복원
+                EnemyBase enemy = EnemyBase.Registry[s.entityId];
+                SpatialHashGrid.Instance?.Remove(enemy);
+                enemy.RestoreSnapshot(s);
+                SpatialHashGrid.Instance?.Add(enemy);
             }
-            else if (!s.isActive && s.enemy.gameObject.activeSelf)
+            else
             {
-                // 살아있던 적 제거
-                EnemyInstanceRenderer.Unregister(s.enemy, s.prefab);
-                SpatialHashGrid.Instance?.Remove(s.enemy);
-                s.enemy.gameObject.SetActive(false);
-            }
+                // Case B: 현재 죽어있음 → 부활
+                if (s.enemy == null) continue;
 
-            if (s.enemy.gameObject.activeSelf)
-                s.enemy.RestoreSnapshot(s);
+                if (s.enemy.EntityId == s.entityId)
+                {
+                    // B1: Pool 재사용 없음 → 직접 활성화
+                    s.enemy.gameObject.SetActive(true);
+                    s.enemy.RestoreSnapshot(s);
+                    EnemyBase.RegisterForRewind(s.enemy);
+                    EnemyInstanceRenderer.Register(s.enemy, s.prefab);
+                    SpatialHashGrid.Instance?.Add(s.enemy);
+                }
+                else
+                {
+                    // B2: Pool 재사용됨 → 새 오브젝트에 entityId 강제 주입
+                    GameObject obj = Managers.Object.Get(s.prefab);
+                    EnemyBase restored = obj.GetComponent<EnemyBase>();
+                    restored.ForceRestore(s, _player.transform);
+                    EnemyInstanceRenderer.Register(restored, s.prefab);
+                    SpatialHashGrid.Instance?.Add(restored);
+                }
+            }
         }
     }
 

@@ -22,6 +22,12 @@ public class EnemyMover : EnemyBase
             _attackCooldown -= Time.deltaTime;
     }
 
+    public override void RestoreSnapshot(EnemySnapshot s)
+    {
+        base.RestoreSnapshot(s);
+        _attackCooldown = s.attackCooldown;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (_attackCooldown > 0f) return;
