@@ -122,4 +122,6 @@ MonoBehaviour:
   _speed: 5
   _hp: 1
   _expReward: 2
+  _deathEffectPrefab: {fileID: 1098155297326586499, guid: c1fbae7ad7c3ac94bb4c679e94ff8717, type: 3}
+  _deathEffectLifetime: 2
   _contactDamage: 5

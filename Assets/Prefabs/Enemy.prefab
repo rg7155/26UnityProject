@@ -48,6 +48,8 @@ MonoBehaviour:
   _speed: 2
   _hp: 3
   _expReward: 1
+  _deathEffectPrefab: {fileID: 1098155297326586499, guid: c1fbae7ad7c3ac94bb4c679e94ff8717, type: 3}
+  _deathEffectLifetime: 2
   _contactDamage: 10
 --- !u!58 &2539780182042367105
 CircleCollider2D:

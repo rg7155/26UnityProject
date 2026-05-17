@@ -6,6 +6,8 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected float _speed = 2f;
     [SerializeField] protected int _hp = 3;
     [SerializeField] protected int _expReward = 1;
+    [SerializeField] GameObject _deathEffectPrefab;
+    [SerializeField] float      _deathEffectLifetime = 2f;
     protected Transform _target;
 
     int _originHp;
@@ -51,6 +53,11 @@ public class EnemyBase : MonoBehaviour
         SpatialHashGrid.Instance?.Remove(this);
         EnemyInstanceRenderer.Unregister(this, _originPrefab);
         _hp = _originHp;
+        if (_deathEffectPrefab != null)
+        {
+            GameObject fx = UnityEngine.Object.Instantiate(_deathEffectPrefab, transform.position, Quaternion.identity);
+            Managers.Resource.Destroy(fx, _deathEffectLifetime);
+        }
         Managers.Object.Return(gameObject, _originPrefab);
     }
 
