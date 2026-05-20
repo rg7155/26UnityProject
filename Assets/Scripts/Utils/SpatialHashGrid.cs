@@ -88,4 +88,29 @@ public class SpatialHashGrid : MonoBehaviour
 
         return nearest;
     }
+
+    public void QueryNeighbors(EnemyBase self, Vector2 origin, float radius, List<EnemyBase> result)
+    {
+        result.Clear();
+        var originCell = GetCell(origin);
+        int searchRadius = Mathf.CeilToInt(radius / _cellSize);
+        float radiusSq = radius * radius;
+
+        for (int dx = -searchRadius; dx <= searchRadius; dx++)
+        {
+            for (int dy = -searchRadius; dy <= searchRadius; dy++)
+            {
+                var cell = (originCell.Item1 + dx, originCell.Item2 + dy);
+                if (!_grid.TryGetValue(cell, out List<EnemyBase> list)) continue;
+
+                foreach (EnemyBase enemy in list)
+                {
+                    if (enemy == null || !enemy.gameObject.activeSelf) continue;
+                    if (enemy == self) continue;
+                    if (((Vector2)enemy.transform.position - origin).sqrMagnitude < radiusSq)
+                        result.Add(enemy);
+                }
+            }
+        }
+    }
 }

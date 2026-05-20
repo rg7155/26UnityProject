@@ -125,3 +125,5 @@ MonoBehaviour:
   _deathEffectPrefab: {fileID: 1098155297326586499, guid: c1fbae7ad7c3ac94bb4c679e94ff8717, type: 3}
   _deathEffectLifetime: 2
   _contactDamage: 15
+  _separationRadius: 0.8
+  _separationWeight: 1.5
