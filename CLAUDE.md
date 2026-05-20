@@ -75,7 +75,18 @@ SerializeField:  _camelCase     (예: [SerializeField] float _speed)
   EventSystem
   Main Camera
   Global Light 2D
+  RewindVolume
 ```
+
+### 신규 오브젝트 배치 규칙
+| 추가할 오브젝트 | 배치 위치 | 예시 |
+|----------------|----------|------|
+| 게임 시스템/매니저 | `--- Managers ---` | WaveManager, EnemySpawner |
+| GPU 인스턴싱 렌더러 | `--- Managers ---` > `@Renderers` 하위 | Renderer_Basic |
+| 게임플레이 오브젝트 | `--- World ---` | Player, Boss |
+| Canvas 안 UI 요소 | `--- UI ---` > `Canvas` 하위 | HpBar, 새 패널 |
+| 씬 전역 시각 효과 | `--- UI ---` > Canvas 밖 | Global Light 2D, RewindVolume |
+| 카메라 | `--- UI ---` > Canvas 밖 | Main Camera |
 
 ## 폴더 구조
 ```

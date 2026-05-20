@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using static Define;
 
 public class GameScene : MonoBehaviour
 {
@@ -19,17 +20,20 @@ public class GameScene : MonoBehaviour
         if (cam == null) { Debug.LogError("[GameScene] CameraController not found"); return; }
 
         cam.SetTarget(player.transform);
-        player.OnDead += OnGameOver;
+        Managers.Game.OnStateChanged += OnGameStateChanged;
 
         if (_gameOverText != null)
             _gameOverText.gameObject.SetActive(false);
     }
 
-    void OnGameOver()
+    void OnGameStateChanged(GameState state)
     {
-        if (_gameOverText != null)
-            _gameOverText.gameObject.SetActive(true);
+        if (_gameOverText == null) return;
+        _gameOverText.gameObject.SetActive(state == GameState.GameOver);
+    }
 
-        Debug.Log("[GameScene] Game Over");
+    void OnDestroy()
+    {
+        Managers.Game.OnStateChanged -= OnGameStateChanged;
     }
 }

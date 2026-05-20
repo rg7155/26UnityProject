@@ -18,10 +18,11 @@ public class GameManagerEx
     public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
     GameState _state = GameState.Playing;
+    public event Action<GameState> OnStateChanged;
     public GameState State
     {
         get { return _state; }
-        set { _state = value; }
+        set { _state = value; OnStateChanged?.Invoke(value); }
     }
 
     public int Score
