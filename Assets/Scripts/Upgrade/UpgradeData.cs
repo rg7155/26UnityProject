@@ -18,6 +18,9 @@ public class UpgradeData : ScriptableObject
             case UpgradeType.FireRate:  weapon.UpgradeFireRate(value); break;
             case UpgradeType.Damage:    weapon.UpgradeDamage(value); break;
             case UpgradeType.Range:     weapon.UpgradeRange(value); break;
+            case UpgradeType.UnlockBomb:
+                player.GetComponent<BombWeapon>().enabled = true;
+                break;
         }
     }
 }
