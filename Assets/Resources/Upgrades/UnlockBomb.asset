@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: UnlockBomb
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: 
-  description: 
-  type: 0
+  upgradeName: 'Bomb Unlock '
+  description: 'Periodically explodes nearby enemies
+
+'
+  type: 5
   value: 0
