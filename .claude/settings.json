@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"if (Test-Path '_workspace_prev')*)",
+      "Bash(mkdir -p \"c:/Users/rg715/My project/*)",
+      "Bash(mkdir -p \"c:\\Users\\rg715\\My project\\*)",
+      "Bash(mkdir \"c:\\Users\\rg715\\My project\\*)"
+    ],
+    "deny": []
+  }
+}

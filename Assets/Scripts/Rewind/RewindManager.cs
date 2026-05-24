@@ -27,6 +27,10 @@ public class RewindManager : MonoBehaviour
     PlayerController _player;
     WaveManager      _waveManager;
 
+    // Lerp 시작 위치 캐시 (매 스텝 Clear → 재구성하여 재사용, GC 최소화)
+    Dictionary<int, Vector3> _enemyFromPositions = new Dictionary<int, Vector3>();
+    HashSet<int>             _snapshotIdsBuffer  = new HashSet<int>();
+
     public float CooldownRemaining { get { return _cooldownTimer; } }
     public float CooldownMax       { get { return _rewindCooldown; } }
     public int   AutoRewindCharges { get { return _autoRewindCharges; } }
@@ -159,22 +163,55 @@ public class RewindManager : MonoBehaviour
     {
         Managers.Game.State = GameState.Rewinding;
 
-        // 가장 오래된 것부터 최신 순으로 스냅샷 인덱스 배열 생성
         int[] indices = new int[_count];
         for (int i = 0; i < _count; i++)
             indices[i] = (_head + i) % _bufferSize;
 
-        // 역순으로 재생 (최신 → 과거)
-        for (int i = _count - 1; i >= 0; i--)
+        for (int i = _count - 1; i > 0; i--)
         {
-            FrameSnapshot frame = _buffer[indices[i]];
+            FrameSnapshot fromFrame = _buffer[indices[i]];
+            FrameSnapshot toFrame   = _buffer[indices[i - 1]];
 
-            ApplyPlayer(frame.player);
-            ApplyEnemies(frame.enemies);
-            ApplyWave(frame.wave);
+            ApplyPlayer(toFrame.player);
+            ApplyEnemies(toFrame.enemies);
+            ApplyWave(toFrame.wave);
 
-            yield return new WaitForSecondsRealtime(_recordInterval);
+            Vector3 playerFrom = fromFrame.player.position;
+            Vector3 playerTo   = toFrame.player.position;
+
+            _enemyFromPositions.Clear();
+            for (int k = 0; k < fromFrame.enemies.Length; k++)
+                _enemyFromPositions[fromFrame.enemies[k].entityId] = fromFrame.enemies[k].position;
+
+            float elapsed = 0f;
+            while (elapsed < _recordInterval)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / _recordInterval);
+
+                _player.transform.position = Vector3.Lerp(playerFrom, playerTo, t);
+
+                for (int k = 0; k < toFrame.enemies.Length; k++)
+                {
+                    int id = toFrame.enemies[k].entityId;
+                    if (!EnemyBase.Registry.TryGetValue(id, out EnemyBase enemy)) continue;
+
+                    Vector3 eTo = toFrame.enemies[k].position;
+                    Vector3 eFrom;
+                    if (!_enemyFromPositions.TryGetValue(id, out eFrom))
+                        eFrom = eTo;
+
+                    enemy.transform.position = Vector3.Lerp(eFrom, eTo, t);
+                }
+
+                yield return null;
+            }
         }
+
+        FrameSnapshot finalFrame = _buffer[indices[0]];
+        ApplyPlayer(finalFrame.player);
+        ApplyEnemies(finalFrame.enemies);
+        ApplyWave(finalFrame.wave);
 
         _count = 0;
         _head  = 0;
@@ -191,16 +228,16 @@ public class RewindManager : MonoBehaviour
 
     void ApplyEnemies(EnemySnapshot[] snapshots)
     {
-        // 스냅샷 entityId 집합
-        var snapshotIds = new HashSet<int>();
+        // 스냅샷 entityId 집합 (필드 재사용, GC 최소화)
+        _snapshotIdsBuffer.Clear();
         foreach (var s in snapshots)
-            snapshotIds.Add(s.entityId);
+            _snapshotIdsBuffer.Add(s.entityId);
 
         // Case C: 현재 살아있지만 스냅샷에 없음 → 풀 반납
         var toRemove = new List<EnemyBase>(EnemyBase.Registry.Values);
         foreach (EnemyBase e in toRemove)
         {
-            if (snapshotIds.Contains(e.EntityId)) continue;
+            if (_snapshotIdsBuffer.Contains(e.EntityId)) continue;
             EnemyInstanceRenderer.Unregister(e, e.OriginPrefab);
             SpatialHashGrid.Instance?.Remove(e);
             EnemyBase.UnregisterForRewind(e.EntityId);
