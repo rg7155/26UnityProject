@@ -9,6 +9,12 @@ public class UpgradeManager : MonoBehaviour
     PlayerController _player;
     PlayerWeapon _weapon;
 
+    static readonly HashSet<Define.UpgradeType> _oneTimeTypes = new HashSet<Define.UpgradeType>
+    {
+        Define.UpgradeType.UnlockBomb,
+    };
+    HashSet<Define.UpgradeType> _consumedOneTime = new HashSet<Define.UpgradeType>();
+
     public System.Action<UpgradeData[]> OnUpgradeChoiceReady;  // UI가 구독
 
     void Start()
@@ -40,12 +46,21 @@ public class UpgradeManager : MonoBehaviour
     public void ApplyUpgrade(UpgradeData upgrade)
     {
         upgrade.Apply(_player, _weapon);
+
+        if (_oneTimeTypes.Contains(upgrade.type))
+            _consumedOneTime.Add(upgrade.type);
+
         Managers.Game.State = Define.GameState.Playing;  // 여기서 Resume
     }
 
     UpgradeData[] PickRandom(int count)
     {
-        List<UpgradeData> pool = new List<UpgradeData>(_allUpgrades);
+        List<UpgradeData> pool = new List<UpgradeData>(_allUpgrades.Length);
+        foreach (var up in _allUpgrades)
+        {
+            if (_consumedOneTime.Contains(up.type)) continue;
+            pool.Add(up);
+        }
         UpgradeData[] result = new UpgradeData[Mathf.Min(count, pool.Count)];
 
         for (int i = 0; i < result.Length; i++)
