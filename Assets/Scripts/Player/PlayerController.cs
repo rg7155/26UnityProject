@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     int _hp;
     float _invincibleTimer;
 
+    GameObject _damageTextPrefab;
+
     // 경험치 / 레벨
     int _exp;
     int _level = 1;
@@ -44,6 +46,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         Hp = _maxHp;
+        _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
     }
 
     void Update()
@@ -85,6 +88,13 @@ public class PlayerController : MonoBehaviour
     {
         if (IsInvincible) return;
         if (Managers.Game.State != GameState.Playing) return;
+
+        if (_damageTextPrefab != null)
+        {
+            GameObject fx = Instantiate(_damageTextPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+            fx.GetComponent<DamageText>().Init(damage, Color.red);
+            Managers.Resource.Destroy(fx, 0.7f);
+        }
 
         Hp -= damage;
         _invincibleTimer = _invincibleDuration;

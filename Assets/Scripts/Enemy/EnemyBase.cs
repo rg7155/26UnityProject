@@ -21,6 +21,9 @@ public class EnemyBase : MonoBehaviour
     static Dictionary<int, EnemyBase> _registry = new Dictionary<int, EnemyBase>();
     public static IReadOnlyDictionary<int, EnemyBase> Registry => _registry;
 
+    // 모든 적이 공유 — 1회만 Load
+    static GameObject _damageTextPrefab;
+
     public int        Hp           { get { return _hp; } }
     public float      Speed        { get { return _speed; } }
     public GameObject OriginPrefab { get { return _originPrefab; } }
@@ -36,12 +39,22 @@ public class EnemyBase : MonoBehaviour
         EntityId = _nextEntityId++;
         _registry[EntityId] = this;
 
+        if (_damageTextPrefab == null)
+            _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
+
         SpatialHashGrid.Instance?.Add(this);
         EnemyInstanceRenderer.Register(this, originPrefab);
     }
 
     public virtual void OnDamaged(int damage)
     {
+        if (_damageTextPrefab != null)
+        {
+            GameObject fx = Instantiate(_damageTextPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
+            fx.GetComponent<DamageText>().Init(damage, Color.white);
+            Managers.Resource.Destroy(fx, 0.7f);
+        }
+
         _hp -= damage;
         if (_hp <= 0) OnDead();
     }
