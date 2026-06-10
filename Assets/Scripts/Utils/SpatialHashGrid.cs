@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Profiling;
 
 // 월드를 고정 크기 셀로 분할해 적 위치를 관리
 // 가장 가까운 적 탐색 시 인접 3×3 셀만 순회 — FindObjectsOfType 대체
 public class SpatialHashGrid : MonoBehaviour
 {
     [SerializeField] float _cellSize = 5f;
+
+    static readonly ProfilerMarker _findNearestMarker = new ProfilerMarker("SpatialHash.FindNearest");
+    static readonly ProfilerMarker _queryNeighborsMarker = new ProfilerMarker("SpatialHash.QueryNeighbors");
 
     Dictionary<(int, int), List<EnemyBase>> _grid = new Dictionary<(int, int), List<EnemyBase>>();
 
@@ -59,56 +63,62 @@ public class SpatialHashGrid : MonoBehaviour
     // 주어진 위치에서 가장 가까운 적 반환 (탐지 범위 내)
     public EnemyBase FindNearest(Vector2 origin, float detectRange)
     {
-        var originCell = GetCell(origin);
-        int searchRadius = Mathf.CeilToInt(detectRange / _cellSize);
-
-        EnemyBase nearest = null;
-        float minDistSq = detectRange * detectRange;  // 제곱 비교로 Sqrt 생략
-
-        for (int dx = -searchRadius; dx <= searchRadius; dx++)
+        using (_findNearestMarker.Auto())
         {
-            for (int dy = -searchRadius; dy <= searchRadius; dy++)
+            var originCell = GetCell(origin);
+            int searchRadius = Mathf.CeilToInt(detectRange / _cellSize);
+
+            EnemyBase nearest = null;
+            float minDistSq = detectRange * detectRange;  // 제곱 비교로 Sqrt 생략
+
+            for (int dx = -searchRadius; dx <= searchRadius; dx++)
             {
-                var cell = (originCell.Item1 + dx, originCell.Item2 + dy);
-                if (!_grid.TryGetValue(cell, out List<EnemyBase> list)) continue;
-
-                foreach (EnemyBase enemy in list)
+                for (int dy = -searchRadius; dy <= searchRadius; dy++)
                 {
-                    if (enemy == null || !enemy.gameObject.activeSelf) continue;
+                    var cell = (originCell.Item1 + dx, originCell.Item2 + dy);
+                    if (!_grid.TryGetValue(cell, out List<EnemyBase> list)) continue;
 
-                    float distSq = ((Vector2)enemy.transform.position - origin).sqrMagnitude;
-                    if (distSq < minDistSq)
+                    foreach (EnemyBase enemy in list)
                     {
-                        minDistSq = distSq;
-                        nearest = enemy;
+                        if (enemy == null || !enemy.gameObject.activeSelf) continue;
+
+                        float distSq = ((Vector2)enemy.transform.position - origin).sqrMagnitude;
+                        if (distSq < minDistSq)
+                        {
+                            minDistSq = distSq;
+                            nearest = enemy;
+                        }
                     }
                 }
             }
-        }
 
-        return nearest;
+            return nearest;
+        }
     }
 
     public void QueryNeighbors(EnemyBase self, Vector2 origin, float radius, List<EnemyBase> result)
     {
-        result.Clear();
-        var originCell = GetCell(origin);
-        int searchRadius = Mathf.CeilToInt(radius / _cellSize);
-        float radiusSq = radius * radius;
-
-        for (int dx = -searchRadius; dx <= searchRadius; dx++)
+        using (_queryNeighborsMarker.Auto())
         {
-            for (int dy = -searchRadius; dy <= searchRadius; dy++)
-            {
-                var cell = (originCell.Item1 + dx, originCell.Item2 + dy);
-                if (!_grid.TryGetValue(cell, out List<EnemyBase> list)) continue;
+            result.Clear();
+            var originCell = GetCell(origin);
+            int searchRadius = Mathf.CeilToInt(radius / _cellSize);
+            float radiusSq = radius * radius;
 
-                foreach (EnemyBase enemy in list)
+            for (int dx = -searchRadius; dx <= searchRadius; dx++)
+            {
+                for (int dy = -searchRadius; dy <= searchRadius; dy++)
                 {
-                    if (enemy == null || !enemy.gameObject.activeSelf) continue;
-                    if (enemy == self) continue;
-                    if (((Vector2)enemy.transform.position - origin).sqrMagnitude < radiusSq)
-                        result.Add(enemy);
+                    var cell = (originCell.Item1 + dx, originCell.Item2 + dy);
+                    if (!_grid.TryGetValue(cell, out List<EnemyBase> list)) continue;
+
+                    foreach (EnemyBase enemy in list)
+                    {
+                        if (enemy == null || !enemy.gameObject.activeSelf) continue;
+                        if (enemy == self) continue;
+                        if (((Vector2)enemy.transform.position - origin).sqrMagnitude < radiusSq)
+                            result.Add(enemy);
+                    }
                 }
             }
         }

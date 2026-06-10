@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Profiling;
 using static Define;
 
 // Time Rewind 핵심 로직
@@ -13,6 +14,9 @@ public class RewindManager : MonoBehaviour
     [SerializeField] float _recordInterval  = 0.05f;  // 스냅샷 저장 간격
     [SerializeField] float _rewindDuration  = 5f;     // 최대 되감기 시간
     [SerializeField] float _rewindCooldown  = 30f;    // 능동 되감기 쿨타임
+
+    static readonly ProfilerMarker _recordMarker = new ProfilerMarker("Rewind.Record");
+    static readonly ProfilerMarker _captureEnemiesMarker = new ProfilerMarker("Rewind.CaptureEnemies");
 
     int _bufferSize;  // _rewindDuration / _recordInterval
     FrameSnapshot[] _buffer;
@@ -80,20 +84,23 @@ public class RewindManager : MonoBehaviour
 
     void Record()
     {
-        FrameSnapshot frame = new FrameSnapshot
+        using (_recordMarker.Auto())
         {
-            player  = CapturePlayer(),
-            enemies = CaptureEnemies(),
-            wave    = CaptureWave(),
-        };
+            FrameSnapshot frame = new FrameSnapshot
+            {
+                player  = CapturePlayer(),
+                enemies = CaptureEnemies(),
+                wave    = CaptureWave(),
+            };
 
-        _buffer[_tail] = frame;
-        _tail = (_tail + 1) % _bufferSize;
+            _buffer[_tail] = frame;
+            _tail = (_tail + 1) % _bufferSize;
 
-        if (_count < _bufferSize)
-            _count++;
-        else
-            _head = (_head + 1) % _bufferSize;  // 가득 찼으면 가장 오래된 것 덮어씀
+            if (_count < _bufferSize)
+                _count++;
+            else
+                _head = (_head + 1) % _bufferSize;  // 가득 찼으면 가장 오래된 것 덮어씀
+        }
     }
 
     PlayerSnapshot CapturePlayer()
@@ -112,26 +119,29 @@ public class RewindManager : MonoBehaviour
 
     EnemySnapshot[] CaptureEnemies()
     {
-        var registry = EnemyBase.Registry;
-        EnemySnapshot[] snapshots = new EnemySnapshot[registry.Count];
-
-        int i = 0;
-        foreach (EnemyBase e in registry.Values)
+        using (_captureEnemiesMarker.Auto())
         {
-            EnemyMover mover = e as EnemyMover;
-            snapshots[i++] = new EnemySnapshot
-            {
-                entityId       = e.EntityId,
-                enemy          = e,
-                prefab         = e.OriginPrefab,
-                position       = e.transform.position,
-                hp             = e.Hp,
-                speed          = e.Speed,
-                attackCooldown = mover != null ? mover.AttackCooldown : 0f,
-            };
-        }
+            var registry = EnemyBase.Registry;
+            EnemySnapshot[] snapshots = new EnemySnapshot[registry.Count];
 
-        return snapshots;
+            int i = 0;
+            foreach (EnemyBase e in registry.Values)
+            {
+                EnemyMover mover = e as EnemyMover;
+                snapshots[i++] = new EnemySnapshot
+                {
+                    entityId       = e.EntityId,
+                    enemy          = e,
+                    prefab         = e.OriginPrefab,
+                    position       = e.transform.position,
+                    hp             = e.Hp,
+                    speed          = e.Speed,
+                    attackCooldown = mover != null ? mover.AttackCooldown : 0f,
+                };
+            }
+
+            return snapshots;
+        }
     }
 
     WaveSnapshot CaptureWave()
