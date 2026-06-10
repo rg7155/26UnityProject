@@ -6,10 +6,16 @@ public class EnemyMover : EnemyBase
     [SerializeField] int _contactDamage = 10;
     [SerializeField] float _separationRadius = 0.8f;
     [SerializeField] float _separationWeight = 1.5f;
-    List<EnemyBase> _neighborBuf = new List<EnemyBase>(8);
+    // _neighborBuf 제거 — 이웃 탐색은 EnemyJobScheduler가 담당
     float _attackCooldown = 0f;
+    EnemyJobScheduler _scheduler;   // 씬 간 참조 캐시
 
     public float AttackCooldown { get { return _attackCooldown; } }
+
+    void Start()
+    {
+        _scheduler = FindObjectOfType<EnemyJobScheduler>();
+    }
 
     void Update()
     {
@@ -19,27 +25,18 @@ public class EnemyMover : EnemyBase
         Vector2 prevPos = transform.position;
         Vector2 targetDir = ((Vector2)_target.position - (Vector2)transform.position).normalized;
 
-        // Separation Steering
+        // Separation은 EnemyJobScheduler(Job+Burst)가 미리 계산 — index 조회만
         Vector2 separation = Vector2.zero;
-        SpatialHashGrid.Instance?.QueryNeighbors(this, transform.position, _separationRadius, _neighborBuf);
-        foreach (EnemyBase other in _neighborBuf)
+        if (_scheduler != null)
         {
-            Vector2 diff = (Vector2)transform.position - (Vector2)other.transform.position;
-            float dist = diff.magnitude;
-            if (dist < 0.0001f)
-            {
-                // 완전 겹침 — EntityId 기반 결정적 오프셋으로 NaN 방지
-                diff = new Vector2((EntityId & 1) == 0 ? 1f : -1f, (EntityId & 2) == 0 ? 1f : -1f);
-                dist = 1f;
-            }
-            float strength = 1f - (dist / _separationRadius);
-            separation += diff.normalized * strength;
+            Unity.Mathematics.float2 s = _scheduler.GetSeparation(EntityId);
+            separation = new Vector2(s.x, s.y);
         }
 
         Vector2 moveDir = (targetDir + separation * _separationWeight).normalized;
         transform.position += (Vector3)(moveDir * _speed * Time.deltaTime);
 
-        SpatialHashGrid.Instance?.Move(this, prevPos);
+        SpatialHashGrid.Instance?.Move(this, prevPos);   // grid 유지(BombWeapon/Rewind 의존)
 
         if (_attackCooldown > 0f)
             _attackCooldown -= Time.deltaTime;
