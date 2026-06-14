@@ -20,7 +20,9 @@ public class Define
     public enum SceneType
     {
         Unknown,
+        Title,
         GameScene,
+        Result,
     }
 
     public enum Sound

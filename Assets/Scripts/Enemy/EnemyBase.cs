@@ -62,6 +62,7 @@ public class EnemyBase : MonoBehaviour
     protected virtual void OnDead()
     {
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
+        Managers.Game.Score += _expReward;
         _registry.Remove(EntityId);
         SpatialHashGrid.Instance?.Remove(this);
         EnemyInstanceRenderer.Unregister(this, _originPrefab);

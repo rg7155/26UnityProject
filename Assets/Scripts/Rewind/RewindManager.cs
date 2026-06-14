@@ -166,6 +166,9 @@ public class RewindManager : MonoBehaviour
         else
         {
             Managers.Game.State = Define.GameState.GameOver;
+            Managers.Game.SaveData.PlayTime = _waveManager.GameTime;
+            Managers.Game.CommitResult();
+            Managers.Scene.ChangeScene(SceneType.Result);
         }
     }
 

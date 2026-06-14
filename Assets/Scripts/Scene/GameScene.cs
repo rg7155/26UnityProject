@@ -9,6 +9,8 @@ public class GameScene : MonoBehaviour
     void Awake()
     {
         Managers.Init();
+        Managers.Game.State = GameState.Playing;
+        Managers.Game.Score = 0;
     }
 
     void Start()

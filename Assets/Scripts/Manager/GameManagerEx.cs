@@ -8,6 +8,8 @@ public class GameData
 {
     public int Score;
     public float PlayTime;
+    public int BestScore;
+    public float BestTime;
     public bool BGMOn = true;
     public bool EffectSoundOn = true;
 }
@@ -30,6 +32,15 @@ public class GameManagerEx
         get { return _gameData.Score; }
         set { _gameData.Score = value; }
     }
+
+    public float PlayTime
+    {
+        get { return _gameData.PlayTime; }
+        set { _gameData.PlayTime = value; }
+    }
+
+    public int BestScore { get { return _gameData.BestScore; } }
+    public float BestTime { get { return _gameData.BestTime; } }
 
     public bool BGMOn
     {
@@ -55,6 +66,13 @@ public class GameManagerEx
     {
         string jsonStr = JsonUtility.ToJson(_gameData);
         File.WriteAllText(_path, jsonStr);
+    }
+
+    public void CommitResult()
+    {
+        if (Score > _gameData.BestScore) _gameData.BestScore = Score;
+        if (PlayTime > _gameData.BestTime) _gameData.BestTime = PlayTime;
+        SaveGame();
     }
 
     public bool LoadGame()
