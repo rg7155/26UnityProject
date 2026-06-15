@@ -15,6 +15,8 @@ public class UpgradeManager : MonoBehaviour
     };
     HashSet<Define.UpgradeType> _consumedOneTime = new HashSet<Define.UpgradeType>();
 
+    int _pendingLevelUps;
+
     public System.Action<UpgradeData[]> OnUpgradeChoiceReady;  // UI가 구독
 
     void Start()
@@ -38,9 +40,11 @@ public class UpgradeManager : MonoBehaviour
 
     void HandleLevelUp(int newLevel)
     {
+        _pendingLevelUps++;
+        if (_pendingLevelUps > 1) return;  // 이미 선택 진행 중 — 큐에만 쌓고 패널 덮어쓰기 금지
+
         Managers.Game.State = Define.GameState.Paused;  // 여기서 Pause
-        UpgradeData[] choices = PickRandom(3);
-        OnUpgradeChoiceReady?.Invoke(choices);
+        OnUpgradeChoiceReady?.Invoke(PickRandom(3));
     }
 
     public void ApplyUpgrade(UpgradeData upgrade)
@@ -50,7 +54,11 @@ public class UpgradeManager : MonoBehaviour
         if (_oneTimeTypes.Contains(upgrade.type))
             _consumedOneTime.Add(upgrade.type);
 
-        Managers.Game.State = Define.GameState.Playing;  // 여기서 Resume
+        _pendingLevelUps--;
+        if (_pendingLevelUps > 0)
+            OnUpgradeChoiceReady?.Invoke(PickRandom(3));  // 큐 남음 — 다음 선택지, Paused 유지
+        else
+            Managers.Game.State = Define.GameState.Playing;  // 모두 소진 — Resume
     }
 
     UpgradeData[] PickRandom(int count)

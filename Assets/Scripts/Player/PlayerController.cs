@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
         _exp += exp;
         OnExpChanged?.Invoke(_exp, _expToNextLevel);
 
-        if (_exp >= _expToNextLevel)
+        while (_exp >= _expToNextLevel)  // 한 번의 AddExp가 여러 레벨 경계를 넘을 수 있음
             HandleLevelUp();
     }
 

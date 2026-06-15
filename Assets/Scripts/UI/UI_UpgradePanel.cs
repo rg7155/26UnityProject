@@ -62,6 +62,7 @@ public class UI_UpgradePanel : MonoBehaviour
         if (_currentChoices == null || index >= _currentChoices.Length) return;
 
         _upgradeManager.ApplyUpgrade(_currentChoices[index]);
-        gameObject.SetActive(false);
+        if (Managers.Game.State == Define.GameState.Playing)
+            gameObject.SetActive(false);  // 큐 소진되어 Resume된 경우에만 닫기 (큐 남으면 Show가 패널 유지)
     }
 }
