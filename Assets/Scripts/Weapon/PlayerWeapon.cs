@@ -42,6 +42,7 @@ public class PlayerWeapon : MonoBehaviour
         go.transform.rotation = Quaternion.identity;
         Projectile proj = go.GetComponent<Projectile>();
         proj.Init(dir, _damage, _range, _projectilePrefab);
+        Managers.Sound.PlayEffect(SoundManager.Shoot);
     }
 
     // --- 업그레이드 적용 메서드 ---

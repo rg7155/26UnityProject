@@ -56,6 +56,9 @@ public class EnemyBase : MonoBehaviour
         }
 
         _hp -= damage;
+        // Rewind 리플레이 중 효과음 오발생 방지
+        if (Managers.Game.State == Define.GameState.Playing)
+            Managers.Sound.PlayEffect(SoundManager.Hit);
         if (_hp <= 0) OnDead();
     }
 
@@ -63,6 +66,8 @@ public class EnemyBase : MonoBehaviour
     {
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
         Managers.Game.Score += _expReward;
+        if (Managers.Game.State == Define.GameState.Playing)
+            Managers.Sound.PlayEffect(SoundManager.EnemyDeath);
         _registry.Remove(EntityId);
         SpatialHashGrid.Instance?.Remove(this);
         EnemyInstanceRenderer.Unregister(this, _originPrefab);

@@ -45,6 +45,8 @@ public class BombWeapon : MonoBehaviour
             GameObject fx = Instantiate(_explosionEffectPrefab, transform.position, Quaternion.identity);
             Managers.Resource.Destroy(fx, 1f);
         }
+
+        Managers.Sound.PlayEffect(SoundManager.Explosion);
     }
 
     // --- 업그레이드 적용 메서드 ---

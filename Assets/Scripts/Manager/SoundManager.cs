@@ -5,8 +5,15 @@ using UnityEngine;
 
 public class SoundManager
 {
+    public const string Shoot      = "Shoot";
+    public const string Hit        = "Hit";
+    public const string PlayerHit  = "PlayerHit";
+    public const string EnemyDeath = "EnemyDeath";
+    public const string Explosion  = "Explosion";
+
     private AudioSource[] _audioSources = new AudioSource[(int)Define.Sound.Max];
     private Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
+    private Dictionary<string, float> _lastEffectTime = new Dictionary<string, float>();
 
     private GameObject _soundRoot = null;
 
@@ -85,6 +92,16 @@ public class SoundManager
 					audioSource.PlayOneShot(audioClip);
 			});
         }
+	}
+
+	// 대량 적 동시 발생 시 같은 효과음 폭주 방지 (minInterval 내 중복 호출 무시)
+	public void PlayEffect(string key, float minInterval = 0.05f)
+	{
+		float now = Time.unscaledTime;
+		if (_lastEffectTime.TryGetValue(key, out float last) && now - last < minInterval)
+			return;
+		_lastEffectTime[key] = now;
+		Play(Define.Sound.Effect, key);
 	}
 
 	public void Play(Define.Sound type, AudioClip audioClip, float pitch = 1.0f)

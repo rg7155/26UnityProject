@@ -98,6 +98,7 @@ public class PlayerController : MonoBehaviour
 
         Hp -= damage;
         _invincibleTimer = _invincibleDuration;
+        Managers.Sound.PlayEffect(SoundManager.PlayerHit);
 
         if (_hp <= 0)
             HandleDead();
