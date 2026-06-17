@@ -4,12 +4,11 @@ using static Define;
 
 // 플레이어 주변 반경 내 적을 일정 주기로 폭발시키는 보조 무기
 // 기본 비활성화 상태이며, UnlockBomb 업그레이드 선택 시 enabled = true
-public class BombWeapon : MonoBehaviour
+public class AoEWeapon : WeaponBase
 {
-    [SerializeField] float _interval = 4f;
-    [SerializeField] int _damage = 30;
-    [SerializeField] float _radius = 3f;
-    [SerializeField] GameObject _explosionEffectPrefab;
+    float _interval;
+    float _radius;
+    GameObject _explosionEffectPrefab;
 
     float _timer;
     List<EnemyBase> _hitBuf = new List<EnemyBase>(16);
@@ -17,6 +16,15 @@ public class BombWeapon : MonoBehaviour
     void Awake()
     {
         enabled = false;
+    }
+
+    public override void Init(WeaponData data)
+    {
+        base.Init(data);
+        var d = (AoEWeaponData)data;
+        _interval = d.interval;
+        _radius = d.radius;
+        _explosionEffectPrefab = d.explosionEffectPrefab;
         _timer = _interval;
     }
 
@@ -49,8 +57,6 @@ public class BombWeapon : MonoBehaviour
         Managers.Sound.PlayEffect(SoundManager.Explosion);
     }
 
-    // --- 업그레이드 적용 메서드 ---
-    public void UpgradeDamage(float multiplier)   { _damage = Mathf.RoundToInt(_damage * multiplier); }
     public void UpgradeRadius(float multiplier)   { _radius *= multiplier; }
     public void UpgradeInterval(float multiplier) { _interval /= multiplier; }  // 빠를수록 좋으므로 나눔
 }

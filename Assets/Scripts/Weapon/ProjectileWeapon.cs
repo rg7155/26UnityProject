@@ -1,16 +1,24 @@
 using UnityEngine;
 
-// 플레이어에 붙이는 자동 발사 무기
 // 가장 가까운 적을 향해 일정 주기로 발사체 발사
-public class PlayerWeapon : MonoBehaviour
+public class ProjectileWeapon : WeaponBase
 {
-    [SerializeField] GameObject _projectilePrefab;
-    [SerializeField] float _fireRate = 1f;      // 초당 발사 횟수
-    [SerializeField] int _damage = 20;
-    [SerializeField] float _range = 8f;         // 발사체 사거리
-    [SerializeField] float _detectRange = 10f;  // 적 탐지 범위
+    GameObject _projectilePrefab;
+    float _fireRate;
+    float _range;
+    float _detectRange;
 
     float _fireCooldown;
+
+    public override void Init(WeaponData data)
+    {
+        base.Init(data);
+        var d = (ProjectileWeaponData)data;
+        _projectilePrefab = d.projectilePrefab;
+        _fireRate = d.fireRate;
+        _range = d.range;
+        _detectRange = d.detectRange;
+    }
 
     void Update()
     {
@@ -45,9 +53,7 @@ public class PlayerWeapon : MonoBehaviour
         Managers.Sound.PlayEffect(SoundManager.Shoot);
     }
 
-    // --- 업그레이드 적용 메서드 ---
     public void UpgradeFireRate(float multiplier) { _fireRate *= multiplier; }
-    public void UpgradeDamage(float multiplier)   { _damage = Mathf.RoundToInt(_damage * multiplier); }
     public void UpgradeRange(float multiplier)    { _range *= multiplier; _detectRange *= multiplier; }
 
     EnemyBase FindNearest()

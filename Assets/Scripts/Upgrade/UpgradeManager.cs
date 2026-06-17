@@ -7,7 +7,7 @@ public class UpgradeManager : MonoBehaviour
 {
     UpgradeData[] _allUpgrades;
     PlayerController _player;
-    PlayerWeapon _weapon;
+    WeaponManager _weaponManager;
 
     static readonly HashSet<Define.UpgradeType> _oneTimeTypes = new HashSet<Define.UpgradeType>
     {
@@ -26,7 +26,7 @@ public class UpgradeManager : MonoBehaviour
             Debug.LogError("[UpgradeManager] Resources/Upgrades/ 에 UpgradeData 에셋이 없습니다");
 
         _player = FindObjectOfType<PlayerController>();
-        _weapon = FindObjectOfType<PlayerWeapon>();
+        _weaponManager = FindObjectOfType<WeaponManager>();
 
         if (_player != null)
             _player.OnLevelUp += HandleLevelUp;
@@ -49,7 +49,7 @@ public class UpgradeManager : MonoBehaviour
 
     public void ApplyUpgrade(UpgradeData upgrade)
     {
-        upgrade.Apply(_player, _weapon);
+        upgrade.Apply(_player, _weaponManager);
 
         if (_oneTimeTypes.Contains(upgrade.type))
             _consumedOneTime.Add(upgrade.type);
