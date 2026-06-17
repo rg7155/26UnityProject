@@ -9,12 +9,6 @@ public class UpgradeManager : MonoBehaviour
     PlayerController _player;
     WeaponManager _weaponManager;
 
-    static readonly HashSet<Define.UpgradeType> _oneTimeTypes = new HashSet<Define.UpgradeType>
-    {
-        Define.UpgradeType.UnlockBomb,
-    };
-    HashSet<Define.UpgradeType> _consumedOneTime = new HashSet<Define.UpgradeType>();
-
     int _pendingLevelUps;
 
     public System.Action<UpgradeData[]> OnUpgradeChoiceReady;  // UI가 구독
@@ -51,9 +45,6 @@ public class UpgradeManager : MonoBehaviour
     {
         upgrade.Apply(_player, _weaponManager);
 
-        if (_oneTimeTypes.Contains(upgrade.type))
-            _consumedOneTime.Add(upgrade.type);
-
         _pendingLevelUps--;
         if (_pendingLevelUps > 0)
             OnUpgradeChoiceReady?.Invoke(PickRandom(3));  // 큐 남음 — 다음 선택지, Paused 유지
@@ -66,7 +57,7 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeData> pool = new List<UpgradeData>(_allUpgrades.Length);
         foreach (var up in _allUpgrades)
         {
-            if (_consumedOneTime.Contains(up.type)) continue;
+            if (up.type == Define.UpgradeType.AcquireWeapon && _weaponManager.HasWeapon(up.weaponToAcquire)) continue;
             pool.Add(up);
         }
         UpgradeData[] result = new UpgradeData[Mathf.Min(count, pool.Count)];

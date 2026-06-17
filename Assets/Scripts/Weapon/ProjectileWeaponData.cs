@@ -7,4 +7,11 @@ public class ProjectileWeaponData : WeaponData
     public float fireRate;
     public float range;
     public float detectRange;
+
+    public override WeaponBase AddTo(GameObject owner)
+    {
+        var w = owner.AddComponent<ProjectileWeapon>();
+        w.Init(this);
+        return w;
+    }
 }

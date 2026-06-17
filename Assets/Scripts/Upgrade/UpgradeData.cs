@@ -8,6 +8,7 @@ public class UpgradeData : ScriptableObject
     [TextArea] public string description;
     public UpgradeType type;
     public float value;  // 곱연산: 1.2 = +20%, 덧셈: 20 = +20
+    public WeaponData weaponToAcquire;  // AcquireWeapon 전용
 
     public void Apply(PlayerController player, WeaponManager wm)
     {
@@ -18,7 +19,7 @@ public class UpgradeData : ScriptableObject
             case UpgradeType.FireRate:  wm.UpgradeFireRate(value); break;
             case UpgradeType.Damage:    wm.UpgradeDamage(value); break;
             case UpgradeType.Range:     wm.UpgradeRange(value); break;
-            case UpgradeType.UnlockBomb: wm.UnlockBomb(); break;
+            case UpgradeType.AcquireWeapon: wm.AddWeapon(weaponToAcquire); break;
         }
     }
 }

@@ -53,8 +53,8 @@ public class ProjectileWeapon : WeaponBase
         Managers.Sound.PlayEffect(SoundManager.Shoot);
     }
 
-    public void UpgradeFireRate(float multiplier) { _fireRate *= multiplier; }
-    public void UpgradeRange(float multiplier)    { _range *= multiplier; _detectRange *= multiplier; }
+    public override void UpgradeFireRate(float multiplier) { _fireRate *= multiplier; }
+    public override void UpgradeRange(float multiplier)    { _range *= multiplier; _detectRange *= multiplier; }
 
     EnemyBase FindNearest()
     {

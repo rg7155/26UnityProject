@@ -46,6 +46,6 @@ public class Define
         Damage,
         MaxHp,
         Range,
-        UnlockBomb,
+        AcquireWeapon,
     }
 }

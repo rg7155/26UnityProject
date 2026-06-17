@@ -3,7 +3,7 @@ using UnityEngine;
 using static Define;
 
 // 플레이어 주변 반경 내 적을 일정 주기로 폭발시키는 보조 무기
-// 기본 비활성화 상태이며, UnlockBomb 업그레이드 선택 시 enabled = true
+// 획득 시 WeaponData.AddTo가 AddComponent로 부착
 public class AoEWeapon : WeaponBase
 {
     float _interval;
@@ -12,11 +12,6 @@ public class AoEWeapon : WeaponBase
 
     float _timer;
     List<EnemyBase> _hitBuf = new List<EnemyBase>(16);
-
-    void Awake()
-    {
-        enabled = false;
-    }
 
     public override void Init(WeaponData data)
     {
@@ -57,6 +52,6 @@ public class AoEWeapon : WeaponBase
         Managers.Sound.PlayEffect(SoundManager.Explosion);
     }
 
-    public void UpgradeRadius(float multiplier)   { _radius *= multiplier; }
-    public void UpgradeInterval(float multiplier) { _interval /= multiplier; }  // 빠를수록 좋으므로 나눔
+    public override void UpgradeRadius(float multiplier)   { _radius *= multiplier; }
+    public override void UpgradeInterval(float multiplier) { _interval /= multiplier; }  // 빠를수록 좋으므로 나눔
 }

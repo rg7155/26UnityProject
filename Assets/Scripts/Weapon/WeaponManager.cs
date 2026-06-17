@@ -1,25 +1,39 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-// 플레이어에 부착. 두 무기에 WeaponData를 주입하고 업그레이드의 단일 진입점 제공
+// 플레이어에 부착. 무기 목록을 관리하고 업그레이드의 단일 진입점 제공
 public class WeaponManager : MonoBehaviour
 {
-    [SerializeField] ProjectileWeaponData _baseWeaponData;
-    [SerializeField] AoEWeaponData _bombWeaponData;
+    [SerializeField] WeaponData[] _startingWeapons;
 
-    ProjectileWeapon _projectileWeapon;
-    AoEWeapon _aoeWeapon;
+    List<WeaponBase> _weapons = new List<WeaponBase>();
+    float _damageMult = 1f, _fireRateMult = 1f, _rangeMult = 1f;
 
-    void Awake()
+    // Managers/SpatialHashGrid 초기화(Awake) 이후 무기 생성 보장 위해 Start
+    void Start()
     {
-        _projectileWeapon = GetComponent<ProjectileWeapon>();
-        _aoeWeapon = GetComponent<AoEWeapon>();
-
-        _projectileWeapon.Init(_baseWeaponData);
-        _aoeWeapon.Init(_bombWeaponData);
+        foreach (var d in _startingWeapons)
+            AddWeapon(d);
     }
 
-    public void UpgradeFireRate(float multiplier) => _projectileWeapon.UpgradeFireRate(multiplier);
-    public void UpgradeRange(float multiplier)    => _projectileWeapon.UpgradeRange(multiplier);
-    public void UpgradeDamage(float multiplier)   => _projectileWeapon.UpgradeDamage(multiplier);
-    public void UnlockBomb()                      => _aoeWeapon.enabled = true;
+    public WeaponBase AddWeapon(WeaponData data)
+    {
+        var w = data.AddTo(gameObject);
+        if (_damageMult != 1f) w.UpgradeDamage(_damageMult);
+        if (_fireRateMult != 1f) w.UpgradeFireRate(_fireRateMult);
+        if (_rangeMult != 1f) w.UpgradeRange(_rangeMult);
+        _weapons.Add(w);
+        return w;
+    }
+
+    public bool HasWeapon(WeaponData data)
+    {
+        foreach (var w in _weapons)
+            if (w.Data == data) return true;
+        return false;
+    }
+
+    public void UpgradeDamage(float multiplier)   { _damageMult *= multiplier; foreach (var w in _weapons) w.UpgradeDamage(multiplier); }
+    public void UpgradeFireRate(float multiplier) { _fireRateMult *= multiplier; foreach (var w in _weapons) w.UpgradeFireRate(multiplier); }
+    public void UpgradeRange(float multiplier)    { _rangeMult *= multiplier; foreach (var w in _weapons) w.UpgradeRange(multiplier); }
 }

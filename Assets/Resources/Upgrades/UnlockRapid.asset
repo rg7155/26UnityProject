@@ -10,12 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
-  m_Name: UnlockBomb
+  m_Name: UnlockRapid
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: 'Bomb Unlock '
-  description: 'Periodically explodes nearby enemies
-
-'
+  upgradeName: 'RapidUnlock '
+  description: Rapid Shoot
   type: 5
   value: 0
-  weaponToAcquire: {fileID: 11400000, guid: 340bf32f6a1f88546bdd1a26800b3ace, type: 2}
+  weaponToAcquire: {fileID: 11400000, guid: c010418d627a99641bb3e51860ac9074, type: 2}

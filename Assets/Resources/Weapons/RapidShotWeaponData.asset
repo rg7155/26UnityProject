@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5abb498e5efd08488c1e8b9326b05d3, type: 3}
+  m_Name: RapidShotWeaponData
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectileWeaponData
+  weaponName: RapidWeapon
+  damage: 5
+  projectilePrefab: {fileID: 2087712369979334790, guid: 47ad396f1bc8b5c42b06cd750f9d5e4e, type: 3}
+  fireRate: 4
+  range: 5
+  detectRange: 5
