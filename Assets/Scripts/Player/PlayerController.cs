@@ -11,6 +11,10 @@ public class PlayerController : MonoBehaviour
     int _hp;
     float _invincibleTimer;
 
+#if UNITY_EDITOR
+    public bool DebugInvincible;
+#endif
+
     GameObject _damageTextPrefab;
 
     // 경험치 / 레벨
@@ -86,6 +90,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnDamaged(int damage)
     {
+#if UNITY_EDITOR
+        if (DebugInvincible) return;
+#endif
         if (IsInvincible) return;
         if (Managers.Game.State != GameState.Playing) return;
 
