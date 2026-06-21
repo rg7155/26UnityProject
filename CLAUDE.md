@@ -46,8 +46,8 @@ LLM 코딩 실수를 줄이기 위한 행동 지침. 사소한 작업은 판단�
 | 렌더 파이프라인 | URP (Unity 6 기본값) | 변경 없이 진행 |
 | Input System | New Input System — **Polling 방식** | `Keyboard.current.wKey.isPressed` 형태. Action-based 사용 안 함 |
 | 리소스 로딩 | `Resources.Load` | Addressables 미사용. 포트폴리오 규모에 충분 |
-| 충돌 감지 | 현재 Physics2D → 3개월차에 Spatial Hashing으로 교체 예정 | 지금은 Physics2D 써도 됨 |
-| 오브젝트 관리 | 현재 Instantiate/SetActive → 3개월차에 Object Pool로 교체 예정 | 지금은 직접 생성/비활성화 써도 됨 |
+| 충돌 감지 | Spatial Hashing (탐색·범위 판정) + Physics2D (접촉·피격) | 병행 사용 |
+| 오브젝트 관리 | Object Pool (타입별 Generic Pool) | Get/Return |
 
 ## 코딩 스타일
 
@@ -141,13 +141,6 @@ Assets/Scripts/
 └── Weapon/          Projectile, PlayerWeapon
 ```
 
-## 앞으로 만들 핵심 시스템 (월별)
-- **2개월차:** 웨이브 시스템, 레벨업/업그레이드, 적 3종, 기본 UI
-- **3개월차:** Object Pool → Spatial Hashing → GPU Instancing (최적화)
-- **4개월차:** Time Rewind (Circular Buffer + State Snapshot)
-- **5개월차:** 폴리싱
-- **6개월차:** GitHub README, Profiler 캡처, GIF 문서화
-
 ## 커밋 규칙
 - 커밋 + 푸시 시 `개발_진행상황.md` 도 함께 업데이트해서 포함할 것
 - 완료된 항목은 `⬜ → ✅` 로 변경, 비고란에 핵심 구현 방식 한 줄 기재
@@ -157,9 +150,6 @@ Assets/Scripts/
 - **복잡한 기능은 단계별로 나눠서 구현** — 한 번에 여러 파일을 바꾸지 않고, 단계마다 동작 확인 후 다음 단계 진행
 
 ## 코드 작성 시 주의사항
-- 현재 `Instantiate` / `SetActive(false)` 로 처리하는 부분은 3개월차에 Object Pool로 교체 예정. 지금은 그대로 둘 것
-- `FindObjectsOfType` 사용 중인 부분 (`PlayerWeapon.FindNearest`)은 3개월차 Spatial Hashing으로 교체 예정
-- 성능 최적화 관련 제안은 3개월차 이전에는 하지 않아도 됨
 - 진행 상황은 `개발_진행상황.md` 참고
 - 기획 및 기술 상세는 `탕탕_포트폴리오_기획서.md` 참고
 
