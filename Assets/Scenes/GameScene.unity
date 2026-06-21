@@ -590,6 +590,7 @@ Transform:
   m_Children:
   - {fileID: 568824116}
   - {fileID: 763014297}
+  - {fileID: 833832312}
   - {fileID: 986989448}
   - {fileID: 172512520}
   - {fileID: 1616033281}
@@ -597,7 +598,6 @@ Transform:
   - {fileID: 2099214796}
   - {fileID: 1159399674}
   - {fileID: 1510893884}
-  - {fileID: 833832312}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &459894519
@@ -1807,6 +1807,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f8cddbd9a4a7b0d4fbb472b7f45ef581, type: 2}
   - {fileID: 11400000, guid: 340bf32f6a1f88546bdd1a26800b3ace, type: 2}
   - {fileID: 11400000, guid: c010418d627a99641bb3e51860ac9074, type: 2}
+  - {fileID: 11400000, guid: b5c7f603aeaa27f40927daa92aa0a7f2, type: 2}
   _debugEnemyPrefab: {fileID: 4243169767101499499, guid: ec34b518074a64b4db8959a76fc57ad5, type: 3}
   _debugSpawnCount: 20
   _debugEnemyHp: 30
