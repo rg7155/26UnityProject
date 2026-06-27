@@ -10,6 +10,12 @@ public class OrbitWeaponData : WeaponData
     public float hitInterval;
     public GameObject orbiterPrefab;
 
+    public float spinBaseSpeed;        // 자전 기본 각속도 (도/초)
+    public float spinAmplitude;        // 자전 속도 변동 진폭
+    public float spinFrequency;        // 자전 속도 변동 주기 계수
+    public float radiusPulseAmplitude; // 거리 펄스 진폭 (orbitRadius보다 작게 — 음수 방지)
+    public float radiusPulseFrequency; // 거리 펄스 주기 계수
+
     public override WeaponBase AddTo(GameObject owner)
     {
         var w = owner.AddComponent<OrbitWeapon>();

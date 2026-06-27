@@ -14,9 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrbitWeaponData
   weaponName: OrbitWeapon
   damage: 10
-  orbiterCount: 2
-  orbitRadius: 2
+  orbiterCount: 3
+  orbitRadius: 4
   rotationSpeed: 150
   hitRadius: 0.6
-  hitInterval: 0.3
+  hitInterval: 0.1
   orbiterPrefab: {fileID: 2087712369979334790, guid: 7d23fecf9aba8fb47a605ed6ed36e719, type: 3}
+  spinBaseSpeed: 180
+  spinAmplitude: 90
+  spinFrequency: 2
+  radiusPulseAmplitude: 2
+  radiusPulseFrequency: 1.5
