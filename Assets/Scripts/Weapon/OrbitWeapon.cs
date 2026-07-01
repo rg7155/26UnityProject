@@ -10,7 +10,7 @@ public class OrbitWeapon : WeaponBase
     float _orbitRadius;
     float _rotationSpeed;
     float _hitRadius;
-    float _hitInterval;
+    float _hitCooldown;
     float _spinBaseSpeed;
     float _spinAmplitude;
     float _spinFrequency;
@@ -21,7 +21,7 @@ public class OrbitWeapon : WeaponBase
     float _angle;
     float _pulseTime;
     float _spinAngle;
-    float _tickTimer;
+    Dictionary<int, float> _lastHit = new Dictionary<int, float>();
     List<EnemyBase> _hitBuf = new List<EnemyBase>(16);
 
     public override void Init(WeaponData data)
@@ -32,7 +32,7 @@ public class OrbitWeapon : WeaponBase
         _orbitRadius = d.orbitRadius;
         _rotationSpeed = d.rotationSpeed;
         _hitRadius = d.hitRadius;
-        _hitInterval = d.hitInterval;
+        _hitCooldown = d.hitCooldown;
         _spinBaseSpeed = d.spinBaseSpeed;
         _spinAmplitude = d.spinAmplitude;
         _spinFrequency = d.spinFrequency;
@@ -44,7 +44,6 @@ public class OrbitWeapon : WeaponBase
             GameObject orb = Instantiate(d.orbiterPrefab, transform);
             _orbiters.Add(orb.transform);
         }
-        _tickTimer = _hitInterval;
     }
 
     void Update()
@@ -66,16 +65,17 @@ public class OrbitWeapon : WeaponBase
             _orbiters[i].localRotation = Quaternion.Euler(0f, 0f, _spinAngle);
         }
 
-        _tickTimer -= Time.deltaTime;
-        if (_tickTimer <= 0f)
+        // 매 프레임 판정 + 적별 쿨다운 — 빠른 회전 시 틱 간격으로 적을 건너뛰는 판정 틈 방지
+        foreach (Transform orb in _orbiters)
         {
-            foreach (Transform orb in _orbiters)
+            SpatialHashGrid.Instance?.QueryNeighbors(null, orb.position, _hitRadius, _hitBuf);
+            foreach (EnemyBase each in _hitBuf)
             {
-                SpatialHashGrid.Instance?.QueryNeighbors(null, orb.position, _hitRadius, _hitBuf);
-                foreach (EnemyBase each in _hitBuf)
-                    each.OnDamaged(_damage);
+                int id = each.EntityId;
+                if (_lastHit.TryGetValue(id, out float t) && _pulseTime - t < _hitCooldown) continue;
+                each.OnDamaged(_damage);
+                _lastHit[id] = _pulseTime;
             }
-            _tickTimer = _hitInterval;
         }
     }
 }
