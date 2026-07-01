@@ -13,6 +13,7 @@ public struct SeparationJob : IJobParallelFor
     [WriteOnly] public NativeArray<float2> Results;    // 적별 분리 벡터(가중치 미적용)
 
     public float SeparationRadius;
+    public int   Count;   // 활성 적 수 — 미사용 슬롯(유령 위치) 순회 방지
 
     public void Execute(int index)
     {
@@ -22,7 +23,7 @@ public struct SeparationJob : IJobParallelFor
         float  radiusSq = radius * radius;
 
         float2 separation = float2.zero;
-        int count = Positions.Length;
+        int count = Count;
 
         for (int i = 0; i < count; i++)
         {

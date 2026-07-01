@@ -16,18 +16,24 @@ public class DebugController : MonoBehaviour
     WeaponManager _weaponManager;
     EnemySpawner _spawner;
     PlayerController _player;
+    UpgradeManager _upgradeManager;
 
     void Start()
     {
         _weaponManager = FindObjectOfType<WeaponManager>();
         _spawner = FindObjectOfType<EnemySpawner>();
         _player = FindObjectOfType<PlayerController>();
+        _upgradeManager = FindObjectOfType<UpgradeManager>();
     }
 
     void Update()
     {
         var kb = Keyboard.current;
         if (kb == null) return;
+
+        // Paused(패널 표시)에서도 토글되도록 Playing 가드보다 앞에 처리
+        if (kb.uKey.wasPressedThisFrame && _upgradeManager != null)
+            _upgradeManager.DebugSkipUpgrades = !_upgradeManager.DebugSkipUpgrades;
 
         // Playing일 때만 치트 동작 — Rewinding/Paused 상태 머신과 충돌 방지
         if (Managers.Game.State != GameState.Playing) return;
@@ -71,8 +77,9 @@ public class DebugController : MonoBehaviour
         style.normal.textColor = Color.yellow;
 
         string invincible = _player != null && _player.DebugInvincible ? "ON" : "OFF";
-        GUI.Label(new Rect(10, Screen.height - 120, 500, 30), "[Debug] 1~5: 무기  0: 전체무기  K: 적스폰  L: 레벨업  G: 무적", style);
-        GUI.Label(new Rect(10, Screen.height - 90, 500, 30), $"[Debug] 무적: {invincible}", style);
+        string skipUpgrades = _upgradeManager != null && _upgradeManager.DebugSkipUpgrades ? "ON" : "OFF";
+        GUI.Label(new Rect(10, Screen.height - 120, 600, 30), "[Debug] 1~5: 무기  0: 전체무기  K: 적스폰  L: 레벨업  G: 무적  U: 업글패널", style);
+        GUI.Label(new Rect(10, Screen.height - 90, 600, 30), $"[Debug] 무적: {invincible}   업글억제: {skipUpgrades}", style);
     }
 }
 #endif

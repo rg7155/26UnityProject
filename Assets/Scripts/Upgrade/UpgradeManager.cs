@@ -13,6 +13,10 @@ public class UpgradeManager : MonoBehaviour
 
     public System.Action<UpgradeData[]> OnUpgradeChoiceReady;  // UI가 구독
 
+#if UNITY_EDITOR
+    public bool DebugSkipUpgrades;
+#endif
+
     void Start()
     {
         _allUpgrades = Resources.LoadAll<UpgradeData>("Upgrades");
@@ -34,6 +38,9 @@ public class UpgradeManager : MonoBehaviour
 
     void HandleLevelUp(int newLevel)
     {
+#if UNITY_EDITOR
+        if (DebugSkipUpgrades) return;   // 디버그 — 패널/Pause 건너뜀
+#endif
         _pendingLevelUps++;
         if (_pendingLevelUps > 1) return;  // 이미 선택 진행 중 — 큐에만 쌓고 패널 덮어쓰기 금지
 

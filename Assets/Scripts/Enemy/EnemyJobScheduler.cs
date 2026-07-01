@@ -91,6 +91,7 @@ public class EnemyJobScheduler : MonoBehaviour
                 EntityIds        = _entityIds,
                 Results          = _results,
                 SeparationRadius = _separationRadius,
+                Count            = _count,
             };
             JobHandle handle = job.Schedule(_count, _batchSize);
             handle.Complete();
