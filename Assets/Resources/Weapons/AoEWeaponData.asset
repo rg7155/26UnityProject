@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ebf37d3215982d4995eb1e7173fe223, type: 3}
   m_Name: AoEWeaponData
   m_EditorClassIdentifier: Assembly-CSharp::AoEWeaponData
-  weaponName: BombWeapon
+  weaponName: Bomb
   damage: 30
   interval: 4
   radius: 3

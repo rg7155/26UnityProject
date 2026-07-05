@@ -11,6 +11,7 @@ public class GameScene : MonoBehaviour
         Managers.Init();
         Managers.Game.State = GameState.Playing;
         Managers.Game.Score = 0;
+        Managers.Game.RunGold = 0;
     }
 
     void Start()

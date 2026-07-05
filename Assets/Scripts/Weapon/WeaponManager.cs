@@ -14,6 +14,9 @@ public class WeaponManager : MonoBehaviour
     {
         foreach (var d in _startingWeapons)
             AddWeapon(d);
+
+        float m = ShopService.DamageMult();   // 메타 상점 기본 데미지 강화 적용
+        if (m != 1f) UpgradeDamage(m);
     }
 
     public WeaponBase AddWeapon(WeaponData data)

@@ -1,7 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using static Define;
+
+// 상점 항목별 구매 진행도 — id로 ShopItemData와 연결. JsonUtility가 List<[Serializable]> 직렬화 가능
+[Serializable]
+public class ShopPurchase
+{
+    public string id;
+    public int tier;
+}
 
 [Serializable]
 public class GameData
@@ -12,6 +21,9 @@ public class GameData
     public float BestTime;
     public bool BGMOn = true;
     public bool EffectSoundOn = true;
+
+    public int TotalGold;
+    public List<ShopPurchase> Purchases = new List<ShopPurchase>();
 }
 
 public class GameManagerEx
@@ -41,6 +53,11 @@ public class GameManagerEx
 
     public int BestScore { get { return _gameData.BestScore; } }
     public float BestTime { get { return _gameData.BestTime; } }
+
+    public int TotalGold { get { return _gameData.TotalGold; } }
+    public int RunGold { get; set; }   // 이번 판 획득분 — 비직렬화, CommitResult에서 뱅킹
+
+    public void SpendGold(int amount) { _gameData.TotalGold -= amount; }
 
     public bool BGMOn
     {
@@ -72,6 +89,7 @@ public class GameManagerEx
     {
         if (Score > _gameData.BestScore) _gameData.BestScore = Score;
         if (PlayTime > _gameData.BestTime) _gameData.BestTime = PlayTime;
+        _gameData.TotalGold += RunGold;
         SaveGame();
     }
 

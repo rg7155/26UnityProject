@@ -11,6 +11,7 @@ public class ResultScene : MonoBehaviour
     [SerializeField] TMP_Text _timeText;
     [SerializeField] TMP_Text _bestScoreText;
     [SerializeField] TMP_Text _bestTimeText;
+    [SerializeField] TMP_Text _goldText;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class ResultScene : MonoBehaviour
         if (_timeText != null) _timeText.text = $"Time: {Managers.Game.SaveData.PlayTime:F1}s";
         if (_bestScoreText != null) _bestScoreText.text = $"Best Score: {Managers.Game.BestScore}";
         if (_bestTimeText != null) _bestTimeText.text = $"Best Time: {Managers.Game.BestTime:F1}s";
+        if (_goldText != null) _goldText.text = $"Gold +{Managers.Game.RunGold}";
 
         if (_retryButton != null)
             _retryButton.onClick.AddListener(() => Managers.Scene.ChangeScene(SceneType.GameScene));

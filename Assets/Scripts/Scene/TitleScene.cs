@@ -7,6 +7,8 @@ public class TitleScene : MonoBehaviour
 {
     [SerializeField] Button _startButton;
     [SerializeField] TMP_Text _bestText;
+    [SerializeField] Button _shopButton;
+    [SerializeField] GameObject _shopPanel;
 
     void Awake()
     {
@@ -20,11 +22,16 @@ public class TitleScene : MonoBehaviour
 
         if (_bestText != null)
             _bestText.text = $"Best Score: {Managers.Game.BestScore}\nBest Time: {Managers.Game.BestTime:F1}s";
+
+        if (_shopButton != null && _shopPanel != null)
+            _shopButton.onClick.AddListener(() => _shopPanel.SetActive(true));
     }
 
     void OnDestroy()
     {
         if (_startButton != null)
             _startButton.onClick.RemoveAllListeners();
+        if (_shopButton != null)
+            _shopButton.onClick.RemoveAllListeners();
     }
 }

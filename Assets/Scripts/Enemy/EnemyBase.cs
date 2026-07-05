@@ -6,6 +6,7 @@ public class EnemyBase : MonoBehaviour
     [SerializeField] protected float _speed = 2f;
     [SerializeField] protected int _hp = 3;
     [SerializeField] protected int _expReward = 1;
+    [SerializeField] protected int _goldReward = 1;
     [SerializeField] GameObject _deathEffectPrefab;
     [SerializeField] float      _deathEffectLifetime = 2f;
     protected Transform _target;
@@ -67,7 +68,10 @@ public class EnemyBase : MonoBehaviour
         _target?.GetComponent<PlayerController>()?.AddExp(_expReward);
         Managers.Game.Score += _expReward;
         if (Managers.Game.State == Define.GameState.Playing)
+        {
+            Managers.Game.RunGold += _goldReward;   // Rewind 리플레이 중복 획득 방지
             Managers.Sound.PlayEffect(SoundManager.EnemyDeath);
+        }
         _registry.Remove(EntityId);
         SpatialHashGrid.Instance?.Remove(this);
         EnemyInstanceRenderer.Unregister(this, _originPrefab);
