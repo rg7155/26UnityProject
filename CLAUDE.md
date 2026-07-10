@@ -162,8 +162,11 @@ Assets/Scripts/
 
 **트리거:** C# 코드를 건드리는 모든 작업 요청 시 `unity-dev` 스킬을 사용하라. 단순 코드 설명/질문은 직접 답변 가능.
 
+**Knowledge Base:** 버그 수정·기능 구현에 착수하기 전, 먼저 `.claude/knowledge/`를 검색해 유사 패턴을 참조하라 (`symptom`·`tags` 프론트매터 기준). 재발 위험이 있는 문제를 새로 해결했다면 `.claude/knowledge/workflows/bugfix-to-knowledge-pipeline.md` 절차에 따라 엔트리로 저장하라.
+
 **변경 이력:**
 | 날짜 | 변경 내용 | 대상 | 사유 |
 |------|----------|------|------|
 | 2026-05-17 | 초기 구성 | 전체 | 5개월차 폴리싱 단계 돌입, 코드 품질 파이프라인 구축 |
 | 2026-07-01 | game-designer 기획자 에이전트 추가 + Phase 0.5에 게임 기획 단계 편입 | unity-dev, agents | 신규 콘텐츠/룰 요청 시 실제 기획자 관점 설계 강화 |
+| 2026-07-10 | Knowledge Base 도입 (bug-patterns / lessons-learned / workflows) + 착수 전 KB 검색 트리거 배선 | .claude/knowledge, CLAUDE.md | 재발성 버그 패턴 재사용 + AI 워크플로 자산화 |

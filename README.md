@@ -105,6 +105,7 @@ AI 페어 프로그래밍으로 구현하되, 아키텍처와 설계 결정, 개
 
 - CLAUDE.md (프로젝트 규약 명세): 네이밍 컨벤션, 참조 규칙(씬 간 코드 / 프리팹 내부 Inspector), 금지 패턴(DI, 과도한 추상화), 복잡한 기능은 단계별 구현 원칙을 문서로 고정했다.
 - Unity Dev 오케스트레이터 (다단계 품질 파이프라인): 기능마다 Planner(계획) → Coder(구현) → Reviewer(규약·로직 검증)를 거치는 파이프라인을 구축했다.
+- Knowledge Base (재발 방지 지식 자산): 버그를 고칠 때마다 "증상 → 근본 원인 → 재인식 패턴"을 [.claude/knowledge/](.claude/knowledge/README.md)에 축적하고, 새 문제는 착수 전 이 KB를 먼저 검색해 유사 패턴을 재사용한다. LLM이 매 세션 잃는 기억을 외부화한 것이다.
 - 핵심 설계 판단(Job System 도입, Rewind의 EntityId diff, 무기 SO 상속 구조, 단계적 분할)은 직접 내리고 AI에 검증·구현을 위임했다.
 
 즉 AI가 게임을 만들었다가 아니라, 엔지니어링 의사결정과 품질 게이트를 갖춘 개발 프로세스를 설계하고 운영했다.
@@ -137,3 +138,4 @@ Unity 6 · URP · C# · New Input System (Polling) · Unity Job System · Burst 
 
 - [아키텍처.md](아키텍처.md) — 시스템별 상세 설계
 - [개발_진행상황.md](개발_진행상황.md) — 개발 진행 기록
+- [.claude/knowledge/](.claude/knowledge/README.md) — AI가 참조하는 문제해결 Knowledge Base
