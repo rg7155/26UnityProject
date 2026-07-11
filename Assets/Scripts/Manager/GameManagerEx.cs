@@ -58,6 +58,7 @@ public class GameManagerEx
     public int RunGold { get; set; }   // 이번 판 획득분 — 비직렬화, CommitResult에서 뱅킹
 
     public void SpendGold(int amount) { _gameData.TotalGold -= amount; }
+    public void AddGold(int amount) { _gameData.TotalGold += amount; }
 
     public bool BGMOn
     {
