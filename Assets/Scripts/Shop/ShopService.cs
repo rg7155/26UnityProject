@@ -78,15 +78,6 @@ public static class ShopService
         return mult;
     }
 
-    // 무기를 잠그는 UnlockWeapon 항목이 없으면 항상 해금, 있으면 구매(티어≥1) 여부
-    public static bool IsWeaponUnlocked(WeaponData weapon)
-    {
-        foreach (var item in Items)
-            if (item.effect == ShopEffectType.UnlockWeapon && item.weaponToUnlock == weapon)
-                return TierOf(item.id) >= 1;
-        return true;
-    }
-
     // ── UI 표시용 파생값 ──
     public static int HpTotal(int tier, float valuePerTier) => BaseMaxHp + Mathf.RoundToInt(tier * valuePerTier);
     public static int DamagePct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);

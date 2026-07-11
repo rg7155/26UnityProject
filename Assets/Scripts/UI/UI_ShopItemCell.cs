@@ -48,17 +48,13 @@ public class UI_ShopItemCell : MonoBehaviour
                 int next = ShopService.HpTotal(tier + 1, _item.valuePerTier);
                 return $"{_item.displayName}  [{tier}/{max}]\n{now} -> {next}   {cost}G";
             }
-            case ShopEffectType.Damage:
+            default: // Damage
             {
                 int now = ShopService.DamagePct(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n+{now}%";
                 int next = ShopService.DamagePct(tier + 1, _item.valuePerTier);
                 return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%   {cost}G";
             }
-            default: // UnlockWeapon
-                return maxed
-                    ? $"{_item.displayName}  Unlocked"
-                    : $"Unlock {_item.displayName}   {cost}G";
         }
     }
 

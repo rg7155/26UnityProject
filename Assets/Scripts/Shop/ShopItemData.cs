@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ShopEffectType { StartHp, Damage, UnlockWeapon }
+public enum ShopEffectType { StartHp, Damage }
 
 // 상점 항목 정의 — 에디터에서 에셋을 추가하면 상점에 자동 등장 (WeaponData SO와 동일 철학).
 // Resources/Shop/ 에 배치. ShopService가 LoadAll로 읽는다.
@@ -11,7 +11,6 @@ public class ShopItemData : ScriptableObject
     public string displayName;
     public ShopEffectType effect;
 
-    public int[] costs;               // 티어 n → n+1 비용. 길이 = 최대 티어. UnlockWeapon은 {비용} 한 칸
+    public int[] costs;               // 티어 n → n+1 비용. 길이 = 최대 티어
     public float valuePerTier;        // StartHp: +HP/티어, Damage: +비율/티어(0.08=8%)
-    public WeaponData weaponToUnlock; // UnlockWeapon 전용
 }

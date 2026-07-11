@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: StartHp
   m_EditorClassIdentifier: Assembly-CSharp::ShopItemData
   id: start_hp
-  displayName: 
+  displayName: StartHP
   effect: 0
   costs: 50000000a0000000400100008002000000050000
   valuePerTier: 15

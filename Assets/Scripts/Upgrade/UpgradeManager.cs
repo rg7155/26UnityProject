@@ -64,11 +64,8 @@ public class UpgradeManager : MonoBehaviour
         List<UpgradeData> pool = new List<UpgradeData>(_allUpgrades.Length);
         foreach (var up in _allUpgrades)
         {
-            if (up.type == Define.UpgradeType.AcquireWeapon)
-            {
-                if (_weaponManager.HasWeapon(up.weaponToAcquire)) continue;                          // 이미 보유
-                if (!ShopService.IsWeaponUnlocked(up.weaponToAcquire)) continue;       // 상점 미해금
-            }
+            if (up.type == Define.UpgradeType.AcquireWeapon && _weaponManager.HasWeapon(up.weaponToAcquire))
+                continue;   // 이미 보유한 무기는 제외
             pool.Add(up);
         }
         UpgradeData[] result = new UpgradeData[Mathf.Min(count, pool.Count)];
