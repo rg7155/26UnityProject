@@ -3,7 +3,7 @@ title: JsonUtility가 JSON에 없는 필드의 초기화를 건너뛰어 컬렉�
 tags: [save, json, jsonutility, serialization, null, migration, list]
 symptom: 새 필드(List/배열)를 GameData에 추가한 뒤, 구버전 세이브 로드 시 그 필드가 null → NRE
 severity: high
-commit: 90a5734
+commit: 3933a96
 files: [Assets/Scripts/Manager/GameManagerEx.cs]
 ---
 
