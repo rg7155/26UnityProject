@@ -104,6 +104,10 @@ public class GameManagerEx
         if (data != null)
             _gameData = data;
 
+        // JsonUtility는 JSON에 없는 필드의 초기화를 실행하지 않음 — 구버전 세이브엔 Purchases 키가 없어 null
+        if (_gameData.Purchases == null)
+            _gameData.Purchases = new List<ShopPurchase>();
+
         return true;
     }
 }
