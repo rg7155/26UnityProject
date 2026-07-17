@@ -1,6 +1,6 @@
 ---
 name: unity-dev
-description: "Rewind Survivors Unity 게임의 모든 코드 작업 오케스트레이터. 기능 추가, 버그 수정, 코드 개선, 적 추가, 시스템 구현, 폴리싱 등 C# 코드를 건드리는 모든 요청에 반드시 이 스킬을 사용. 트리거 키워드: '추가해줘', '구현해줘', '만들어줘', '수정해줘', '고쳐줘', '개선해줘', '보완해줘', '다시 만들어', '리팩토링', '버그', '적 종류', '웨이브', '되감기', '리와인드', '업그레이드', 'UI', '이펙트', '사운드', '폴리싱'. 단순한 코드 설명 질문('이 코드가 뭐야?', '왜 이렇게 돼?')은 직접 답변 가능."
+description: "Rewind Survivors Unity 게임의 모든 코드 작업 오케스트레이터. 기능 추가, 버그 수정, 코드 개선, 적 추가, 시스템 구현, 폴리싱 등 C# 코드를 건드리는 모든 요청에 반드시 이 스킬을 사용. 트리거 키워드: '추가해줘', '구현해줘', '만들어줘', '수정해줘', '고쳐줘', '개선해줘', '보완해줘', '다시 만들어', '리팩토링', '버그', '적 종류', '웨이브', '되감기', '리와인드', '업그레이드', '이펙트', '사운드', '폴리싱', 그리고 UI 관련: 'UI', '상점', '팝업', 'HUD', '타이틀 화면', '결과 화면', '레이아웃', '리스킨', '버튼', '패널', '이쁘게', '디자인'. 후속: '다시 만들어', '재실행', '이 화면도', '스크린샷 반영'. 단순한 코드 설명 질문('이 코드가 뭐야?', '왜 이렇게 돼?')은 직접 답변 가능."
 ---
 
 # Unity Dev 오케스트레이터
@@ -99,14 +99,42 @@ Agent(
   - Input: Polling 방식만 (`Keyboard.current.wKey.isPressed`)
   - 참조: 씬 간은 `FindObjectOfType`, 프리팹 내부는 Inspector
   - 금지: DI 프레임워크, Action-based Input, 과도한 추상화
+- **UI 작업이면:** 구현 주체는 game-ui-artist(코드기반 UGUI). 계획은 `ui-kit`의
+  3-레이어(절차적 스프라이트 → 컴포넌트 → `[MenuItem]` 생성기) 순서로 파일을 배치하고,
+  기존 UI 로직 스크립트는 무수정 대상으로 명시. 로직+비주얼 혼합이면 파일을 분담.
 - 출력 지시: `_workspace/plan.md` 생성
 
 ---
 
-## Phase 2: 코드 구현 (game-coder)
+## Phase 2: 코드 구현 (game-coder / game-ui-artist)
 
-Phase 1 완료 후 `_workspace/plan.md` 읽기. 그 후 `game-coder` 에이전트 호출:
+Phase 1 완료 후 `_workspace/plan.md` 읽기.
 
+### 라우팅 — UI 작업이면 game-ui-artist
+요청이 **UI 비주얼**(화면 리스킨, 팝업/HUD/타이틀/결과/상점 UI, 레이아웃·스타일·
+폴리싱)이면 `game-coder` 대신 **`game-ui-artist`** 를 호출한다. 이 에이전트는
+코드기반 UGUI(절차적 스프라이트 + 컴포넌트 + `[MenuItem]` 에디터 생성기)로 구현하며
+`ui-kit` 스킬을 참조한다.
+
+- **순수 UI 비주얼** → game-ui-artist만
+- **순수 게임플레이 로직** → game-coder만
+- **혼합**(UI + 로직) → game-coder(로직) 먼저 → game-ui-artist(비주얼). 두 에이전트가
+  같은 파일을 동시에 건드리지 않도록 plan.md에서 파일을 분담시킨다.
+
+```
+Agent(
+  description: "UGUI 화면 구현",
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: [game-ui-artist 역할 + ui-kit 스킬 참조 지시 + plan.md 내용 + 아래 공통 내용]
+)
+```
+
+game-ui-artist 호출 시 프롬프트에 반드시 포함: `ui-kit` 스킬을 먼저 읽을 것, 디자인
+토큰만 사용(매직값 금지), 외부 리소스 0, 기존 UI 로직 스크립트 무수정, 구현 후 사용자에게
+`Tools/UI/...` 메뉴 실행 + 스크린샷 요청 안내.
+
+### 게임플레이 로직이면 game-coder
 ```
 Agent(
   description: "Unity C# 코드 구현",

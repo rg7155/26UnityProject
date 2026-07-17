@@ -170,3 +170,4 @@ Assets/Scripts/
 | 2026-05-17 | 초기 구성 | 전체 | 5개월차 폴리싱 단계 돌입, 코드 품질 파이프라인 구축 |
 | 2026-07-01 | game-designer 기획자 에이전트 추가 + Phase 0.5에 게임 기획 단계 편입 | unity-dev, agents | 신규 콘텐츠/룰 요청 시 실제 기획자 관점 설계 강화 |
 | 2026-07-10 | Knowledge Base 도입 (bug-patterns / lessons-learned / workflows) + 착수 전 KB 검색 트리거 배선 | .claude/knowledge, CLAUDE.md | 재발성 버그 패턴 재사용 + AI 워크플로 자산화 |
+| 2026-07-13 | game-ui-artist 에이전트 + ui-kit 스킬 추가, unity-dev Phase 2에 UI 라우팅 배선 | agents, skills/ui-kit, skills/unity-dev | UI 비주얼 폴리싱 전문화 — 코드기반 UGUI(절차적 스프라이트·에디터 생성기, 외부 리소스 0) |

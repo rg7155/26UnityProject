@@ -47,6 +47,7 @@ LLM은 매 세션 컨텍스트를 새로 읽는다. 과거에 이 프로젝트�
 - [jobsystem-uninitialized-slot-ghost](bug-patterns/jobsystem-uninitialized-slot-ghost.md) — NativeArray 전체 용량 순회 시 (0,0) 유령 슬롯이 가짜 이웃으로 작동
 - [separation-overpowers-target-drift](bug-patterns/separation-overpowers-target-drift.md) — steering 가중치가 목표 추적을 압도해 반대로 드리프트
 - [jsonutility-missing-field-null-collection](bug-patterns/jsonutility-missing-field-null-collection.md) — JsonUtility가 없는 필드 초기화를 건너뛰어 구버전 세이브의 컬렉션이 null
+- [procedural-sprite-not-serialized](bug-patterns/procedural-sprite-not-serialized.md) — 코드 생성 Texture2D/Sprite를 프리팹에 구우면 직렬화 안 돼 런타임 흰 박스 → 런타임 컴포넌트로 재생성
 
 ### lessons-learned
 - [steering-weight-clamping](lessons-learned/steering-weight-clamping.md) — 여러 steering 힘 합성 시 상한 클램프 원칙
