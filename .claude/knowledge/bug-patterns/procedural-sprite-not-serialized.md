@@ -3,7 +3,7 @@ title: 코드로 생성한 Texture2D/Sprite를 프리팹·씬에 구우면 직�
 tags: [ui, ugui, sprite, texture2d, procedural, serialization, prefab, editor-script, ui-kit]
 symptom: 에디터 스크립트에서 UISpriteFactory 등으로 만든 절차적 스프라이트를 Image.sprite에 굽고 프리팹 저장 → 런타임 Instantiate 시 흰 박스로 뜨고, 흰 라벨이 안 보이다가 호버/클릭해야 보임
 severity: high
-commit: pending
+commit: f56efd4
 files: [Assets/Scripts/UI/UIProceduralSprite.cs, Assets/Scripts/Editor/ShopUIGenerator.cs, Assets/Scripts/UI/UISpriteFactory.cs]
 ---
 
