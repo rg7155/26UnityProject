@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     int _hp;
     float _invincibleTimer;
 
+    VirtualJoystick _joystick;
+
 #if UNITY_EDITOR
     public bool DebugInvincible;
 #endif
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
         _maxHp += ShopService.BonusHp();   // 메타 상점 시작 HP 강화 적용
         Hp = _maxHp;
         _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
+        _joystick = FindObjectOfType<VirtualJoystick>();
     }
 
     void Update()
@@ -67,21 +70,30 @@ public class PlayerController : MonoBehaviour
 
     void HandleMove()
     {
-        Vector2 dir = Vector2.zero;
+        Vector2 input;
 
-        if (Keyboard.current != null)
+        if (_joystick != null)
         {
-            float h = (Keyboard.current.dKey.isPressed ? 1f : 0f)
-                    - (Keyboard.current.aKey.isPressed ? 1f : 0f);
-            float v = (Keyboard.current.wKey.isPressed ? 1f : 0f)
-                    - (Keyboard.current.sKey.isPressed ? 1f : 0f);
-            dir = new Vector2(h, v).normalized;
+            input = _joystick.Input;  // 터치/키보드 OR + 아날로그 반영, magnitude 0~1 — normalize 금지
+        }
+        else
+        {
+            // 안전망: 조이스틱 오브젝트가 씬에 없을 때 WASD 직접 폴백 (항상 최대속도)
+            input = Vector2.zero;
+            if (Keyboard.current != null)
+            {
+                float h = (Keyboard.current.dKey.isPressed ? 1f : 0f)
+                        - (Keyboard.current.aKey.isPressed ? 1f : 0f);
+                float v = (Keyboard.current.wKey.isPressed ? 1f : 0f)
+                        - (Keyboard.current.sKey.isPressed ? 1f : 0f);
+                input = new Vector2(h, v).normalized;
+            }
         }
 
-        if (dir != Vector2.zero)
+        if (input != Vector2.zero)
         {
             _state = CreatureState.Moving;
-            transform.position += (Vector3)(dir * _speed * Time.deltaTime);
+            transform.position += (Vector3)(input * _speed * Time.deltaTime);
         }
         else
         {

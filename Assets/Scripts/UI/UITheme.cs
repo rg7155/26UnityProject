@@ -21,6 +21,8 @@ public static class UITheme
     public static readonly Color Cyan          = Hex("35D9F5");
     public static readonly Color Positive      = Hex("79E86A");
     public static readonly Color Danger        = Hex("FF5488");
+    public static readonly Color JoystickBase  = Hex("FFFFFF", 0.40f); // 반투명 도넛 베이스
+    public static readonly Color JoystickKnob  = Hex("FFFFFF", 0.70f); // 중앙 노브
 
     // ── 여백(px) — 이 값만 사용 ──
     public const float S1 = 4, S2 = 8, S3 = 12, S4 = 16, S5 = 24, S6 = 32, S7 = 48;

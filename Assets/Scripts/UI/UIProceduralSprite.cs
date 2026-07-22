@@ -9,17 +9,22 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class UIProceduralSprite : MonoBehaviour
 {
+    public enum Shape { Rounded, Circle, Ring }
+
+    [SerializeField] Shape _shape = Shape.Rounded;
     [SerializeField] bool _outlined;
     [SerializeField] int _radius;
     [SerializeField] int _outlineWidth;
+    [SerializeField] int _thickness;            // Ring 두께(_shape == Ring 일 때만)
     [SerializeField] Color _fill = Color.white;
     [SerializeField] Color _line = Color.black; // _outlined 가 false 면 무시
 
     void OnEnable() => Apply();
 
-    // 에디터 생성기가 값을 세팅한 뒤 호출. 런타임엔 OnEnable 이 담당.
+    // 라운드 사각형(상점/업그레이드 패널). 기존 시그니처 유지.
     public void Configure(bool outlined, int radius, int outlineWidth, Color fill, Color line)
     {
+        _shape = Shape.Rounded;
         _outlined = outlined;
         _radius = radius;
         _outlineWidth = outlineWidth;
@@ -28,14 +33,46 @@ public class UIProceduralSprite : MonoBehaviour
         Apply();
     }
 
+    // 꽉 찬 원(노브).
+    public void ConfigureCircle(int radius, Color fill)
+    {
+        _shape = Shape.Circle;
+        _radius = radius;
+        _fill = fill;
+        Apply();
+    }
+
+    // 도넛(베이스 링).
+    public void ConfigureRing(int outerRadius, int thickness, Color fill)
+    {
+        _shape = Shape.Ring;
+        _radius = outerRadius;
+        _thickness = thickness;
+        _fill = fill;
+        Apply();
+    }
+
     void Apply()
     {
         var img = GetComponent<Image>();
         if (img == null) return;
-        img.sprite = _outlined
-            ? UISpriteFactory.RoundedOutlined(_radius, _outlineWidth, _fill, _line)
-            : UISpriteFactory.Rounded(_radius, _fill);
-        img.type = Image.Type.Sliced;
+        switch (_shape)
+        {
+            case Shape.Circle:
+                img.sprite = UISpriteFactory.Circle(_radius, _fill);
+                img.type = Image.Type.Simple;
+                break;
+            case Shape.Ring:
+                img.sprite = UISpriteFactory.Ring(_radius, _thickness, _fill);
+                img.type = Image.Type.Simple;
+                break;
+            default:
+                img.sprite = _outlined
+                    ? UISpriteFactory.RoundedOutlined(_radius, _outlineWidth, _fill, _line)
+                    : UISpriteFactory.Rounded(_radius, _fill);
+                img.type = Image.Type.Sliced;
+                break;
+        }
     }
 
 #if UNITY_EDITOR

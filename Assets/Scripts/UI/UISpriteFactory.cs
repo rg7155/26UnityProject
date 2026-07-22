@@ -50,6 +50,81 @@ public static class UISpriteFactory
     // 채움만(외곽선 없는 라운드) — 칩·리세스 카드 배경 등
     public static Sprite Rounded(int radius, Color fill) => RoundedOutlined(radius, 0, fill, fill);
 
+    // 꽉 찬 원(조이스틱 노브). border 0 → Image.type=Simple 로 사용.
+    public static Sprite Circle(int radius, Color fill)
+    {
+        string key = $"circ_{radius}_{ColorUtility.ToHtmlStringRGBA(fill)}";
+        if (_cache.TryGetValue(key, out var cached) && cached != null) return cached;
+
+        int pad = 2;
+        int size = radius * 2 + pad * 2;
+        var tex = NewTex(size, key);
+        float half = size * 0.5f;
+        var px = new Color[size * size];
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            float dist = RadialDistance(x, y, half);
+            float alpha = Mathf.Clamp01(0.5f - (dist - radius)); // 반지름 안 불투명, 경계 1px AA
+            Color c = fill;
+            c.a *= alpha;
+            px[y * size + x] = c;
+        }
+        tex.SetPixels(px);
+        tex.Apply();
+        return CacheSprite(key, tex, size, Vector4.zero);
+    }
+
+    // 도넛(조이스틱 베이스 링). outer-thickness <= dist <= outer 만 fill, 안팎 투명. border 0.
+    public static Sprite Ring(int outerRadius, int thickness, Color fill)
+    {
+        string key = $"ring_{outerRadius}_{thickness}_{ColorUtility.ToHtmlStringRGBA(fill)}";
+        if (_cache.TryGetValue(key, out var cached) && cached != null) return cached;
+
+        int pad = 2;
+        int size = outerRadius * 2 + pad * 2;
+        var tex = NewTex(size, key);
+        float half = size * 0.5f;
+        float inner = outerRadius - thickness;
+        var px = new Color[size * size];
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            float dist = RadialDistance(x, y, half);
+            float outerA = Mathf.Clamp01(0.5f - (dist - outerRadius)); // 바깥 경계 AA
+            float innerA = Mathf.Clamp01(0.5f - (inner - dist));       // 안쪽 경계 AA
+            Color c = fill;
+            c.a *= Mathf.Min(outerA, innerA);
+            px[y * size + x] = c;
+        }
+        tex.SetPixels(px);
+        tex.Apply();
+        return CacheSprite(key, tex, size, Vector4.zero);
+    }
+
+    static float RadialDistance(int x, int y, float half)
+    {
+        float dx = x + 0.5f - half;
+        float dy = y + 0.5f - half;
+        return Mathf.Sqrt(dx * dx + dy * dy);
+    }
+
+    static Texture2D NewTex(int size, string key) => new Texture2D(size, size, TextureFormat.RGBA32, false)
+    {
+        name = key,
+        filterMode = FilterMode.Bilinear,
+        wrapMode = TextureWrapMode.Clamp
+    };
+
+    static Sprite CacheSprite(string key, Texture2D tex, int size, Vector4 border)
+    {
+        var sprite = Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 100f, 0,
+            SpriteMeshType.FullRect, border);
+        sprite.name = key;
+        _cache[key] = sprite;
+        return sprite;
+    }
+
     // 코너 반경 cornerRadius 를 가진 중앙 정렬 라운드 사각형의 부호거리(SDF).
     static float OuterDistance(int x, int y, float half, int cornerRadius)
     {

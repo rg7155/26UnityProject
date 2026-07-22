@@ -44,6 +44,7 @@ public class UpgradeManager : MonoBehaviour
         _pendingLevelUps++;
         if (_pendingLevelUps > 1) return;  // 이미 선택 진행 중 — 큐에만 쌓고 패널 덮어쓰기 금지
 
+        FindObjectOfType<VirtualJoystick>()?.Cancel();  // 재개 시 옛 터치 좌표로 튐 방지
         Managers.Game.State = Define.GameState.Paused;  // 여기서 Pause
         OnUpgradeChoiceReady?.Invoke(PickRandom(3));
     }
