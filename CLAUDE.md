@@ -44,7 +44,9 @@ LLM 코딩 실수를 줄이기 위한 행동 지침. 사소한 작업은 판단�
 | 항목 | 결정 | 이유 |
 |------|------|------|
 | 렌더 파이프라인 | URP (Unity 6 기본값) | 변경 없이 진행 |
-| Input System | New Input System — **Polling 방식** | `Keyboard.current.wKey.isPressed` 형태. Action-based 사용 안 함 |
+| 화면 방향 | 모바일 세로 (포트레이트) | 타깃 모바일 스튜디오. 게임뷰 1080×1920, CanvasScaler 세로, Safe Area 대응 |
+| Input System | New Input System — **Polling 방식** | `Keyboard.current.wKey.isPressed` 형태. Action-based 사용 안 함. 터치도 `Touchscreen.current` Polling |
+| 조작 | 오토에임(SpatialHash 최근접) + 가상 조이스틱 이동 | 서바이버 표준. 조준 입력 없음(자동). WASD는 에디터 테스트 병행 |
 | 리소스 로딩 | `Resources.Load` | Addressables 미사용. 포트폴리오 규모에 충분 |
 | 충돌 감지 | Spatial Hashing (탐색·범위 판정) + Physics2D (접촉·피격) | 병행 사용 |
 | 오브젝트 관리 | Object Pool (타입별 Generic Pool) | Get/Return |

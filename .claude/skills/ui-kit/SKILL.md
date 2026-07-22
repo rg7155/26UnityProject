@@ -75,11 +75,24 @@ UI는 항상 이 순서로 만든다. 각 레이어는 아래 레이어에만 �
 - **여백이 답이다** — 요소가 답답하면 색을 더하지 말고 여백을 늘린다.
 
 ## 해상도 독립 (반드시)
-- `CanvasScaler`: **Scale With Screen Size**, Reference Resolution = 게임뷰 타깃,
-  Match Width Or Height = 0.5.
+- `CanvasScaler`: **Scale With Screen Size**, **Reference Resolution = 1080×1920 (모바일 세로)**,
+  Match Width Or Height = 0.5. (이 프로젝트는 모바일 포트레이트 — CLAUDE.md 기술 결정.)
 - 모든 위젯은 **앵커·피벗을 명시**. 팝업은 화면 중앙 앵커, 헤더는 상단 스트레치,
   그리드는 부모 채우기 + `GridLayoutGroup` 또는 `ScrollRect`.
 - 절대 좌표 고정 금지 — 다른 해상도에서 깨진다.
+
+### 모바일 필수 — Safe Area (노치·상태바)
+노치/상태바/홈 인디케이터에 걸리는 **상단·하단 바는 반드시 `SafeAreaFitter` 부착**.
+이 컴포넌트가 `Screen.safeArea`를 정규화 앵커로 변환해 콘텐츠를 안전 영역 안으로 넣는다.
+안 붙이면 재화바·타이틀이 노치에 파묻힌다. **Device Simulator의 노치 기기(iOS Notch
+1170×2532 등)로 반드시 검증** — 일반 Game 뷰엔 노치가 없어 문제가 안 보인다.
+실사용자 대다수는 ~19.5:9 긴 폰이므로 그 비율을 주 테스트로.
+
+### TMP 한글 — 두부(□) 방지
+`NotoSansKR SDF`라도 아틀라스에 **한글 글리프가 안 구워져 있으면 두부(□)로 렌더**된다.
+한글이 필요하면 폰트 에셋의 **Atlas Population Mode = Dynamic**(런타임 온디맨드 생성)으로
+바꾼다. 단 **이 프로젝트 UI는 영어로 통일**(로고·PLAY·SHOP·LEVEL UP 등) — 한글만 섞이면
+짬뽕이라 덜 폴리시돼 보인다. 새 라벨은 영어로.
 
 ## 이 프로젝트의 UI 자산 (현황)
 - 폰트: `Assets/Font/NotoSansKR-VariableFont_wght SDF.asset` (TMP, 한글 지원)
