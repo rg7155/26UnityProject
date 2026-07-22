@@ -19,12 +19,12 @@ public static class ShopUIGenerator
     const string FontPath = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
     const string CellPrefabPath = "Assets/Prefabs/ShopItemCell.prefab";
 
-    // ── 레이아웃 튜닝값(스크린샷 피드백으로 조정) — CanvasScaler Reference 800x600 기준 ──
-    static readonly Vector2 PopupSize = new Vector2(680f, 560f);
-    const float HeaderH = 76f;
-    static readonly Vector2 GoldChipSize = new Vector2(200f, 48f);
-    const float CloseSize = 64f;
-    static readonly Vector2 CellSize = new Vector2(186f, 180f);
+    // ── 레이아웃 튜닝값(스크린샷 피드백으로 조정) — CanvasScaler Reference 1080x1920 기준 ──
+    static readonly Vector2 PopupSize = new Vector2(960f, 1320f);
+    const float HeaderH = 110f;
+    static readonly Vector2 GoldChipSize = new Vector2(240f, 64f);
+    const float CloseSize = 80f;
+    static readonly Vector2 CellSize = new Vector2(280f, 270f);
 
     [MenuItem("Tools/UI/Build Shop Popup")]
     public static void BuildShopPopup()

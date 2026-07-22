@@ -88,9 +88,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 408a7446e5c89d6429c43dd711a0d384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIProceduralSprite
+  _shape: 0
   _outlined: 0
   _radius: 10
   _outlineWidth: 0
+  _thickness: 0
   _fill: {r: 0.13725491, g: 0.16470589, b: 0.23921569, a: 1}
   _line: {r: 0.13725491, g: 0.16470589, b: 0.23921569, a: 1}
 --- !u!1 &7183614134704982893
@@ -134,7 +136,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 186, y: 180}
+  m_SizeDelta: {x: 280, y: 270}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1100044722199027198
 CanvasRenderer:
@@ -244,9 +246,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 408a7446e5c89d6429c43dd711a0d384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIProceduralSprite
+  _shape: 0
   _outlined: 1
   _radius: 18
   _outlineWidth: 5
+  _thickness: 0
   _fill: {r: 0.101960786, g: 0.1254902, b: 0.19607843, a: 1}
   _line: {r: 0.043137256, g: 0.05490196, b: 0.09411765, a: 1}
 --- !u!1 &7692281557293220478
@@ -474,8 +478,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 408a7446e5c89d6429c43dd711a0d384, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIProceduralSprite
+  _shape: 0
   _outlined: 0
   _radius: 10
   _outlineWidth: 0
+  _thickness: 0
   _fill: {r: 1, g: 0.7607843, b: 0.23529412, a: 1}
   _line: {r: 1, g: 0.7607843, b: 0.23529412, a: 1}
