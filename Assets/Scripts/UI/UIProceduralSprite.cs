@@ -18,6 +18,7 @@ public class UIProceduralSprite : MonoBehaviour
     [SerializeField] int _thickness;            // Ring 두께(_shape == Ring 일 때만)
     [SerializeField] Color _fill = Color.white;
     [SerializeField] Color _line = Color.black; // _outlined 가 false 면 무시
+    [SerializeField] bool _preserveType;        // true 면 Image.type 을 덮지 않음(예: Filled 링 유지)
 
     void OnEnable() => Apply();
 
@@ -44,11 +45,16 @@ public class UIProceduralSprite : MonoBehaviour
 
     // 도넛(베이스 링).
     public void ConfigureRing(int outerRadius, int thickness, Color fill)
+        => ConfigureRing(outerRadius, thickness, fill, false);
+
+    // preserveType=true: Image.type 을 건드리지 않는다(생성기가 Filled/Radial360 등을 유지하려는 경우).
+    public void ConfigureRing(int outerRadius, int thickness, Color fill, bool preserveType)
     {
         _shape = Shape.Ring;
         _radius = outerRadius;
         _thickness = thickness;
         _fill = fill;
+        _preserveType = preserveType;
         Apply();
     }
 
@@ -56,23 +62,25 @@ public class UIProceduralSprite : MonoBehaviour
     {
         var img = GetComponent<Image>();
         if (img == null) return;
+        Image.Type type;
         switch (_shape)
         {
             case Shape.Circle:
                 img.sprite = UISpriteFactory.Circle(_radius, _fill);
-                img.type = Image.Type.Simple;
+                type = Image.Type.Simple;
                 break;
             case Shape.Ring:
                 img.sprite = UISpriteFactory.Ring(_radius, _thickness, _fill);
-                img.type = Image.Type.Simple;
+                type = Image.Type.Simple;
                 break;
             default:
                 img.sprite = _outlined
                     ? UISpriteFactory.RoundedOutlined(_radius, _outlineWidth, _fill, _line)
                     : UISpriteFactory.Rounded(_radius, _fill);
-                img.type = Image.Type.Sliced;
+                type = Image.Type.Sliced;
                 break;
         }
+        if (!_preserveType) img.type = type; // Filled 등 커스텀 type 을 생성기가 세팅한 경우 유지
     }
 
 #if UNITY_EDITOR

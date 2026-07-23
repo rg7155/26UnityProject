@@ -39,6 +39,14 @@ public class RewindManager : MonoBehaviour
     public float CooldownMax       { get { return _rewindCooldown; } }
     public int   AutoRewindCharges { get { return _autoRewindCharges; } }
 
+    public bool CanActiveRewind => _cooldownTimer <= 0f && _count > 0
+                                   && Managers.Game.State == GameState.Playing;
+
+    public void TryActiveRewind()
+    {
+        if (CanActiveRewind) StartCoroutine(DoRewind());
+    }
+
     void Start()
     {
         _bufferSize = Mathf.CeilToInt(_rewindDuration / _recordInterval);
@@ -72,12 +80,9 @@ public class RewindManager : MonoBehaviour
             Record();
         }
 
-        // Shift 입력 — 능동 되감기
+        // Shift 입력 — 능동 되감기 (에디터 테스트용)
         if (Keyboard.current != null && Keyboard.current.leftShiftKey.wasPressedThisFrame)
-        {
-            if (_cooldownTimer <= 0f && _count > 0)
-                StartCoroutine(DoRewind());
-        }
+            TryActiveRewind();
     }
 
     // ── 스냅샷 저장 ──────────────────────────────────────────
