@@ -39,6 +39,8 @@ public static class UpgradePanelGenerator
 
         var panelRT = (RectTransform)panel.transform;
 
+        UILayerAssign.AssignLayer(panel.gameObject, UILayer.Modal); // 업그레이드 모달은 항상 최상단 레이어
+
         // ── 1) 백드롭 딤: 패널 자체 Image(전체화면·토글 대상)를 딤으로 ──
         var dim = panel.GetComponent<Image>();
         if (dim == null) dim = panel.gameObject.AddComponent<Image>();

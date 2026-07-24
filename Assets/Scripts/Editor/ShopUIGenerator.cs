@@ -42,6 +42,8 @@ public static class ShopUIGenerator
 
         var panelRT = (RectTransform)panel.transform;
 
+        UILayerAssign.AssignLayer(panel.gameObject, UILayer.Modal); // 상점 모달은 항상 최상단 레이어
+
         // 기존 배선 참조 읽기(무수정 로직의 [SerializeField]) — 이 오브젝트들을 리스킨/재부모화한다.
         var so = new SerializedObject(panel);
         var goldText = so.FindProperty("_goldText").objectReferenceValue as TMP_Text;

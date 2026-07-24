@@ -39,6 +39,8 @@ public static class MenuBackgroundGenerator
         bgRT.offsetMax = Vector2.zero;
         bgRT.SetAsFirstSibling(); // 항상 최하단(다른 UI 뒤). ShopPanel/ShopDim 은 위 계층이라 자연히 그 앞에 그려짐.
 
+        UILayerAssign.AssignLayer(bgRT.gameObject, UILayer.Background);
+
         // 카메라 빈틈 방어 — 클리어색도 AppBg 로
         var cam = Object.FindFirstObjectByType<Camera>(FindObjectsInactive.Include);
         if (cam != null)

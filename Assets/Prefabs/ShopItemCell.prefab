@@ -95,6 +95,7 @@ MonoBehaviour:
   _thickness: 0
   _fill: {r: 0.13725491, g: 0.16470589, b: 0.23921569, a: 1}
   _line: {r: 0.13725491, g: 0.16470589, b: 0.23921569, a: 1}
+  _preserveType: 0
 --- !u!1 &7183614134704982893
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,6 +254,7 @@ MonoBehaviour:
   _thickness: 0
   _fill: {r: 0.101960786, g: 0.1254902, b: 0.19607843, a: 1}
   _line: {r: 0.043137256, g: 0.05490196, b: 0.09411765, a: 1}
+  _preserveType: 0
 --- !u!1 &7692281557293220478
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,3 +487,4 @@ MonoBehaviour:
   _thickness: 0
   _fill: {r: 1, g: 0.7607843, b: 0.23529412, a: 1}
   _line: {r: 1, g: 0.7607843, b: 0.23529412, a: 1}
+  _preserveType: 0

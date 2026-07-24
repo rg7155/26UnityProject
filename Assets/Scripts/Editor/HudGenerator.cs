@@ -50,6 +50,8 @@ public static class HudGenerator
         hudRoot.offsetMax = Vector2.zero;
         if (hudRoot.GetComponent<SafeAreaFitter>() == null) hudRoot.gameObject.AddComponent<SafeAreaFitter>();
 
+        UILayerAssign.AssignLayer(hudRoot.gameObject, UILayer.Hud);
+
         // ── 상단 StatusStrip(top-stretch) ──
         var strip = FindOrCreateChild(hudRoot, "StatusStrip");
         ClearImage(strip);

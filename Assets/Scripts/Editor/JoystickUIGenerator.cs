@@ -42,6 +42,8 @@ public static class JoystickUIGenerator
         var joy = joyRT.GetComponent<VirtualJoystick>();
         if (joy == null) joy = joyRT.gameObject.AddComponent<VirtualJoystick>();
 
+        UILayerAssign.AssignLayer(joyRT.gameObject, UILayer.Hud);
+
         // ── 크기: 스크린 px 를 캔버스 스케일로 환산(스크린샷 후 미세조정) ──
         float scale = canvas.scaleFactor > 0f ? canvas.scaleFactor : 1f;
         float maxRadiusPx = Screen.width * RadiusScreenRatio;

@@ -53,12 +53,12 @@ public static class TitleLobbyGenerator
         var startButton = so.FindProperty("_startButton").objectReferenceValue as Button;
         var bestText = so.FindProperty("_bestText").objectReferenceValue as TMP_Text;
         var shopButton = so.FindProperty("_shopButton").objectReferenceValue as Button;
-        var shopPanel = so.FindProperty("_shopPanel").objectReferenceValue as GameObject;
 
         // ── TitleLobby 컨테이너(투명, 풀스크린) ──
         var lobby = FindOrCreateChild(canvasRT, "TitleLobby");
         ClearImage(lobby);
         Stretch(lobby);
+        UILayerAssign.AssignLayer(lobby.gameObject, UILayer.Hud);
 
         // ── SafeArea 컨테이너(노치 회피) — TopBar 를 그 안에 둔다 ──
         var safeArea = FindOrCreateChild(lobby, "SafeArea");
@@ -205,10 +205,9 @@ public static class TitleLobbyGenerator
             }
         }
 
-        // ── sibling 정리: MenuBackground 위 · ShopPanel 아래에 로비, 상점은 최상단 ──
+        // ── sibling 정리: MenuBackground 위에 로비. 상점(모달)의 상하 순서는 UILayer(Modal)가 결정. ──
         var menuBg = canvasRT.Find("MenuBackground");
         if (menuBg != null) lobby.SetSiblingIndex(menuBg.GetSiblingIndex() + 1);
-        if (shopPanel != null) shopPanel.transform.SetAsLastSibling();
 
         // ── CanvasScaler 세로 세팅 ──
         var scaler = canvas.GetComponent<CanvasScaler>();
