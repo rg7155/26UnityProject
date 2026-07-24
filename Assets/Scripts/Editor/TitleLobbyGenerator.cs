@@ -43,6 +43,7 @@ public static class TitleLobbyGenerator
             Debug.LogError("[TitleLobbyGenerator] 씬에서 Canvas 를 찾지 못했습니다.");
             return;
         }
+        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
         var canvasRT = (RectTransform)canvas.transform;
 
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);

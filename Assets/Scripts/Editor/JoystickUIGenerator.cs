@@ -28,6 +28,7 @@ public static class JoystickUIGenerator
             Debug.LogError("[JoystickUIGenerator] 씬에서 Canvas 를 찾지 못했습니다. GameScene 을 연 상태로 실행하세요.");
             return;
         }
+        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
         var canvasRT = (RectTransform)canvas.transform;
 
         // ── 루트: VirtualJoystick(풀스크린 스트레치) + CanvasGroup ──

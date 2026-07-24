@@ -19,6 +19,7 @@ public static class MenuBackgroundGenerator
             return;
         }
 
+        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
         var canvasRT = (RectTransform)canvas.transform;
         var bgRT = canvasRT.Find("MenuBackground") as RectTransform;
         if (bgRT == null)
