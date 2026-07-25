@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // UI 레이어 단일 출처. 값 = Canvas.sortingOrder (간격 100은 후속 삽입 여유).
-public enum UILayer { Background = 0, Hud = 100, Modal = 300 }
+public enum UILayer { Background = 0, Hud = 100, Modal = 300, Pause = 400 }
 
 // 1주차: 최소 스텁. 추후 팝업/씬 UI 시스템 구현 예정.
 public class UIManager

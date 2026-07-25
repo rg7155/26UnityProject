@@ -38,6 +38,16 @@ public class SoundManager
 				_audioSources[(int)Define.Sound.Bgm].loop = true;
 				_audioSources[(int)Define.Sound.SubBgm].loop = true;
 			}
+			else
+			{
+				// 기존 @SoundRoot 재사용 — _audioSources 재바인딩(누락 시 null 참조 방지)
+				string[] soundTypeNames = System.Enum.GetNames(typeof(Define.Sound));
+				for (int count = 0; count < soundTypeNames.Length - 1; count++)
+				{
+					Transform child = _soundRoot.transform.Find(soundTypeNames[count]);
+					if (child != null) _audioSources[count] = child.GetComponent<AudioSource>();
+				}
+			}
 		}
 	}
 
@@ -58,6 +68,7 @@ public class SoundManager
     {
 		
         AudioSource audioSource = _audioSources[(int)type];
+        if (audioSource == null) return;   // 씬 전환 중 호출 등으로 미바인딩 시 무시
 
         if (type == Define.Sound.Bgm)
         {
@@ -107,6 +118,7 @@ public class SoundManager
 	public void Play(Define.Sound type, AudioClip audioClip, float pitch = 1.0f)
 	{
 		AudioSource audioSource = _audioSources[(int)type];
+		if (audioSource == null) return;   // 씬 전환 중 호출 등으로 미바인딩 시 무시
 
 		if (type == Define.Sound.Bgm)
 		{

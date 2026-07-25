@@ -39,4 +39,9 @@ public class WeaponManager : MonoBehaviour
     public void UpgradeDamage(float multiplier)   { _damageMult *= multiplier; foreach (var w in _weapons) w.UpgradeDamage(multiplier); }
     public void UpgradeFireRate(float multiplier) { _fireRateMult *= multiplier; foreach (var w in _weapons) w.UpgradeFireRate(multiplier); }
     public void UpgradeRange(float multiplier)    { _rangeMult *= multiplier; foreach (var w in _weapons) w.UpgradeRange(multiplier); }
+
+    public float DamageMult   => _damageMult;
+    public float FireRateMult => _fireRateMult;
+    public float RangeMult    => _rangeMult;
+    public int   WeaponCount  => _weapons.Count;
 }

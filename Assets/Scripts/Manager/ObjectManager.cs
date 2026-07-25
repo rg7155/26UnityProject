@@ -47,6 +47,13 @@ public class ObjectManager
 
     public void Clear()
     {
+        // @Pool 은 DontDestroyOnLoad — 활성 상태로 날아다니던 발사체/적(모두 @Pool 자식)이
+        // 씬 전환 후에도 살아남아 다음 씬에서 Update/물리 콜백을 쏘는 것을 막기 위해 실제 파괴
+        if (_root != null)
+        {
+            for (int i = _root.childCount - 1; i >= 0; i--)
+                Object.Destroy(_root.GetChild(i).gameObject);
+        }
         _pools.Clear();
     }
 }

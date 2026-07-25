@@ -105,4 +105,8 @@ public class EnemyBase : MonoBehaviour
     // Rewind 전용 — 레지스트리 직접 조작
     public static void UnregisterForRewind(int entityId) => _registry.Remove(entityId);
     public static void RegisterForRewind(EnemyBase e)    => _registry[e.EntityId] = e;
+
+    // 씬 전환 시 호출 — static 레지스트리는 씬을 넘어 유지되므로, 정상 사망(OnDead) 없이
+    // 파괴된 적이 남아 다음 씬에서 파괴된 참조로 접근되는 것을 막기 위해 비운다
+    public static void ClearRegistry() => _registry.Clear();
 }

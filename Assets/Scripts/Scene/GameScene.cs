@@ -8,6 +8,7 @@ public class GameScene : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 1f;
         Managers.Init();
         Managers.Game.State = GameState.Playing;
         Managers.Game.Score = 0;
