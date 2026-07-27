@@ -180,6 +180,7 @@ public class RewindManager : MonoBehaviour
     IEnumerator DoRewind()
     {
         FindObjectOfType<VirtualJoystick>()?.Cancel();  // Shift·Auto-Rewind 공통 — 재개 시 옛 터치로 스냅 방지
+        Managers.Game.RunRewinds++;   // 능동·자동부활 모두 이 코루틴을 통과
         Managers.Game.State = GameState.Rewinding;
 
         int[] indices = new int[_count];

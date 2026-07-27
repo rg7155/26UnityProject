@@ -13,6 +13,8 @@ public class GameScene : MonoBehaviour
         Managers.Game.State = GameState.Playing;
         Managers.Game.Score = 0;
         Managers.Game.RunGold = 0;
+        Managers.Game.RunKills = 0;
+        Managers.Game.RunRewinds = 0;
     }
 
     void Start()

@@ -70,6 +70,7 @@ public class EnemyBase : MonoBehaviour
         if (Managers.Game.State == Define.GameState.Playing)
         {
             Managers.Game.RunGold += _goldReward;   // Rewind 리플레이 중복 획득 방지
+            Managers.Game.RunKills++;
             Managers.Sound.PlayEffect(SoundManager.EnemyDeath);
         }
         _registry.Remove(EntityId);

@@ -9,6 +9,8 @@ public class TitleScene : MonoBehaviour
     [SerializeField] TMP_Text _bestText;
     [SerializeField] Button _shopButton;
     [SerializeField] GameObject _shopPanel;
+    [SerializeField] Button _questButton;
+    [SerializeField] GameObject _questPanel;
 
     void Awake()
     {
@@ -25,6 +27,9 @@ public class TitleScene : MonoBehaviour
 
         if (_shopButton != null && _shopPanel != null)
             _shopButton.onClick.AddListener(() => _shopPanel.SetActive(true));
+
+        if (_questButton != null && _questPanel != null)
+            _questButton.onClick.AddListener(() => _questPanel.SetActive(true));
     }
 
     void OnDestroy()
@@ -33,5 +38,7 @@ public class TitleScene : MonoBehaviour
             _startButton.onClick.RemoveAllListeners();
         if (_shopButton != null)
             _shopButton.onClick.RemoveAllListeners();
+        if (_questButton != null)
+            _questButton.onClick.RemoveAllListeners();
     }
 }

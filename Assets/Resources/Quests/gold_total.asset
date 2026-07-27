@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372ad81b741fb114ca2884f12fcd7213, type: 3}
+  m_Name: gold_total
+  m_EditorClassIdentifier: Assembly-CSharp::QuestData
+  id: gold_total
+  displayName: COLLECTOR
+  stat: 3
+  targets: e80300001027000050c30000
+  rewards: 2c010000dc050000581b0000

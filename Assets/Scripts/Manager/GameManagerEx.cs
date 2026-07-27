@@ -12,6 +12,14 @@ public class ShopPurchase
     public int tier;
 }
 
+// 퀘스트 수령 진행도 — id로 QuestData와 연결. 수령 완료한 티어 수를 기록
+[Serializable]
+public class QuestProgress
+{
+    public string id;
+    public int claimedTier;
+}
+
 [Serializable]
 public class GameData
 {
@@ -24,6 +32,11 @@ public class GameData
 
     public int TotalGold;
     public List<ShopPurchase> Purchases = new List<ShopPurchase>();
+
+    public int LifetimeKills;
+    public int LifetimeRewinds;
+    public int LifetimeGold;
+    public List<QuestProgress> QuestClaims = new List<QuestProgress>();
 }
 
 public class GameManagerEx
@@ -56,6 +69,8 @@ public class GameManagerEx
 
     public int TotalGold { get { return _gameData.TotalGold; } }
     public int RunGold { get; set; }   // 이번 판 획득분 — 비직렬화, CommitResult에서 뱅킹
+    public int RunKills { get; set; }     // 이번 판 처치 수 — 비직렬화
+    public int RunRewinds { get; set; }   // 이번 판 되감기 수 — 비직렬화
 
     public void SpendGold(int amount) { _gameData.TotalGold -= amount; }
     public void AddGold(int amount) { _gameData.TotalGold += amount; }
@@ -91,6 +106,9 @@ public class GameManagerEx
         if (Score > _gameData.BestScore) _gameData.BestScore = Score;
         if (PlayTime > _gameData.BestTime) _gameData.BestTime = PlayTime;
         _gameData.TotalGold += RunGold;
+        _gameData.LifetimeKills += RunKills;
+        _gameData.LifetimeRewinds += RunRewinds;
+        _gameData.LifetimeGold += RunGold;
         SaveGame();
     }
 
@@ -107,6 +125,8 @@ public class GameManagerEx
         // JsonUtility는 JSON에 없는 필드의 초기화를 실행하지 않음 — 구버전 세이브엔 Purchases 키가 없어 null
         if (_gameData.Purchases == null)
             _gameData.Purchases = new List<ShopPurchase>();
+        if (_gameData.QuestClaims == null)
+            _gameData.QuestClaims = new List<QuestProgress>();
 
         return true;
     }
