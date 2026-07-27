@@ -6,6 +6,8 @@ using UnityEngine;
 public static class ShopService
 {
     const int BaseMaxHp = 100;   // PlayerController._maxHp 기본값과 일치
+    const float BaseRewindDuration = 5f;
+    const float BaseRewindCooldown = 30f;
 
     static ShopItemData[] _items;
     public static ShopItemData[] Items
@@ -78,7 +80,47 @@ public static class ShopService
         return mult;
     }
 
+    public static float FireRateMult()
+    {
+        float mult = 1f;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.FireRate)
+                mult += TierOf(item.id) * item.valuePerTier;
+        return mult;
+    }
+
+    public static float MoveSpeedMult()
+    {
+        float mult = 1f;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.MoveSpeed)
+                mult += TierOf(item.id) * item.valuePerTier;
+        return mult;
+    }
+
+    public static float RewindDuration()
+    {
+        float duration = BaseRewindDuration;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.RewindDuration)
+                duration += TierOf(item.id) * item.valuePerTier;
+        return duration;
+    }
+
+    public static float RewindCooldown()
+    {
+        float cooldown = BaseRewindCooldown;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.RewindCooldown)
+                cooldown -= TierOf(item.id) * item.valuePerTier;
+        return cooldown;
+    }
+
     // ── UI 표시용 파생값 ──
     public static int HpTotal(int tier, float valuePerTier) => BaseMaxHp + Mathf.RoundToInt(tier * valuePerTier);
     public static int DamagePct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
+    public static int FireRatePct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
+    public static int MoveSpeedPct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
+    public static float RewindDurationTotal(int tier, float valuePerTier) => BaseRewindDuration + tier * valuePerTier;
+    public static float RewindCooldownTotal(int tier, float valuePerTier) => BaseRewindCooldown - tier * valuePerTier;
 }

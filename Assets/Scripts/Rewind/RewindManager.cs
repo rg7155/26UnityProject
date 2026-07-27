@@ -49,6 +49,8 @@ public class RewindManager : MonoBehaviour
 
     void Start()
     {
+        _rewindDuration = ShopService.RewindDuration();
+        _rewindCooldown = ShopService.RewindCooldown();
         _bufferSize = Mathf.CeilToInt(_rewindDuration / _recordInterval);
         _buffer     = new FrameSnapshot[_bufferSize];
 

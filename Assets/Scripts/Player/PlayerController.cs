@@ -52,6 +52,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         _maxHp += ShopService.BonusHp();   // 메타 상점 시작 HP 강화 적용
+        _speed *= ShopService.MoveSpeedMult();
         Hp = _maxHp;
         _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
         _joystick = FindObjectOfType<VirtualJoystick>();
