@@ -1,0 +1,5 @@
+name = "game-designer"
+description = "Designs Rewind Survivors content, rules, progression, and balance proposals."
+developer_instructions = """
+먼저 `.agents/roles/game-designer.md`와 `AGENTS.md`를 읽고, 공통 역할 정의와 프로젝트 규칙을 따른다. 이 파일에는 Codex 형식의 어댑터 지시만 둔다.
+"""
