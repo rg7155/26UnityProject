@@ -210,9 +210,9 @@ public static class TitleLobbyGenerator
         var menuBg = canvasRT.Find("MenuBackground");
         if (menuBg != null) lobby.SetSiblingIndex(menuBg.GetSiblingIndex() + 1);
 
-        // ── CanvasScaler 세로 세팅 ──
+        // ── CanvasScaler 세로 세팅 (이미 설정된 씬은 건드리지 않음 — 씬 고유 기준 보존) ──
         var scaler = canvas.GetComponent<CanvasScaler>();
-        if (scaler != null)
+        if (scaler != null && scaler.uiScaleMode != CanvasScaler.ScaleMode.ScaleWithScreenSize)
         {
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080f, 1920f);

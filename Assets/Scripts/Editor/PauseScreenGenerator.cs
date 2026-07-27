@@ -26,6 +26,7 @@ public static class PauseScreenGenerator
     const float ResumeButtonH = 128f;
     const float TitleButtonH = 96f;
     static readonly Vector2 PauseEntryBtnSize = new Vector2(96f, 96f);
+    const float HudStatusStripH = 180f;   // HudGenerator.StatusStripH 와 일치 — 엔트리 버튼을 그 아래 배치
 
     static readonly (string Label, string Field)[] StatRows =
     {
@@ -52,11 +53,19 @@ public static class PauseScreenGenerator
         if (font == null)
             Debug.LogWarning($"[PauseScreenGenerator] 폰트를 찾지 못했습니다: {FontPath} (기존 폰트 유지).");
 
+        // ── 전용 루트 캔버스(@PauseCanvas) — 메인 캔버스(GameScene 800×600)와 독립된 세로 1080×1920 ──
+        // HUD는 메인 캔버스 기준으로 튜닝돼 있어 건드리지 않고, Pause 오버레이만 올바른 세로 비율로 렌더한다.
+        var pauseCanvasRT = GetOrCreatePauseCanvas();
+
+        // 구버전 잔재 제거: 이전엔 PauseRoot 가 메인 캔버스 밑에 있었음 → 중복 방지
+        var stalePauseRoot = canvasRT.Find("PauseRoot");
+        if (stalePauseRoot != null)
+            Object.DestroyImmediate(stalePauseRoot.gameObject);
+
         // ── PauseRoot(풀스크린, 항상 활성 — PauseController 부착 대상) ──
-        var pauseRoot = FindOrCreateChild(canvasRT, "PauseRoot");
+        var pauseRoot = FindOrCreateChild(pauseCanvasRT, "PauseRoot");
         ClearImage(pauseRoot);
         Stretch(pauseRoot);
-        UILayerAssign.AssignLayer(pauseRoot.gameObject, UILayer.Pause);
 
         // ── PausePanel(표시/숨김 대상 — _panelRoot) ──
         var panel = FindOrCreateChild(pauseRoot, "PausePanel");
@@ -182,7 +191,7 @@ public static class PauseScreenGenerator
         var entryRT = (RectTransform)pauseEntryBtn.transform;
         entryRT.anchorMin = entryRT.anchorMax = entryRT.pivot = new Vector2(1f, 1f);
         entryRT.sizeDelta = PauseEntryBtnSize;
-        entryRT.anchoredPosition = new Vector2(-UITheme.S4, -UITheme.S4);
+        entryRT.anchoredPosition = new Vector2(-UITheme.S4, -HudStatusStripH - UITheme.S3);  // 상단 상태 스트립 아래로 내려 HP/XP 바 겹침 방지
         var entryLabel = FindOrCreateLabel(entryRT, "Label", font);
         StyleLabel(entryLabel, "II", UITheme.Button, FontStyles.Bold, UITheme.TextPrimary, TextAlignmentOptions.Center);
         Stretch(entryLabel.rectTransform);
@@ -197,22 +206,34 @@ public static class PauseScreenGenerator
         WireIfNull(co, "_pauseButton", pauseEntryBtn);
         co.ApplyModifiedProperties();
 
-        // ── CanvasScaler 세로 세팅 ──
-        var scaler = canvas.GetComponent<CanvasScaler>();
-        if (scaler != null)
-        {
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080f, 1920f);
-            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            scaler.matchWidthOrHeight = 0.5f;
-            EditorUtility.SetDirty(scaler);
-        }
-
         EditorUtility.SetDirty(controller);
         EditorUtility.SetDirty(statsView);
         EditorSceneManager.MarkSceneDirty(canvas.gameObject.scene);
         Selection.activeGameObject = pauseRoot.gameObject;
         Debug.Log("[PauseScreenGenerator] Pause 화면 생성 + 배선 완료. 필요 시 에디터에서 미세조정.");
+    }
+
+    // 메인 캔버스와 독립된 전용 오버레이 루트 캔버스(세로 1080×1920). idempotent.
+    static RectTransform GetOrCreatePauseCanvas()
+    {
+        var existing = GameObject.Find("@PauseCanvas");
+        var go = existing != null ? existing : new GameObject("@PauseCanvas");
+
+        var canvas = go.GetComponent<Canvas>();
+        if (canvas == null) canvas = go.AddComponent<Canvas>();   // Canvas 추가 시 RectTransform 자동 부착
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = (int)UILayer.Pause;                 // HUD/모달 위
+
+        var scaler = go.GetComponent<CanvasScaler>();
+        if (scaler == null) scaler = go.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1080f, 1920f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+
+        if (go.GetComponent<GraphicRaycaster>() == null) go.AddComponent<GraphicRaycaster>();
+
+        return (RectTransform)go.transform;
     }
 
     // 스텟 카드 한 행: 왼쪽 라벨명(고정) + 오른쪽 값(placeholder "--"). 값 TMP_Text 반환.
