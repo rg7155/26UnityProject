@@ -69,10 +69,11 @@ public class RewindManager : MonoBehaviour
 
     void Update()
     {
+        if (Managers.Game.State != GameState.Playing) return;
+
+        // 업그레이드 패널은 timeScale=0을 쓰지 않으므로, 쿨타임도 상태 가드 아래에 있어야 멈춘다
         if (_cooldownTimer > 0f)
             _cooldownTimer -= Time.deltaTime;
-
-        if (Managers.Game.State != GameState.Playing) return;
 
         // 스냅샷 기록
         _recordTimer += Time.deltaTime;
