@@ -5,7 +5,7 @@
 **먼저 이 KB를 검색**해 유사 패턴을 참조한 뒤 구현한다.
 
 > 이건 장식용 문서가 아니라 실제 워크플로에 연결(wiring)된 자산이다.
-> 트리거는 [CLAUDE.md](../../CLAUDE.md)의 `## 하네스` 섹션에 명시돼 있다.
+> 트리거는 [AGENTS.md](../../AGENTS.md)의 `## 하네스` 섹션에 명시돼 있다.
 
 ## 왜 만들었나
 
@@ -50,6 +50,7 @@ LLM은 매 세션 컨텍스트를 새로 읽는다. 과거에 이 프로젝트�
 - [procedural-sprite-not-serialized](bug-patterns/procedural-sprite-not-serialized.md) — 코드 생성 Texture2D/Sprite를 프리팹에 구우면 직렬화 안 돼 런타임 흰 박스 → 런타임 컴포넌트로 재생성
 - [nested-canvas-generator-duplication](bug-patterns/nested-canvas-generator-duplication.md) — overrideSorting 중첩 Canvas로 FindFirstObjectByType<Canvas> 오탐 → 생성기 루트 중복 + 파괴 시 참조 소실. rootCanvas + 파괴 전 대피로 해결
 - [pooled-object-survives-scene-change](bug-patterns/pooled-object-survives-scene-change.md) — DontDestroyOnLoad 풀의 활성 오브젝트가 씬 전환 후 살아남아 다음 씬에서 유령 콜백(NRE). Clear가 실물 파괴하도록 + ChangeScene에서 호출
+- [dual-pause-timer-leak](bug-patterns/dual-pause-timer-leak.md) — 정지 경로가 GameState/timeScale 두 갈래라, 상태 가드 위에 있던 되감기 쿨타임이 업그레이드 패널에서만 계속 흐름. 시간 누적을 가드 아래로
 
 ### lessons-learned
 - [steering-weight-clamping](lessons-learned/steering-weight-clamping.md) — 여러 steering 힘 합성 시 상한 클램프 원칙
