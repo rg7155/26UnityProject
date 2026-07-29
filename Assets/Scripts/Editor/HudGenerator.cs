@@ -16,13 +16,16 @@ public static class HudGenerator
     const string FontPath = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
 
     // ── 세로 튜닝값(스크린샷 피드백으로 조정) — Reference 1080×1920 기준 ──
-    const float StatusStripH = 180f;
     const float HpBarH = 30f;
     const float ExpBarH = 22f;
     static readonly Vector2 GoldChipSize = new Vector2(150f, 44f);
     const float StatRowH = 56f;
     const float LvBadgeW = 90f;
-    const float RewindBtnSize = 150f;
+
+    // 우하단 조작 클러스터의 기준 — PauseScreenGenerator 가 이 위에 Pause 버튼을 쌓는다(값 복사 금지).
+    public const float RewindBtnSize = 150f;
+    public const float RewindBtnMargin = UITheme.S6;
+
     const int RewindTexRadius = 128; // 절차 텍스처 해상도(표시 크기는 sizeDelta)
     const int RingThicknessTex = 18;
     const float PipSize = 28f;
@@ -30,13 +33,8 @@ public static class HudGenerator
     [MenuItem("Tools/UI/Build HUD")]
     public static void BuildHud()
     {
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[HudGenerator] 씬에서 Canvas 를 찾지 못했습니다. GameScene 을 연 상태로 실행하세요.");
-            return;
-        }
-        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("HudGenerator"); // @PauseCanvas 오탐 방지 — 순서 비의존 확정
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
         if (font == null)
@@ -59,7 +57,7 @@ public static class HudGenerator
         strip.anchorMin = new Vector2(0f, 1f);
         strip.anchorMax = new Vector2(1f, 1f);
         strip.pivot = new Vector2(0.5f, 1f);
-        strip.sizeDelta = new Vector2(0f, StatusStripH);
+        strip.sizeDelta = new Vector2(0f, UIHudLayout.StatusStripH);
         strip.anchoredPosition = Vector2.zero;
 
         // HP / XP 슬라이더를 스트립 상단으로 재배치 + 리스킨
@@ -126,7 +124,7 @@ public static class HudGenerator
         UIBuild.ApplyCtaColors(rewindBtn);
         rewindRT.anchorMin = rewindRT.anchorMax = rewindRT.pivot = new Vector2(1f, 0f);
         rewindRT.sizeDelta = new Vector2(RewindBtnSize, RewindBtnSize);
-        rewindRT.anchoredPosition = new Vector2(-UITheme.S6, UITheme.S6);
+        rewindRT.anchoredPosition = new Vector2(-RewindBtnMargin, RewindBtnMargin);
 
         // 쿨다운 링(Filled Radial360) — procedural 적용 후 type=Filled 세팅(순서 중요)
         var ring = FindOrCreateChild(rewindRT, "CooldownRing");
@@ -170,6 +168,11 @@ public static class HudGenerator
             pipsProp.GetArrayElementAtIndex(0).objectReferenceValue = pipImg;
         }
         ru.ApplyModifiedProperties();
+
+        // ── 잘못된 캔버스에 생긴 HudRoot 한 벌 제거 ──
+        // 반드시 여기(맨 끝)에서 한다. 씬에 하나뿐인 HpBar/ExpBar/Lv 텍스트는 위 SkinBar·PlaceLevelBadge 가
+        // 이미 올바른 StatusStrip 으로 재부모화(대피)해 뒀다. 그 전에 지우면 함께 파괴된다.
+        UIGenScene.PurgeStrays("HudGenerator", hudRoot);
 
         EditorUtility.SetDirty(hudStats);
         EditorUtility.SetDirty(rewindUI);

@@ -27,6 +27,8 @@ public static class TitleLobbyGenerator
     const float ShopWidthPct = 0.65f;   // SHOP 버튼 폭(화면 대비, 중앙 정렬)
     const float LogoY = 220f;           // 중앙 클러스터를 화면 세로 중앙에 가깝게
     const float RecordCardY = -60f;
+    const float BossRushButtonH = 72f;  // SHOP/QUEST(96)보다 낮게 — 데모 진입이라 보조 위계
+    const float BossRushWidthPct = 0.45f;
 
     [MenuItem("Tools/UI/Build Title Lobby")]
     public static void BuildTitleLobby()
@@ -37,13 +39,8 @@ public static class TitleLobbyGenerator
             Debug.LogError("[TitleLobbyGenerator] 씬에서 TitleScene 을 찾지 못했습니다. Title 씬을 연 상태로 실행하세요.");
             return;
         }
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[TitleLobbyGenerator] 씬에서 Canvas 를 찾지 못했습니다.");
-            return;
-        }
-        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("TitleLobbyGenerator"); // 전용 '@' 캔버스 오탐 방지
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
 
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
@@ -205,6 +202,53 @@ public static class TitleLobbyGenerator
                 Stretch(shopLabel.rectTransform);
             }
         }
+
+        // ── BOSS RUSH(데모/심사용 진입) — 버튼 스택 최상단. 더 좁고 낮게 + 보스 레드 아웃라인으로 보조 위계 ──
+        // 기준을 QUEST(없으면 SHOP)의 실제 rect 에서 읽어 QuestUIGenerator 실행 여부와 무관하게 겹치지 않는다.
+        var questButton = so.FindProperty("_questButton").objectReferenceValue as Button;
+        var stackRT = questButton != null ? (RectTransform)questButton.transform
+                    : shopButton != null ? (RectTransform)shopButton.transform
+                    : null;
+        if (stackRT != null)
+        {
+            var bossRushButton = so.FindProperty("_bossRushButton").objectReferenceValue as Button;
+            var bossRT = bossRushButton != null
+                ? (RectTransform)bossRushButton.transform
+                : FindOrCreateChild(bottom, "BossRushButton");
+            bossRT.SetParent(bottom, false);
+            if (bossRushButton == null)
+            {
+                bossRushButton = bossRT.GetComponent<Button>();
+                if (bossRushButton == null) bossRushButton = bossRT.gameObject.AddComponent<Button>();
+            }
+
+            ApplyProcedural(bossRT.gameObject, true, UITheme.RadMd, UITheme.OutlineWidth, UITheme.CardSurface, UITheme.Danger);
+            var bimg = bossRT.GetComponent<Image>();
+            if (bimg != null) bimg.color = Color.white;
+            var bcolors = bossRushButton.colors;
+            bcolors.normalColor = Color.white;
+            bcolors.highlightedColor = Color.white;
+            bcolors.pressedColor = UITheme.Divider;
+            bcolors.selectedColor = Color.white;
+            bcolors.disabledColor = UITheme.TextDisabled;
+            bcolors.fadeDuration = UITheme.FadeDuration;
+            bossRushButton.colors = bcolors;
+
+            float bossSideFrac = (1f - BossRushWidthPct) * 0.5f;
+            bossRT.anchorMin = new Vector2(bossSideFrac, 0f);
+            bossRT.anchorMax = new Vector2(1f - bossSideFrac, 0f);
+            bossRT.pivot = new Vector2(0.5f, 0f);
+            bossRT.sizeDelta = new Vector2(0f, BossRushButtonH);
+            bossRT.anchoredPosition = new Vector2(0f, stackRT.anchoredPosition.y + stackRT.sizeDelta.y + UITheme.S3);
+
+            var bossLabel = FindOrCreateLabel(bossRT, "Label", font);
+            StyleLabel(bossLabel, "BOSS RUSH", UITheme.Body, FontStyles.Bold, UITheme.Danger, TextAlignmentOptions.Center);
+            Stretch(bossLabel.rectTransform);
+
+            WireIfNull(so, "_bossRushButton", bossRushButton);
+            so.ApplyModifiedProperties();
+        }
+        else Debug.LogWarning("[TitleLobbyGenerator] SHOP/QUEST 버튼을 찾지 못해 BOSS RUSH 버튼을 배치하지 못했습니다.");
 
         // ── sibling 정리: MenuBackground 위에 로비. 상점(모달)의 상하 순서는 UILayer(Modal)가 결정. ──
         var menuBg = canvasRT.Find("MenuBackground");

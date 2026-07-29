@@ -25,8 +25,8 @@ public static class PauseScreenGenerator
     const float BottomBarH = 320f;
     const float ResumeButtonH = 128f;
     const float TitleButtonH = 96f;
-    static readonly Vector2 PauseEntryBtnSize = new Vector2(96f, 96f);
-    const float HudStatusStripH = 180f;   // HudGenerator.StatusStripH 와 일치 — 엔트리 버튼을 그 아래 배치
+    static readonly Vector2 PauseEntryBtnSize = new Vector2(72f, 72f);
+    const float PauseEntryGap = UITheme.S6; // REWIND 와의 세로 간격 — 자주 누르는 REWIND 의 오터치 방지
 
     static readonly (string Label, string Field)[] StatRows =
     {
@@ -41,13 +41,8 @@ public static class PauseScreenGenerator
     [MenuItem("Tools/UI/Build Pause Screen")]
     public static void BuildPauseScreen()
     {
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[PauseScreenGenerator] 씬에서 Canvas 를 찾지 못했습니다. GameScene 을 연 상태로 실행하세요.");
-            return;
-        }
-        canvas = canvas.rootCanvas;   // 중첩 UILayerCanvas 오탐 방지 — 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("PauseScreenGenerator"); // 자기가 만든 @PauseCanvas 를 되잡지 않도록
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
         if (font == null)
@@ -56,11 +51,6 @@ public static class PauseScreenGenerator
         // ── 전용 루트 캔버스(@PauseCanvas) — 메인 캔버스(GameScene 800×600)와 독립된 세로 1080×1920 ──
         // HUD는 메인 캔버스 기준으로 튜닝돼 있어 건드리지 않고, Pause 오버레이만 올바른 세로 비율로 렌더한다.
         var pauseCanvasRT = GetOrCreatePauseCanvas();
-
-        // 구버전 잔재 제거: 이전엔 PauseRoot 가 메인 캔버스 밑에 있었음 → 중복 방지
-        var stalePauseRoot = canvasRT.Find("PauseRoot");
-        if (stalePauseRoot != null)
-            Object.DestroyImmediate(stalePauseRoot.gameObject);
 
         // ── PauseRoot(풀스크린, 항상 활성 — PauseController 부착 대상) ──
         var pauseRoot = FindOrCreateChild(pauseCanvasRT, "PauseRoot");
@@ -179,7 +169,8 @@ public static class PauseScreenGenerator
         StyleLabel(titleBtnLabel, "TITLE", UITheme.Button, FontStyles.Bold, UITheme.TextPrimary, TextAlignmentOptions.Center);
         Stretch(titleBtnLabel.rectTransform);
 
-        // ── 우상단 Pause 진입 버튼 — HUD 레이어(PauseRoot 밖, 항상 눌리는 위치) ──
+        // ── 우하단 Pause 진입 버튼 — HUD 레이어(PauseRoot 밖, 항상 눌리는 위치) ──
+        // 상단은 정보 표시(StatusStrip/보스 밴드) 전용이라 조작 버튼은 우하단 클러스터로 내린다.
         var hudRoot = canvasRT.Find("HudRoot") as RectTransform;
         var pauseEntryParent = hudRoot != null ? hudRoot : canvasRT;
         var pauseEntryBtn = FindOrCreateButton(pauseEntryParent, "PauseEntryButton");
@@ -189,12 +180,19 @@ public static class PauseScreenGenerator
         if (hudRoot == null)
             UILayerAssign.AssignLayer(pauseEntryBtn.gameObject, UILayer.Hud);
         var entryRT = (RectTransform)pauseEntryBtn.transform;
-        entryRT.anchorMin = entryRT.anchorMax = entryRT.pivot = new Vector2(1f, 1f);
+        entryRT.anchorMin = entryRT.anchorMax = entryRT.pivot = new Vector2(1f, 0f);
         entryRT.sizeDelta = PauseEntryBtnSize;
-        entryRT.anchoredPosition = new Vector2(-UITheme.S4, -HudStatusStripH - UITheme.S3);  // 상단 상태 스트립 아래로 내려 HP/XP 바 겹침 방지
+        // REWIND 기하는 HudGenerator 가 소유 — 여기선 읽기만 하고 그 위로 쌓는다(가로 중심 정렬).
+        float entryX = HudGenerator.RewindBtnMargin + (HudGenerator.RewindBtnSize - PauseEntryBtnSize.x) * 0.5f;
+        float entryY = HudGenerator.RewindBtnMargin + HudGenerator.RewindBtnSize + PauseEntryGap;
+        entryRT.anchoredPosition = new Vector2(-entryX, entryY);
         var entryLabel = FindOrCreateLabel(entryRT, "Label", font);
         StyleLabel(entryLabel, "II", UITheme.Button, FontStyles.Bold, UITheme.TextPrimary, TextAlignmentOptions.Center);
         Stretch(entryLabel.rectTransform);
+
+        // 잘못된 HudRoot 에 생긴 진입 버튼 제거 — 배선보다 먼저. 기존 _pauseButton 이 그 유령을 가리키고
+        // 있었다면 여기서 null 이 되고, 아래 WireIfNull 이 올바른 버튼으로 다시 배선한다.
+        UIGenScene.PurgeStrays("PauseScreenGenerator", entryRT);
 
         // ── PauseController 배선(항상 활성 PauseRoot 에 부착, _panelRoot 는 PausePanel) ──
         var controller = pauseRoot.GetComponent<PauseController>();
@@ -205,6 +203,10 @@ public static class PauseScreenGenerator
         WireIfNull(co, "_titleButton", titleBtn);
         WireIfNull(co, "_pauseButton", pauseEntryBtn);
         co.ApplyModifiedProperties();
+
+        // 구버전 잔재 제거: 이전엔 PauseRoot 가 메인 캔버스 밑에 있었다. 배선 뒤에 지워야
+        // 정식 PauseRoot 가 PauseController 를 이미 갖고 있어 "유일본 보호"에 걸리지 않는다.
+        UIGenScene.PurgeStrays("PauseScreenGenerator", pauseRoot);
 
         EditorUtility.SetDirty(controller);
         EditorUtility.SetDirty(statsView);

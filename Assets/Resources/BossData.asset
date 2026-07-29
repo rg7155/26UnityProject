@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b3e2acbe06e0bf4299ff9bf0a14ce4c, type: 3}
+  m_Name: BossData
+  m_EditorClassIdentifier: Assembly-CSharp::BossData
+  bossName: MONOLITH
+  hp: 300
+  moveSpeed: 1.6
+  expReward: 100
+  goldReward: 150
+  contactDamage: 25
+  contactInterval: 1
+  phase1Color: {r: 0, g: 1, b: 1, a: 1}
+  phase2Color: {r: 1, g: 0, b: 0, a: 1}
+  patternSequence: 00000000
+  slamTelegraph: 1
+  slamRadius: 2.5
+  slamDamage: 35
+  slamCooldown: 5
+  radialTelegraph: 0.6
+  radialCount: 12
+  radialCountPhase2: 16
+  radialDamage: 20
+  radialSpeed: 4.5
+  radialLifetime: 3
+  radialCooldown: 6
+  chargeTelegraph: 0.8
+  chargeSpeed: 12
+  chargeDuration: 1.2
+  chargeDamage: 30
+  chargeCooldown: 8
+  phase2HpRatio: 0.5
+  phase2CooldownMult: 0.7
+  leashDistance: 9
+  leashReturnDistance: 5
+  leashSpeedMult: 2.6

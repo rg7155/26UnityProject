@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum QuestStat { Kills, SurviveTime, Rewinds, Gold }
+public enum QuestStat { Kills, SurviveTime, Rewinds, Gold, BossKills }
 
 // 메타 누적 도전과제 정의 — 에셋을 Resources/Quests/ 에 추가하면 자동 등장.
 // QuestService가 LoadAll로 읽는다. targets/rewards 길이가 티어 수 (동일 길이).

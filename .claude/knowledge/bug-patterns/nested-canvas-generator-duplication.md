@@ -49,6 +49,54 @@ files: [Assets/Scripts/Editor/ResultSceneGenerator.cs, Assets/Scripts/Editor/Hud
 - 데이터 소실 사고 시: **작업이 미커밋이면 `git checkout HEAD -- 씬.unity`로 원본 복구** 가능
   (씬을 아직 커밋 안 했으면 원본에 참조가 살아있다).
 
+## 재발 사례 2 — **형제** 루트 캔버스 오인 (`.rootCanvas`로는 못 막는다)
+
+위 해결책 1(`canvas.rootCanvas`)은 **중첩**만 막는다. 그 뒤 `PauseScreenGenerator`가
+`@PauseCanvas`라는 **별도 루트 캔버스**(Reference 1080×1920, 메인은 800×600)를 만들면서
+같은 버그가 다시 났다.
+
+### 증상
+보스 HUD 작업 후 `Build HUD → Build Boss HUD → Build Pause Screen` 순서로 실행하자
+**HUD가 통째로 두 벌** 생성됐다. 보스 HP 바·REWIND 버튼·Score/Timer/Gold·Lv 배지가
+전부 2개씩, **서로 다른 배율로** 겹쳐 보였다(두 캔버스의 Reference 해상도가 달라서).
+
+### 근본 원인
+`FindFirstObjectByType<Canvas>`는 **반환 순서를 보장하지 않는다.** `@PauseCanvas`가 씬에
+이미 존재하는 상태에서 `Build HUD`를 돌리면 그걸 메인 캔버스로 오인하고, 그 아래에
+`HudRoot` 한 벌을 새로 만든다. `.rootCanvas`는 이미 루트인 `@PauseCanvas`를 그대로 돌려주므로
+**정규화가 아무 방어도 못 한다.**
+
+`BossHudGenerator`만 `ResolveHudCanvas()`(HpBar 역추적)로 방어하고 있었으나, `HudGenerator`가
+`@PauseCanvas` 아래에 HpBar를 만들어버리면 그 역추적도 함께 뚫린다.
+
+**방아쇠는 실행 순서였다.** 이전엔 Pause 생성기를 마지막에 돌려서 우연히 안 터졌을 뿐이다.
+
+### 해결
+공용 리졸버 `UIGenScene.ResolveMainCanvas(tag)` 하나로 통일하고 **모든** 생성기가 그것만 쓴다.
+- 씬의 Canvas를 전부 모아 `rootCanvas`로 정규화·중복 제거 → **캔버스 "집합"만 보므로 순서 비의존**
+- **`@` 접두사 루트는 후보에서 제외**(생성기 전용 오버레이 규약 = Hierarchy 네이밍 규칙과 동일)
+- 후보 1개면 확정, 여러 개면 이름이 `Canvas`인 유일한 하나
+- **못 정하면 조용히 아무거나 고르지 않고 `LogError` 후 중단** ← 이 버그의 본질이 "조용히 틀린 걸 골랐다"였다
+
+이미 생긴 중복은 `UIGenScene.PurgeStrays`가 자가 치유한다. 파괴 전 안전장치로
+**그 서브트리에만 존재하는 로직 컴포넌트(씬의 유일본)가 있으면 지우지 않고 경고**한다
+(사례 1의 "참조 소실" 재발 방지).
+
+`Tools/UI/Check HUD Overlap`에 **"메인 캔버스 밖에 HUD 컴포넌트가 있으면 경고"** 를 추가했다 —
+겹침 검사만으로는 다른 캔버스에 생긴 유령 UI를 못 본다.
+
+### 재인식 패턴 ⚠️
+- **생성기가 전용 루트 캔버스(`@PauseCanvas` 등)를 만드는 프로젝트에서 `FindFirstObjectByType<Canvas>`는
+  실행 순서에 따라 결과가 달라진다.** `.rootCanvas` 정규화는 중첩만 막고 형제는 못 막는다.
+- **"같은 UI가 두 가지 크기로 겹쳐 보인다"** → 서로 다른 Reference 해상도를 가진 **두 캔버스**에
+  같은 것이 생성된 것. 한쪽을 지우기 전에 어느 쪽이 올바른 캔버스인지부터 확정하라.
+- **생성기를 실행하는 순서를 바꿨더니 결과가 달라졌다** → 씬 조회가 순서 비의존인지 점검.
+  "지금까지 잘 됐다"는 우연일 수 있다.
+- 일반 규칙: **씬 조회로 대상을 하나 고르는 코드는 후보가 여럿일 때 침묵하면 안 된다.**
+  확정 규칙을 명시하고, 확정 실패 시 중단하라.
+
 ## 관련
 - UI 레이어 시스템: `UILayerCanvas`/`UILayerAssign`, `UIManager.UILayer`.
 - 절차 스프라이트 직렬화 이슈는 별도: [[procedural-sprite-not-serialized]].
+- 상단 HUD 밴드 좌표 충돌(같은 슬롯을 두 생성기가 계산)은 `UIHudLayout` 단일 소유자로 해결 — 같은 계열의
+  "좌표·대상 소유권이 분산되면 조용히 충돌한다" 패턴.

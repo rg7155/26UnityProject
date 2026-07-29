@@ -10,10 +10,15 @@ public class WaveData : ScriptableObject
     public float spawnInterval;     // 스폰 간격 (초)
     public int spawnCountPerBurst;  // 한 번에 스폰할 적 수
 
-    [Header("적 프리팹")]
+    [Header("잡몹 프리팹")]
     public GameObject enemyPrefab;   // 이 웨이브에서 스폰할 적 프리팹
 
-    [Header("적 스탯")]
+    [Header("잡몹 스탯 — 보스에는 적용되지 않음(BossData가 원본)")]
     public int enemyHp;
     public float enemySpeed;
+
+    [Header("보스 — 위 잡몹 설정은 보스전 중에도 계속 쓰인다")]
+    public bool isBossWave;
+    public GameObject bossPrefab;    // 스탯은 BossData가 원본 — 여기선 등장만 지정
+    public float warningLeadTime;    // 웨이브 시작 이 초 전부터 WARNING 표시 + 잡몹 스폰 중단
 }

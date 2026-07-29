@@ -36,13 +36,8 @@ public static class QuestUIGenerator
             Debug.LogError("[QuestUIGenerator] 씬에서 TitleScene 을 찾지 못했습니다. Title 씬을 연 상태로 실행하세요.");
             return;
         }
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[QuestUIGenerator] 씬에서 Canvas 를 찾지 못했습니다.");
-            return;
-        }
-        canvas = canvas.rootCanvas; // nested Canvas(UILayerCanvas) 오탐 방지
+        var canvas = UIGenScene.ResolveMainCanvas("QuestUIGenerator"); // 전용 '@' 캔버스 오탐 방지
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
 
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);

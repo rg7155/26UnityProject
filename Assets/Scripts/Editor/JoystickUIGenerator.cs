@@ -22,13 +22,8 @@ public static class JoystickUIGenerator
     [MenuItem("Tools/UI/Build Virtual Joystick")]
     public static void BuildVirtualJoystick()
     {
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[JoystickUIGenerator] 씬에서 Canvas 를 찾지 못했습니다. GameScene 을 연 상태로 실행하세요.");
-            return;
-        }
-        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("JoystickUIGenerator"); // @PauseCanvas 오탐 방지 — 순서 비의존 확정
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
 
         // ── 루트: VirtualJoystick(풀스크린 스트레치) + CanvasGroup ──
@@ -68,6 +63,10 @@ public static class JoystickUIGenerator
         Center(knob);
         knob.sizeDelta = new Vector2(knobDiameter, knobDiameter);
         EnsureProcedural(knob).ConfigureCircle(TexRadius, UITheme.JoystickKnob);
+
+        // 다른 캔버스/다른 부모에 남은 조이스틱 제거 — PlayerController 가 FindObjectOfType 로 잡으므로
+        // 두 벌이 있으면 어느 쪽이 살아나는지 비결정적이 된다. 배선 전에 치운다.
+        UIGenScene.PurgeStrays("JoystickUIGenerator", joyRT);
 
         // ── 참조 자동 배선(드래그 대체) ──
         var so = new SerializedObject(joy);

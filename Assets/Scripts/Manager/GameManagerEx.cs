@@ -36,6 +36,7 @@ public class GameData
     public int LifetimeKills;
     public int LifetimeRewinds;
     public int LifetimeGold;
+    public int LifetimeBossKills;
     public List<QuestProgress> QuestClaims = new List<QuestProgress>();
 }
 
@@ -71,6 +72,7 @@ public class GameManagerEx
     public int RunGold { get; set; }   // 이번 판 획득분 — 비직렬화, CommitResult에서 뱅킹
     public int RunKills { get; set; }     // 이번 판 처치 수 — 비직렬화
     public int RunRewinds { get; set; }   // 이번 판 되감기 수 — 비직렬화
+    public int RunBossKills { get; set; } // 이번 판 보스 처치 수 — 비직렬화
 
     public void SpendGold(int amount) { _gameData.TotalGold -= amount; }
     public void AddGold(int amount) { _gameData.TotalGold += amount; }
@@ -109,6 +111,7 @@ public class GameManagerEx
         _gameData.LifetimeKills += RunKills;
         _gameData.LifetimeRewinds += RunRewinds;
         _gameData.LifetimeGold += RunGold;
+        _gameData.LifetimeBossKills += RunBossKills;
         SaveGame();
     }
 

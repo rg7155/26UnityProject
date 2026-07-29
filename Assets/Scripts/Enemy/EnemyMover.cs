@@ -11,7 +11,7 @@ public class EnemyMover : EnemyBase
     float _attackCooldown = 0f;
     EnemyJobScheduler _scheduler;   // 씬 간 참조 캐시
 
-    public float AttackCooldown { get { return _attackCooldown; } }
+    public override float AttackCooldown { get { return _attackCooldown; } }
 
     void Start()
     {

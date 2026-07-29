@@ -29,6 +29,9 @@ public class EnemyBase : MonoBehaviour
     public float      Speed        { get { return _speed; } }
     public GameObject OriginPrefab { get { return _originPrefab; } }
 
+    // 접촉 쿨다운은 파생 클래스가 각자 들고 있다 — Rewind 캡처가 타입 분기 없이 읽기 위한 확장 지점
+    public virtual float AttackCooldown { get { return 0f; } }
+
     public virtual void Init(Transform target, GameObject originPrefab, int hp = -1, float speed = -1f)
     {
         _target = target;

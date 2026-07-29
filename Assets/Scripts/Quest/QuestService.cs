@@ -24,6 +24,7 @@ public static class QuestService
             case QuestStat.Kills:       return D.LifetimeKills;
             case QuestStat.Rewinds:     return D.LifetimeRewinds;
             case QuestStat.Gold:        return D.LifetimeGold;
+            case QuestStat.BossKills:   return D.LifetimeBossKills;
             case QuestStat.SurviveTime: return Mathf.RoundToInt(D.BestTime);
             default:                    return 0;
         }

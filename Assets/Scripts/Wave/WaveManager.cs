@@ -20,6 +20,18 @@ public class WaveManager : MonoBehaviour
 
     WaveData CurrentWave { get { return _waves[_waveIndex]; } }
 
+    // 상태 플래그가 아니라 _gameTime에서 매 프레임 계산 — 복원할 상태가 없으면 되감기 버그도 없다
+    public bool BossWarningActive
+    {
+        get
+        {
+            if (_waves == null || _waveIndex + 1 >= _waves.Length) return false;
+            WaveData next = _waves[_waveIndex + 1];
+            if (!next.isBossWave) return false;
+            return _gameTime >= next.startTime - next.warningLeadTime && _gameTime < next.startTime;
+        }
+    }
+
     void Start()
     {
         // WaveData 에셋을 Resources/Waves/ 에서 로드 (이름 오름차순 정렬)
@@ -55,8 +67,10 @@ public class WaveManager : MonoBehaviour
 
         if (_spawnTimer <= 0f)
         {
-            SpawnBurst();
-            _spawnTimer = CurrentWave.spawnInterval;
+            if (!BossWarningActive)
+                SpawnBurst();
+            // 보스전 중엔 완전 정지가 아니라 완화 — 잡몹이 없으면 EXP 공급이 끊긴다
+            _spawnTimer = CurrentWave.spawnInterval * (BossController.Instance != null ? 3f : 1f);
         }
     }
 
@@ -70,6 +84,13 @@ public class WaveManager : MonoBehaviour
             _spawnTimer = 0f;
             OnWaveChanged?.Invoke(_waveIndex + 1);
             Debug.Log($"[WaveManager] Wave {_waveIndex + 1} 시작 ({_gameTime:F0}초)");
+
+            // 되감기로 시간이 되돌아간 뒤 다시 전진하면 이 전환이 재발화한다 — Instance 가드로 2마리 방지
+            if (CurrentWave.isBossWave && CurrentWave.bossPrefab != null && BossController.Instance == null)
+            {
+                _spawner.Spawn(CurrentWave.bossPrefab, -1, -1f);
+                FindObjectOfType<RewindManager>()?.ResetCooldown();
+            }
         }
     }
 

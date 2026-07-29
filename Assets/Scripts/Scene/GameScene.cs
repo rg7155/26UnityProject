@@ -15,6 +15,7 @@ public class GameScene : MonoBehaviour
         Managers.Game.RunGold = 0;
         Managers.Game.RunKills = 0;
         Managers.Game.RunRewinds = 0;
+        Managers.Game.RunBossKills = 0;
     }
 
     void Start()

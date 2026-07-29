@@ -47,6 +47,18 @@ public class RewindManager : MonoBehaviour
         if (CanActiveRewind) StartCoroutine(DoRewind());
     }
 
+    // 보스 등장 순간 호출 — 되감기를 곧바로 쓸 수 있어야 보스전이 성립한다
+    public void ResetCooldown()
+    {
+        _cooldownTimer = 0f;
+    }
+
+    // 보스 처치 보상 — 사망 부활 횟수 1회분
+    public void AddAutoRewindCharge()
+    {
+        _autoRewindCharges++;
+    }
+
     void Start()
     {
         _rewindDuration = ShopService.RewindDuration();
@@ -99,6 +111,7 @@ public class RewindManager : MonoBehaviour
                 player  = CapturePlayer(),
                 enemies = CaptureEnemies(),
                 wave    = CaptureWave(),
+                boss    = CaptureBoss(),
             };
 
             _buffer[_tail] = frame;
@@ -135,7 +148,6 @@ public class RewindManager : MonoBehaviour
             int i = 0;
             foreach (EnemyBase e in registry.Values)
             {
-                EnemyMover mover = e as EnemyMover;
                 snapshots[i++] = new EnemySnapshot
                 {
                     entityId       = e.EntityId,
@@ -144,7 +156,7 @@ public class RewindManager : MonoBehaviour
                     position       = e.transform.position,
                     hp             = e.Hp,
                     speed          = e.Speed,
-                    attackCooldown = mover != null ? mover.AttackCooldown : 0f,
+                    attackCooldown = e.AttackCooldown,
                 };
             }
 
@@ -160,6 +172,13 @@ public class RewindManager : MonoBehaviour
             spawnTimer = _waveManager.SpawnTimer,
             waveIndex  = _waveManager.WaveIndex,
         };
+    }
+
+    BossSnapshot CaptureBoss()
+    {
+        BossController boss = BossController.Instance;
+        if (boss == null) return default;   // active = false
+        return boss.CaptureState();
     }
 
     // ── 되감기 실행 ──────────────────────────────────────────
@@ -183,6 +202,7 @@ public class RewindManager : MonoBehaviour
     IEnumerator DoRewind()
     {
         FindObjectOfType<VirtualJoystick>()?.Cancel();  // Shift·Auto-Rewind 공통 — 재개 시 옛 터치로 스냅 방지
+        BossProjectile.ClearAll();  // 탄환은 스냅샷에 없어 남겨두면 복원된 세계와 불일치
         Managers.Game.RunRewinds++;   // 능동·자동부활 모두 이 코루틴을 통과
         Managers.Game.State = GameState.Rewinding;
 
@@ -196,7 +216,8 @@ public class RewindManager : MonoBehaviour
             FrameSnapshot toFrame   = _buffer[indices[i - 1]];
 
             ApplyPlayer(toFrame.player);
-            ApplyEnemies(toFrame.enemies);
+            ApplyEnemies(toFrame.enemies);   // 보스가 풀에서 부활(B2)하거나 반납(C)될 수 있다
+            ApplyBoss(toFrame.boss);         // 그 뒤라야 Instance가 확정된다
             ApplyWave(toFrame.wave);
 
             Vector3 playerFrom = fromFrame.player.position;
@@ -234,6 +255,7 @@ public class RewindManager : MonoBehaviour
         FrameSnapshot finalFrame = _buffer[indices[0]];
         ApplyPlayer(finalFrame.player);
         ApplyEnemies(finalFrame.enemies);
+        ApplyBoss(finalFrame.boss);
         ApplyWave(finalFrame.wave);
 
         _count = 0;
@@ -303,6 +325,14 @@ public class RewindManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    void ApplyBoss(BossSnapshot s)
+    {
+        BossController boss = BossController.Instance;
+        if (boss == null || !s.active) return;
+        if (boss.EntityId != s.entityId) return;   // 다른 개체면 적용 금지
+        boss.RestoreBossState(s);
     }
 
     void ApplyWave(WaveSnapshot s)

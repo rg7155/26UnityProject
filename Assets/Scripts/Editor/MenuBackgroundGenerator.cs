@@ -12,14 +12,8 @@ public static class MenuBackgroundGenerator
     [MenuItem("Tools/UI/Build Menu Background")]
     public static void BuildMenuBackground()
     {
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[MenuBackgroundGenerator] 씬에서 Canvas 를 찾지 못했습니다. 대상 씬을 연 상태로 실행하세요.");
-            return;
-        }
-
-        canvas = canvas.rootCanvas;   // UILayerCanvas 중첩 Canvas 오탐 방지 — 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("MenuBackgroundGenerator"); // 전용 '@' 캔버스 오탐 방지
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
         var bgRT = canvasRT.Find("MenuBackground") as RectTransform;
         if (bgRT == null)

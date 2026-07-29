@@ -39,13 +39,8 @@ public static class ResultSceneGenerator
             Debug.LogError("[ResultSceneGenerator] 씬에서 ResultScene 을 찾지 못했습니다. Result 씬을 연 상태로 실행하세요.");
             return;
         }
-        var canvas = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Include);
-        if (canvas == null)
-        {
-            Debug.LogError("[ResultSceneGenerator] 씬에서 Canvas 를 찾지 못했습니다.");
-            return;
-        }
-        canvas = canvas.rootCanvas;   // UILayerCanvas 가 추가한 중첩 Canvas 가 잡혀도 항상 루트 기준
+        var canvas = UIGenScene.ResolveMainCanvas("ResultSceneGenerator"); // 전용 '@' 캔버스 오탐 방지
+        if (canvas == null) return;
         var canvasRT = (RectTransform)canvas.transform;
 
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);

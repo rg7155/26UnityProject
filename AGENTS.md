@@ -130,6 +130,33 @@ SerializeField:  _camelCase     (예: [SerializeField] float _speed)
 | 씬 전역 시각 효과 | `--- UI ---` > Canvas 밖 | Global Light 2D, RewindVolume |
 | 카메라 | `--- UI ---` > Canvas 밖 | Main Camera |
 
+## Physics 레이어 규칙
+
+코드에서 레이어를 이름으로 조회하지 않는다(`LayerMask`/`NameToLayer` 미사용). 충돌 제어는 전적으로
+`Project Settings > Physics 2D`의 Layer Collision Matrix가 담당한다.
+
+| # | 레이어 | 대상 |
+|---|--------|------|
+| 6 | `Enemy` | 잡몹 전체, **보스**(기존 무기 판정을 그대로 타야 하므로 반드시 여기) |
+| 7 | `Projectile` | 플레이어 무기 — Projectile, Orbiter 등 |
+| 8 | `BossProjectile` | 보스 방사탄 |
+| 9 | `Player` | 플레이어 |
+
+**충돌 매트릭스에서 켜는 조합은 이 4개뿐이다.**
+
+| 조합 | 이유 |
+|------|------|
+| Player × Enemy | 잡몹·보스 접촉 피해 |
+| Player × BossProjectile | 보스 탄 피격 |
+| Enemy × Projectile | 무기가 적을 맞힘 |
+| Enemy × Enemy | **끔** — 적은 Rigidbody2D가 없어 이벤트가 안 생긴다. 밀어내기는 SpatialHash + SeparationJob 담당 |
+
+- `Player × Projectile`은 **끈다** (자기 발사체 자해 방지)
+- `Enemy × BossProjectile`은 **끈다** (보스 탄이 잡몹을 지우면 안 됨)
+- 레이어 이름에 **공백을 넣지 마라** — 이름 조회 시 조용히 실패한다
+- 트리거 콜백은 **양쪽 중 하나에 Rigidbody2D가 있어야** 발생한다. 적 프리팹엔 Rigidbody2D가 없고
+  플레이어 쪽 바디에 의존한다. 개별 오브젝트(보스·보스 탄)는 Kinematic + Gravity 0 + Never Sleep을 직접 붙인다
+
 ## 폴더 구조
 ```
 Assets/Scripts/
