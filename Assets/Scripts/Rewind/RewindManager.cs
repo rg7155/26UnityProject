@@ -194,7 +194,10 @@ public class RewindManager : MonoBehaviour
         {
             Managers.Game.State = Define.GameState.GameOver;
             Managers.Game.SaveData.PlayTime = _waveManager.GameTime;
-            Managers.Game.CommitResult();
+            // BOSS RUSH는 무기 프리셋을 들고 176초 지점에서 시작하는 데모 판이다.
+            // 뱅킹하면 최고 시간·평생 스탯·퀘스트 진행도가 실제 플레이 기록이 아닌 값으로 덮인다
+            if (!GameScene.BossRush)
+                Managers.Game.CommitResult();
             Managers.Scene.ChangeScene(SceneType.Result);
         }
     }

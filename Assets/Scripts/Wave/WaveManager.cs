@@ -100,6 +100,26 @@ public class WaveManager : MonoBehaviour
             _spawner.Spawn(CurrentWave.enemyPrefab, CurrentWave.enemyHp, CurrentWave.enemySpeed);
     }
 
+    // BOSS RUSH 데모용 시간 점프. 보스 스폰은 CheckWaveTransition이라는 정식 경로로만 일어나야 하므로
+    // _waveIndex를 보스 웨이브 "직전"까지만 올린다 — 보스 웨이브에 직접 착지하면 전환이 이미 지나간 것으로
+    // 간주되어 보스가 영영 스폰되지 않는다
+    public void JumpTo(float t)
+    {
+        if (_waves == null || _waves.Length == 0) return;
+
+        int index = 0;
+        for (int i = 0; i < _waves.Length; i++)
+        {
+            if (_waves[i].startTime > t) break;
+            if (_waves[i].isBossWave) break;
+            index = i;
+        }
+
+        _gameTime   = t;
+        _waveIndex  = index;
+        _spawnTimer = 0f;
+    }
+
     public void RestoreSnapshot(WaveSnapshot s)
     {
         _gameTime   = s.gameTime;

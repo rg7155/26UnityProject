@@ -4,10 +4,15 @@ using UnityEngine;
 public enum BossActionState { Idle, Telegraph, Execute }
 
 // 보스 — EnemyBase 직상속. HP/위치 되감기는 EnemyBase.Registry 경로로 자동 처리된다
+//
+// 스탯 원본은 BossData 하나다. Inspector 에 보이는 EnemyBase 의 _hp/_speed/_expReward/_goldReward 는
+// 잡몹용 필드이고 보스에겐 Init 이 전부 _data 값으로 덮으므로 **무시해도 된다**(C# 은 부모 SerializeField 를
+// 자식에서 숨길 수 없다). 보스 스탯 조정은 BossData 에셋에서만 한다.
 public class BossController : EnemyBase
 {
-    [SerializeField] BossData      _data;
-    [SerializeField] BossTelegraph _telegraph;
+    [SerializeField] BossData       _data;
+    [SerializeField] BossTelegraph  _telegraph;   // 예고(장판 원·방사탄 링·돌진 조준선). 비면 예고가 안 보인다
+    [SerializeField] SpriteRenderer _sprite;      // 페이즈 색 전환용 — 프리팹 루트의 SpriteRenderer
 
     // 풀 부활 경로(ForceRestore)는 Init을 타지 않으므로 Instance를 Init에서 잡으면 안 된다
     public static BossController Instance { get; private set; }
@@ -16,10 +21,12 @@ public class BossController : EnemyBase
     bool  _leashing;
 
     BossActionState _actionState;
+    int     _phase = 1;
     int     _sequenceIndex;
     float   _stateTimer;
     float   _cooldownTimer;
     Vector2 _lockedPoint;
+    Vector2 _lockedDir;
 
     public BossData Data { get { return _data; } }
 
@@ -29,8 +36,7 @@ public class BossController : EnemyBase
     // 되감기 한 번이면 최대치가 "그 시점 HP"로 줄어 HP 바가 항상 가득 차 보인다
     public int MaxHp { get { return _data.hp; } }
 
-    // Stage 9(페이즈 2)에서 내부 필드로 교체. 그 전까진 항상 1
-    public int Phase { get { return 1; } }
+    public int Phase { get { return _phase; } }
 
     public override float AttackCooldown { get { return _attackCooldown; } }
 
@@ -55,6 +61,8 @@ public class BossController : EnemyBase
         _sequenceIndex = 0;
         _stateTimer = 0f;
         _cooldownTimer = 0f;
+        _lockedDir = Vector2.zero;
+        SetPhase(1);
         _telegraph?.Hide();
     }
 
@@ -63,10 +71,13 @@ public class BossController : EnemyBase
         if (_target == null) return;
         if (Managers.Game.State != Define.GameState.Playing) return;
 
+        UpdatePhase();
         UpdatePattern();
 
         // 텔레그래프 중엔 정지 — 예고를 보고 피할 시간을 준다
-        if (_actionState != BossActionState.Telegraph)
+        if (_actionState == BossActionState.Execute && CurrentPattern == BossPatternType.Charge)
+            ChargeMove();
+        else if (_actionState != BossActionState.Telegraph)
             Move();
 
         if (_attackCooldown > 0f)
@@ -89,6 +100,46 @@ public class BossController : EnemyBase
         SpatialHashGrid.Instance?.Move(this, prevPos);
     }
 
+    // 추적 이동과 달리 방향을 다시 계산하지 않는다 — 고정된 _lockedDir로만 직진한다
+    void ChargeMove()
+    {
+        Vector2 prevPos = transform.position;
+        transform.position += (Vector3)(_lockedDir * _data.chargeSpeed * Time.deltaTime);
+
+        SpatialHashGrid.Instance?.Move(this, prevPos);
+    }
+
+    // ── Phase ──
+
+    // 히스테리시스 없음 — HP 비율 단일 기준이어야 되감기가 같은 페이즈를 재현한다
+    int EvaluatePhase()
+    {
+        if (_data.phase2HpRatio <= 0f) return 1;
+        return (float)Hp / _data.hp <= _data.phase2HpRatio ? 2 : 1;
+    }
+
+    // 진입 연출은 여기서만 — RestoreBossState는 SetPhase로 상태만 조용히 맞춘다
+    void UpdatePhase()
+    {
+        int phase = EvaluatePhase();
+        if (phase == _phase) return;
+
+        bool entering = phase > _phase;
+        SetPhase(phase);
+
+        if (entering)
+            FindObjectOfType<CameraController>()?.Shake(0.4f, 0.4f);
+    }
+
+    void SetPhase(int phase)
+    {
+        _phase = phase;
+        if (_sprite != null)
+            _sprite.color = _phase == 2 ? _data.phase2Color : _data.phase1Color;
+    }
+
+    float PhaseCooldownMult { get { return _phase == 2 ? _data.phase2CooldownMult : 1f; } }
+
     void UpdatePattern()
     {
         if (_data.patternSequence == null || _data.patternSequence.Length == 0) return;
@@ -102,7 +153,7 @@ public class BossController : EnemyBase
 
             case BossActionState.Telegraph:
                 _stateTimer -= Time.deltaTime;
-                _telegraph?.SetProgress(TelegraphProgress());
+                ShowTelegraph();
                 if (_stateTimer <= 0f) ExecutePattern();
                 break;
 
@@ -111,6 +162,25 @@ public class BossController : EnemyBase
                 if (_stateTimer <= 0f) EndPattern();
                 break;
         }
+    }
+
+    // 돌진 조준선만 매 프레임 플레이어를 다시 겨눈다 — 방향 고정은 텔레그래프 종료 시점이다
+    void ShowTelegraph()
+    {
+        if (CurrentPattern == BossPatternType.Charge)
+            _telegraph?.ShowLine(transform.position, AimDir(), ChargeDistance, TelegraphProgress());
+        else
+            _telegraph?.SetProgress(TelegraphProgress());
+    }
+
+    // 예고선 길이를 실제 이동 거리와 같게 둔다 — 예고와 궤도가 어긋나면 회피가 불공정해진다
+    float ChargeDistance { get { return _data.chargeSpeed * _data.chargeDuration; } }
+
+    Vector2 AimDir()
+    {
+        Vector2 toTarget = (Vector2)_target.position - (Vector2)transform.position;
+        // 플레이어가 보스 중심에 겹치면 normalized가 0이라 돌진이 제자리에 멈춘다
+        return toTarget.sqrMagnitude > 0.0001f ? toTarget.normalized : Vector2.right;
     }
 
     float TelegraphProgress()
@@ -126,12 +196,13 @@ public class BossController : EnemyBase
         {
             case BossPatternType.GroundSlam:  return _data.slamTelegraph;
             case BossPatternType.RadialBurst: return _data.radialTelegraph;
-            default:                          return 0f;   // Stage 8: Charge
+            default:                          return _data.chargeTelegraph;
         }
     }
 
-    // 방사탄은 피해 반경 개념이 없다 — 링은 순수 시각 예고라 데이터가 아닌 상수로 둔다
-    const float RadialRingRadius = 2f;
+    // 방사탄은 피해 반경 개념이 없다 — 링은 순수 시각 예고라 데이터가 아닌 상수로 둔다.
+    // 보스 본체 반경(스케일 4 × 스프라이트 1유닛 = 지름 4)보다 커야 링이 가려지지 않는다
+    const float RadialRingRadius = 3.4f;
 
     float TelegraphRadius()
     {
@@ -158,9 +229,10 @@ public class BossController : EnemyBase
                 _telegraph?.Show(_lockedPoint, TelegraphRadius());
                 break;
 
-            case BossPatternType.Charge:        // Stage 8
-                // 미구현 패턴이 상태머신을 멈추지 않도록 텔레그래프 없이 다음 인덱스로 넘긴다
-                EndPattern();
+            case BossPatternType.Charge:
+                _actionState = BossActionState.Telegraph;
+                _stateTimer  = _data.chargeTelegraph;
+                ShowTelegraph();
                 break;
         }
     }
@@ -170,6 +242,14 @@ public class BossController : EnemyBase
         _telegraph?.Hide();
         _actionState = BossActionState.Execute;
         _stateTimer  = 0f;
+
+        if (CurrentPattern == BossPatternType.Charge)
+        {
+            // 방향은 여기서 고정 — 이후 플레이어가 움직여도 궤도는 그대로다(되감기 재현성)
+            _lockedDir  = AimDir();
+            _stateTimer = _data.chargeDuration;
+            return;
+        }
 
         if (CurrentPattern == BossPatternType.RadialBurst)
         {
@@ -196,7 +276,7 @@ public class BossController : EnemyBase
         Vector2 toPlayer = (Vector2)_target.position - (Vector2)transform.position;
         float baseAngle = Mathf.Atan2(toPlayer.y, toPlayer.x) * Mathf.Rad2Deg;
 
-        int count = _data.radialCount;   // Stage 9: 페이즈 2면 _data.radialCountPhase2
+        int count = _phase == 2 ? _data.radialCountPhase2 : _data.radialCount;
         float step = 360f / count;
 
         for (int i = 0; i < count; i++)
@@ -215,12 +295,16 @@ public class BossController : EnemyBase
 
     void EndPattern()
     {
+        float cooldown;
         switch (CurrentPattern)
         {
-            case BossPatternType.GroundSlam:  _cooldownTimer = _data.slamCooldown;   break;
-            case BossPatternType.RadialBurst: _cooldownTimer = _data.radialCooldown; break;
-            default:                          _cooldownTimer = 0f;                   break;  // Stage 8: Charge
+            case BossPatternType.GroundSlam:  cooldown = _data.slamCooldown;   break;
+            case BossPatternType.RadialBurst: cooldown = _data.radialCooldown; break;
+            default:                          cooldown = _data.chargeCooldown; break;
         }
+
+        // 세 패턴이 전부 이 경로를 지나므로 페이즈 2 단축은 여기 한 곳에서만 곱한다
+        _cooldownTimer = cooldown * PhaseCooldownMult;
 
         _actionState = BossActionState.Idle;
         _stateTimer  = 0f;
@@ -237,8 +321,10 @@ public class BossController : EnemyBase
         PlayerController player = other.GetComponent<PlayerController>();
         if (player == null) return;
 
-        // Stage 8: 돌진 Execute 중이면 _data.chargeDamage로 대체
-        player.OnDamaged(_data.contactDamage);
+        int damage = (_actionState == BossActionState.Execute && CurrentPattern == BossPatternType.Charge)
+                   ? _data.chargeDamage : _data.contactDamage;
+
+        player.OnDamaged(damage);
         _attackCooldown = _data.contactInterval;
     }
 
@@ -292,27 +378,34 @@ public class BossController : EnemyBase
         {
             active        = true,
             entityId      = EntityId,
+            phase         = _phase,
             sequenceIndex = _sequenceIndex,
             actionState   = (int)_actionState,
             stateTimer    = _stateTimer,
             cooldownTimer = _cooldownTimer,
             lockedPoint   = _lockedPoint,
+            lockedDir     = _lockedDir,
         };
     }
 
     public void RestoreBossState(BossSnapshot s)
     {
+        // 색만 되돌리고 화면 흔들림은 내지 않는다 — 진입 연출은 UpdatePhase의 HP 교차 전용이다
+        SetPhase(s.phase);
         _sequenceIndex = s.sequenceIndex;
         _actionState   = (BossActionState)s.actionState;
         _stateTimer    = s.stateTimer;
         _cooldownTimer = s.cooldownTimer;
         _lockedPoint   = s.lockedPoint;
+        _lockedDir     = s.lockedDir;
 
         // Update는 State != Playing이면 조기 리턴한다 — 되감기 중 예고원을 갱신할 곳이 여기뿐이다
         if (_actionState == BossActionState.Telegraph)
         {
-            _telegraph?.Show(_lockedPoint, TelegraphRadius());
-            _telegraph?.SetProgress(TelegraphProgress());
+            // 조준선은 Show가 필요 없다 — ShowTelegraph가 위치·방향·진행도를 한 번에 갱신한다
+            if (CurrentPattern != BossPatternType.Charge)
+                _telegraph?.Show(_lockedPoint, TelegraphRadius());
+            ShowTelegraph();
         }
         else
         {

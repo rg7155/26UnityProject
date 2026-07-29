@@ -35,11 +35,13 @@ public struct BossSnapshot
 {
     public bool    active;         // 이 프레임에 보스가 존재했는가
     public int     entityId;       // 복원 대상이 같은 개체인지 확인
+    public int     phase;          // 1 or 2
     public int     sequenceIndex;
     public int     actionState;    // BossActionState
     public float   stateTimer;
     public float   cooldownTimer;
     public Vector2 lockedPoint;    // 텔레그래프 시작 시점에 고정한 장판 중심
+    public Vector2 lockedDir;      // 텔레그래프 종료 시점에 고정한 돌진 방향
 }
 
 public struct FrameSnapshot

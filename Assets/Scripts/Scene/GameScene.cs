@@ -6,6 +6,10 @@ public class GameScene : MonoBehaviour
 {
     [SerializeField] TMP_Text _gameOverText;
 
+    // 타이틀의 두 버튼이 모두 값을 명시적으로 설정한다(START=false / BOSS RUSH=true).
+    // 소비형 의미론이 아니므로 잔류 상태로 다음 판이 오염될 여지가 없다
+    public static bool BossRush;
+
     void Awake()
     {
         Time.timeScale = 1f;
