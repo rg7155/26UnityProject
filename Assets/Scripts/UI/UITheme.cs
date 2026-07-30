@@ -37,6 +37,10 @@ public static class UITheme
     // ── 버튼 색 전환 시간(초) ──
     public const float FadeDuration = 0.08f;
 
+    // ── 모달 등장 연출 ──
+    public const float ModalTween = 0.15f;
+    public const float ModalFromScale = 0.92f;
+
     static Color Hex(string hex, float a = 1f)
     {
         ColorUtility.TryParseHtmlString("#" + hex, out var c);
