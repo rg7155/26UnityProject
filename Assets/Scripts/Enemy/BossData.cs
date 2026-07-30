@@ -45,6 +45,8 @@ public class BossData : ScriptableObject
     [Header("페이즈 2 — hpRatio 0이면 비활성")]
     public float phase2HpRatio = 0.5f;
     public float phase2CooldownMult = 0.7f;
+    public float phase2SpeedMult = 1.5f;    // 쿨다운만으론 페이즈 전환이 체감되지 않아 이동·피해 축을 추가
+    public float phase2DamageMult = 1.3f;
 
     [Header("리쉬")]
     public float leashDistance = 18f;

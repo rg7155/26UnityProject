@@ -94,7 +94,7 @@ public class BossController : EnemyBase
         else           { if (distance > _data.leashDistance)       _leashing = true;  }
 
         // separation을 조회하지 않는다 — Job 결과는 프레임 순서에 의존해 되감기 재현성을 깨뜨린다
-        float speed = _leashing ? _speed * _data.leashSpeedMult : _speed;
+        float speed = (_leashing ? _speed * _data.leashSpeedMult : _speed) * PhaseSpeedMult;
         transform.position += (Vector3)(toTarget.normalized * speed * Time.deltaTime);
 
         SpatialHashGrid.Instance?.Move(this, prevPos);
@@ -139,6 +139,15 @@ public class BossController : EnemyBase
     }
 
     float PhaseCooldownMult { get { return _phase == 2 ? _data.phase2CooldownMult : 1f; } }
+
+    // 배율 필드는 나중에 추가돼서 기존 에셋엔 0으로 들어온다 — 0이면 보스가 멈추거나 피해가 사라진다
+    float PhaseSpeedMult { get { return _phase == 2 && _data.phase2SpeedMult > 0f ? _data.phase2SpeedMult : 1f; } }
+
+    int PhaseDamage(int damage)
+    {
+        if (_phase != 2 || _data.phase2DamageMult <= 0f) return damage;
+        return Mathf.RoundToInt(damage * _data.phase2DamageMult);
+    }
 
     void UpdatePattern()
     {
@@ -261,7 +270,7 @@ public class BossController : EnemyBase
 
         PlayerController player = _target.GetComponent<PlayerController>();
         if (player != null && Vector2.Distance(_lockedPoint, _target.position) <= _data.slamRadius)
-            player.OnDamaged(_data.slamDamage);
+            player.OnDamaged(PhaseDamage(_data.slamDamage));
 
         Managers.Sound.PlayEffect(SoundManager.Explosion);
         FindObjectOfType<CameraController>()?.Shake(0.25f, 0.3f);
@@ -287,7 +296,7 @@ public class BossController : EnemyBase
             GameObject go = Managers.Object.Get(prefab);
             go.transform.position = transform.position;
             go.transform.rotation = Quaternion.identity;
-            go.GetComponent<BossProjectile>().Init(dir, _data.radialSpeed, _data.radialDamage, _data.radialLifetime, prefab);
+            go.GetComponent<BossProjectile>().Init(dir, _data.radialSpeed, PhaseDamage(_data.radialDamage), _data.radialLifetime, prefab);
         }
 
         Managers.Sound.PlayEffect(SoundManager.Shoot);
@@ -322,7 +331,7 @@ public class BossController : EnemyBase
         if (player == null) return;
 
         int damage = (_actionState == BossActionState.Execute && CurrentPattern == BossPatternType.Charge)
-                   ? _data.chargeDamage : _data.contactDamage;
+                   ? PhaseDamage(_data.chargeDamage) : PhaseDamage(_data.contactDamage);
 
         player.OnDamaged(damage);
         _attackCooldown = _data.contactInterval;
