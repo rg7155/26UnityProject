@@ -19,6 +19,8 @@ public class UI_QuestPanel : MonoBehaviour
         if (_closeButton != null)
             _closeButton.onClick.AddListener(() => gameObject.SetActive(false));
 
+        FitContainerWidth();
+
         foreach (QuestData quest in QuestService.Quests)
         {
             UI_QuestCell cell = Instantiate(_cellPrefab, _cellContainer);
@@ -26,6 +28,20 @@ public class UI_QuestPanel : MonoBehaviour
             _cells.Add(cell);
         }
         RefreshAll();
+    }
+
+    // 리스트 컨테이너 폭을 뷰포트 폭에 고정. 씬에 직렬화된 sizeDelta 가 어긋나 있으면
+    // (에디터 생성기 실행 후 씬을 저장하지 않으면 기본값 100 이 그대로 남는다) 컨테이너가
+    // 뷰포트보다 넓어져 셀이 좌우로 잘린다. 세로 크기는 ContentSizeFitter 담당이라 건드리지 않는다.
+    void FitContainerWidth()
+    {
+        RectTransform rt = _cellContainer as RectTransform;
+        if (rt == null) return;
+
+        rt.anchorMin = new Vector2(0f, rt.anchorMin.y);
+        rt.anchorMax = new Vector2(1f, rt.anchorMax.y);
+        rt.sizeDelta = new Vector2(0f, rt.sizeDelta.y);
+        rt.anchoredPosition = new Vector2(0f, rt.anchoredPosition.y);
     }
 
     void OnDestroy()

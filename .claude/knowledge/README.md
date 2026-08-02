@@ -49,6 +49,7 @@ LLM은 매 세션 컨텍스트를 새로 읽는다. 과거에 이 프로젝트�
 - [jsonutility-missing-field-null-collection](bug-patterns/jsonutility-missing-field-null-collection.md) — JsonUtility가 없는 필드 초기화를 건너뛰어 구버전 세이브의 컬렉션이 null
 - [procedural-sprite-not-serialized](bug-patterns/procedural-sprite-not-serialized.md) — 코드 생성 Texture2D/Sprite를 프리팹에 구우면 직렬화 안 돼 런타임 흰 박스 → 런타임 컴포넌트로 재생성
 - [nested-canvas-generator-duplication](bug-patterns/nested-canvas-generator-duplication.md) — FindFirstObjectByType<Canvas> 오탐으로 생성기 루트 중복. ①중첩 Canvas → rootCanvas 정규화 ②**형제 루트 캔버스(@PauseCanvas) → 순서 비의존 리졸버 필요**(rootCanvas로는 못 막음)
+- [editor-generator-scene-not-saved](bug-patterns/editor-generator-scene-not-saved.md) — 생성기 결과를 씬 저장 안 해 유실 → 며칠 뒤 UI 재파손. 런타임 불변식 강제 + SafeAreaFitter 앵커 Clamp01
 - [pooled-object-survives-scene-change](bug-patterns/pooled-object-survives-scene-change.md) — DontDestroyOnLoad 풀의 활성 오브젝트가 씬 전환 후 살아남아 다음 씬에서 유령 콜백(NRE). Clear가 실물 파괴하도록 + ChangeScene에서 호출
 - [dual-pause-timer-leak](bug-patterns/dual-pause-timer-leak.md) — 정지 경로가 GameState/timeScale 두 갈래라, 상태 가드 위에 있던 되감기 쿨타임이 업그레이드 패널에서만 계속 흐름. 시간 누적을 가드 아래로
 - [instanced-enemy-prefab-lacks-components](bug-patterns/instanced-enemy-prefab-lacks-components.md) — GPU 인스턴싱용 적 프리팹엔 SpriteRenderer·Rigidbody2D가 없어, 복제해 만든 보스가 안 보이거나(그리는 주체 없음) 중력에 낙하

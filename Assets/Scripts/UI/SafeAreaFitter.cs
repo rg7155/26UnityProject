@@ -24,8 +24,16 @@ public class SafeAreaFitter : MonoBehaviour
         if (w <= 0 || h <= 0) return;
 
         Rect safe = Screen.safeArea;
-        Vector2 anchorMin = new Vector2(safe.xMin / w, safe.yMin / h);
-        Vector2 anchorMax = new Vector2(safe.xMax / w, safe.yMax / h);
+        // 에디터에서 Screen.safeArea 의 출처(시뮬레이터 기기 해상도)와 Screen.width/height(게임뷰 해상도)가
+        // 어긋나면 비율이 1 을 넘어 컨테이너가 화면보다 커지고 자식 UI 가 좌우로 잘린다.
+        // [ExecuteAlways] 라 그 값이 씬에 그대로 저장되므로, "안전 영역은 화면을 넘을 수 없다"를 강제한다.
+        Vector2 anchorMin = new Vector2(Mathf.Clamp01(safe.xMin / w), Mathf.Clamp01(safe.yMin / h));
+        Vector2 anchorMax = new Vector2(Mathf.Clamp01(safe.xMax / w), Mathf.Clamp01(safe.yMax / h));
+        if (anchorMax.x <= anchorMin.x || anchorMax.y <= anchorMin.y)
+        {
+            anchorMin = Vector2.zero;
+            anchorMax = Vector2.one;
+        }
 
         var rt = (RectTransform)transform;
         rt.anchorMin = anchorMin;
