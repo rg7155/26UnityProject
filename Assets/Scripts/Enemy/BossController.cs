@@ -348,6 +348,8 @@ public class BossController : EnemyBase
         {
             Managers.Game.RunBossKills++;
 
+            FindObjectOfType<TreasureSpawner>()?.SpawnAt(transform.position);
+
             RewindManager rewind = FindObjectOfType<RewindManager>();
             if (rewind != null)
             {

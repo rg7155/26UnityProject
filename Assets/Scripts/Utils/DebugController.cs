@@ -22,6 +22,7 @@ public class DebugController : MonoBehaviour
     EnemySpawner _spawner;
     PlayerController _player;
     UpgradeManager _upgradeManager;
+    TreasureSpawner _treasureSpawner;
 
     void Start()
     {
@@ -29,6 +30,7 @@ public class DebugController : MonoBehaviour
         _spawner = FindObjectOfType<EnemySpawner>();
         _player = FindObjectOfType<PlayerController>();
         _upgradeManager = FindObjectOfType<UpgradeManager>();
+        _treasureSpawner = FindObjectOfType<TreasureSpawner>();
     }
 
     void Update()
@@ -69,6 +71,9 @@ public class DebugController : MonoBehaviour
         if (kb.gKey.wasPressedThisFrame && _player != null)
             _player.DebugInvincible = !_player.DebugInvincible;
 
+        if (kb.tKey.wasPressedThisFrame && _treasureSpawner != null && _player != null)
+            _treasureSpawner.SpawnAt(_player.transform.position + Vector3.up * 3f);
+
         if (kb.mKey.wasPressedThisFrame)
         {
             Managers.Game.AddGold(_debugGold);
@@ -98,7 +103,7 @@ public class DebugController : MonoBehaviour
 
         string invincible = _player != null && _player.DebugInvincible ? "ON" : "OFF";
         string skipUpgrades = _upgradeManager != null && _upgradeManager.DebugSkipUpgrades ? "ON" : "OFF";
-        GUI.Label(new Rect(10, Screen.height - 120, 640, 30), "[Debug] F1: 숨기기  1~5: 무기  0: 전체무기  K: 적스폰  L: 레벨업  G: 무적  U: 업글패널  M: 골드+", style);
+        GUI.Label(new Rect(10, Screen.height - 120, 760, 30), "[Debug] F1: 숨기기  1~5: 무기  0: 전체무기  K: 적스폰  L: 레벨업  G: 무적  U: 업글패널  M: 골드+  T: 상자", style);
         GUI.Label(new Rect(10, Screen.height - 90, 600, 30), $"[Debug] 무적: {invincible}   업글억제: {skipUpgrades}", style);
     }
 }
