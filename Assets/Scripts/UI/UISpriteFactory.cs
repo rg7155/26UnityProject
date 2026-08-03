@@ -102,6 +102,32 @@ public static class UISpriteFactory
         return CacheSprite(key, tex, size, Vector4.zero);
     }
 
+    // 화면 테두리 발광(피격 비네트). 가장자리에서 안쪽으로 band px 동안 알파가 0 으로 떨어진다.
+    // 9-slice border 를 band 로 잡아 세로 화면이든 뭐든 사방 테두리 두께가 같게 유지된다
+    // (단일 텍스처를 늘리면 1080×1920 에서 좌우가 상하보다 얇아진다).
+    public static Sprite EdgeGlow(int band, Color fill)
+    {
+        string key = $"edge_{band}_{ColorUtility.ToHtmlStringRGBA(fill)}";
+        if (_cache.TryGetValue(key, out var cached) && cached != null) return cached;
+
+        int pad = 2;
+        int size = band * 2 + pad * 2;
+        var tex = NewTex(size, key);
+        var px = new Color[size * size];
+        for (int y = 0; y < size; y++)
+        for (int x = 0; x < size; x++)
+        {
+            int d = Mathf.Min(Mathf.Min(x, y), Mathf.Min(size - 1 - x, size - 1 - y));
+            float t = Mathf.Clamp01(1f - d / (float)band);
+            Color c = fill;
+            c.a *= t * t;   // 제곱 감쇠 — 테두리에 바짝 붙이고 중앙(9-slice 늘어나는 영역)은 완전히 비운다
+            px[y * size + x] = c;
+        }
+        tex.SetPixels(px);
+        tex.Apply();
+        return CacheSprite(key, tex, size, new Vector4(band, band, band, band));
+    }
+
     static float RadialDistance(int x, int y, float half)
     {
         float dx = x + 0.5f - half;

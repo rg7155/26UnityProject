@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     public System.Action<int, int> OnHpChanged;     // (current, max)
     public System.Action<int, int> OnExpChanged;    // (current, expToNext)
     public System.Action<int> OnLevelUp;            // (newLevel)
+    public System.Action OnHit;                     // 무적/상태 가드를 통과해 실제로 피해가 들어간 순간만
     public System.Action OnDead;
 
     CreatureState _state = CreatureState.Idle;
@@ -116,6 +117,7 @@ public class PlayerController : MonoBehaviour
         Hp -= damage;
         _invincibleTimer = _invincibleDuration;
         Managers.Sound.PlayEffect(SoundManager.PlayerHit);
+        OnHit?.Invoke();
 
         if (_hp <= 0)
             HandleDead();

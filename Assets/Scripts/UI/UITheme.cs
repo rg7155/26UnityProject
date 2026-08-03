@@ -21,6 +21,7 @@ public static class UITheme
     public static readonly Color Cyan          = Hex("35D9F5");
     public static readonly Color Positive      = Hex("79E86A");
     public static readonly Color Danger        = Hex("FF5488");
+    public static readonly Color HitFlash      = Hex("FF1E1E"); // 피격 비네트 — Danger(핑크빛)보다 순수한 경고 적색
     public static readonly Color JoystickBase  = Hex("FFFFFF", 0.40f); // 반투명 도넛 베이스
     public static readonly Color JoystickKnob  = Hex("FFFFFF", 0.70f); // 중앙 노브
 

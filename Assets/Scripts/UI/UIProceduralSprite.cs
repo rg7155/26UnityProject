@@ -9,7 +9,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Image))]
 public class UIProceduralSprite : MonoBehaviour
 {
-    public enum Shape { Rounded, Circle, Ring }
+    public enum Shape { Rounded, Circle, Ring, EdgeGlow } // 새 값은 항상 뒤에 추가 — 기존 씬의 직렬화 인덱스 보존
 
     [SerializeField] Shape _shape = Shape.Rounded;
     [SerializeField] bool _outlined;
@@ -58,6 +58,15 @@ public class UIProceduralSprite : MonoBehaviour
         Apply();
     }
 
+    // 화면 테두리 발광(피격 비네트). band 는 테두리 두께 px — _thickness 를 재사용한다.
+    public void ConfigureEdgeGlow(int band, Color fill)
+    {
+        _shape = Shape.EdgeGlow;
+        _thickness = band;
+        _fill = fill;
+        Apply();
+    }
+
     void Apply()
     {
         var img = GetComponent<Image>();
@@ -65,6 +74,10 @@ public class UIProceduralSprite : MonoBehaviour
         Image.Type type;
         switch (_shape)
         {
+            case Shape.EdgeGlow:
+                img.sprite = UISpriteFactory.EdgeGlow(_thickness, _fill);
+                type = Image.Type.Sliced;
+                break;
             case Shape.Circle:
                 img.sprite = UISpriteFactory.Circle(_radius, _fill);
                 type = Image.Type.Simple;
