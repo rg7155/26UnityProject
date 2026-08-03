@@ -47,14 +47,4 @@ public class GameScene : MonoBehaviour
     {
         Managers.Game.OnStateChanged -= OnGameStateChanged;
     }
-
-    // 성능 측정용 — 측정 완료 후 삭제
-    void OnGUI()
-    {
-        GUIStyle style = new GUIStyle(GUI.skin.label);
-        style.fontSize = 24;
-        style.normal.textColor = Color.white;
-        GUI.Label(new Rect(10, 10, 300, 35), $"Enemies: {EnemyBase.Registry.Count}", style);
-        GUI.Label(new Rect(10, 50, 300, 35), $"FPS: {(1f / Time.deltaTime):F0}", style);
-    }
 }
