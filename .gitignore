@@ -30,3 +30,26 @@
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity 생성물 — 재생성 가능하거나 용량만 차지
+[Mm]emoryCaptures/
+[Rr]ecordings/
+ProfilerCaptures/
+sysinfo.txt
+crashlytics-build.properties
+*.unitypackage
+*.apk
+*.aab
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Unity 크래시 복구 씬 덤프. 씬 스냅샷 8벌(7.4MB)이라 이력에 남길 가치가 없다
+/[Aa]ssets/_[Rr]ecovery/
+/[Aa]ssets/_[Rr]ecovery.meta
+
+# AI 파이프라인 작업 폴더 — 매 실행마다 덮어써지는 스크래치.
+# 완료된 계획서는 _workspace_archive/ 로 옮겨 커밋한다(해커톤 AI 증거물).
+/_workspace/
