@@ -8,6 +8,7 @@ public static class ShopService
     const int BaseMaxHp = 100;   // PlayerController._maxHp 기본값과 일치
     const float BaseRewindDuration = 5f;
     const float BaseRewindCooldown = 30f;
+    const int BaseAutoRewindCharges = 1;   // RewindManager._autoRewindCharges 기본값과 일치
 
     static ShopItemData[] _items;
     public static ShopItemData[] Items
@@ -89,6 +90,15 @@ public static class ShopService
         return mult;
     }
 
+    public static float RangeMult()
+    {
+        float mult = 1f;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.Range)
+                mult += TierOf(item.id) * item.valuePerTier;
+        return mult;
+    }
+
     public static float MoveSpeedMult()
     {
         float mult = 1f;
@@ -116,6 +126,24 @@ public static class ShopService
         return cooldown;
     }
 
+    public static int AutoRewindCharges()
+    {
+        int charges = BaseAutoRewindCharges;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.RewindCharge)
+                charges += Mathf.RoundToInt(TierOf(item.id) * item.valuePerTier);
+        return charges;
+    }
+
+    public static float RewindGraceDuration()
+    {
+        float duration = 0f;
+        foreach (var item in Items)
+            if (item.effect == ShopEffectType.RewindGrace)
+                duration += TierOf(item.id) * item.valuePerTier;
+        return duration;
+    }
+
     // ── UI 표시용 파생값 ──
     public static int HpTotal(int tier, float valuePerTier) => BaseMaxHp + Mathf.RoundToInt(tier * valuePerTier);
     public static int DamagePct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
@@ -123,4 +151,7 @@ public static class ShopService
     public static int MoveSpeedPct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
     public static float RewindDurationTotal(int tier, float valuePerTier) => BaseRewindDuration + tier * valuePerTier;
     public static float RewindCooldownTotal(int tier, float valuePerTier) => BaseRewindCooldown - tier * valuePerTier;
+    public static int RangePct(int tier, float valuePerTier) => Mathf.RoundToInt(tier * valuePerTier * 100f);
+    public static int RewindChargesTotal(int tier, float valuePerTier) => BaseAutoRewindCharges + Mathf.RoundToInt(tier * valuePerTier);
+    public static float RewindGraceTotal(int tier, float valuePerTier) => tier * valuePerTier;
 }

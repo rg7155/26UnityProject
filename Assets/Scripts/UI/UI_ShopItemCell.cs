@@ -9,6 +9,7 @@ public class UI_ShopItemCell : MonoBehaviour
 {
     [SerializeField] Button _button;
     [SerializeField] TMP_Text _label;
+    [SerializeField] TMP_Text _priceLabel;   // 하단 골드 스트립 안 — 가격만 크게
 
     ShopItemData _item;
     Action _onPurchased;
@@ -29,6 +30,7 @@ public class UI_ShopItemCell : MonoBehaviour
     {
         if (_item == null) return;
         if (_label != null)  _label.text = BuildLabel();
+        if (_priceLabel != null) _priceLabel.text = ShopService.IsMaxed(_item) ? "MAX" : $"{ShopService.Cost(_item)} G";
         if (_button != null) _button.interactable = ShopService.CanBuy(_item);
     }
 
@@ -37,7 +39,6 @@ public class UI_ShopItemCell : MonoBehaviour
         int tier = ShopService.TierOf(_item.id);
         int max = ShopService.MaxTier(_item);
         bool maxed = ShopService.IsMaxed(_item);
-        int cost = ShopService.Cost(_item);
 
         switch (_item.effect)
         {
@@ -46,42 +47,63 @@ public class UI_ShopItemCell : MonoBehaviour
                 int now = ShopService.HpTotal(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n{now}";
                 int next = ShopService.HpTotal(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n{now} -> {next}   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n{now} -> {next}";
             }
             case ShopEffectType.Damage:
             {
                 int now = ShopService.DamagePct(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n+{now}%";
                 int next = ShopService.DamagePct(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%";
             }
             case ShopEffectType.FireRate:
             {
                 int now = ShopService.FireRatePct(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n+{now}%";
                 int next = ShopService.FireRatePct(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%";
             }
             case ShopEffectType.MoveSpeed:
             {
                 int now = ShopService.MoveSpeedPct(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n+{now}%";
                 int next = ShopService.MoveSpeedPct(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%";
+            }
+            case ShopEffectType.Range:
+            {
+                int now = ShopService.RangePct(tier, _item.valuePerTier);
+                if (maxed) return $"{_item.displayName}  MAX\n+{now}%";
+                int next = ShopService.RangePct(tier + 1, _item.valuePerTier);
+                return $"{_item.displayName}  [{tier}/{max}]\n+{now}% -> +{next}%";
+            }
+            case ShopEffectType.RewindCharge:
+            {
+                int now = ShopService.RewindChargesTotal(tier, _item.valuePerTier);
+                if (maxed) return $"{_item.displayName}  MAX\n{now}";
+                int next = ShopService.RewindChargesTotal(tier + 1, _item.valuePerTier);
+                return $"{_item.displayName}  [{tier}/{max}]\n{now} -> {next}";
+            }
+            case ShopEffectType.RewindGrace:
+            {
+                float now = ShopService.RewindGraceTotal(tier, _item.valuePerTier);
+                if (maxed) return $"{_item.displayName}  MAX\n{now:0.0}s";
+                float next = ShopService.RewindGraceTotal(tier + 1, _item.valuePerTier);
+                return $"{_item.displayName}  [{tier}/{max}]\n{now:0.0}s -> {next:0.0}s";
             }
             case ShopEffectType.RewindCooldown:
             {
                 float now = ShopService.RewindCooldownTotal(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n{now:0}s";
                 float next = ShopService.RewindCooldownTotal(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n{now:0}s -> {next:0}s   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n{now:0}s -> {next:0}s";
             }
             case ShopEffectType.RewindDuration:
             {
                 float now = ShopService.RewindDurationTotal(tier, _item.valuePerTier);
                 if (maxed) return $"{_item.displayName}  MAX\n{now:0}s";
                 float next = ShopService.RewindDurationTotal(tier + 1, _item.valuePerTier);
-                return $"{_item.displayName}  [{tier}/{max}]\n{now:0}s -> {next:0}s   {cost}G";
+                return $"{_item.displayName}  [{tier}/{max}]\n{now:0}s -> {next:0}s";
             }
             default:
                 return string.Empty;

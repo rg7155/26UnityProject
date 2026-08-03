@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ShopEffectType { StartHp, Damage, RewindCooldown, RewindDuration, FireRate, MoveSpeed }
+public enum ShopEffectType { StartHp, Damage, RewindCooldown, RewindDuration, FireRate, MoveSpeed, Range, RewindCharge, RewindGrace }
 
 // 상점 항목 정의 — 에디터에서 에셋을 추가하면 상점에 자동 등장 (WeaponData SO와 동일 철학).
 // Resources/Shop/ 에 배치. ShopService가 LoadAll로 읽는다.

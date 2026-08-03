@@ -13,9 +13,7 @@ public class PlayerController : MonoBehaviour
 
     VirtualJoystick _joystick;
 
-#if UNITY_EDITOR
     public bool DebugInvincible;
-#endif
 
     GameObject _damageTextPrefab;
 
@@ -104,9 +102,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnDamaged(int damage)
     {
-#if UNITY_EDITOR
         if (DebugInvincible) return;
-#endif
         if (IsInvincible) return;
         if (Managers.Game.State != GameState.Playing) return;
 
@@ -123,6 +119,13 @@ public class PlayerController : MonoBehaviour
 
         if (_hp <= 0)
             HandleDead();
+    }
+
+    // 외부에서 무적 부여 — 피격 무적이 더 길게 남아있으면 깎지 않는다
+    public void GrantInvincible(float duration)
+    {
+        if (duration > _invincibleTimer)
+            _invincibleTimer = duration;
     }
 
     public void AddExp(int exp)

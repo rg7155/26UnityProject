@@ -255,7 +255,7 @@ public static class ShopUIGenerator
             }
 
             const float iconH = 56f;
-            const float stripH = 24f;
+            const float stripH = 44f;   // 가격 텍스트를 담을 만큼 — 빈 장식 띠였던 것을 실제 가격표로
 
             // 장식 아이콘 슬롯(상단 중앙) — 데이터에 아이콘 없음, 순수 장식
             var icon = FindOrCreateChild(rootRT, "IconSlot");
@@ -267,7 +267,7 @@ public static class ShopUIGenerator
             icon.sizeDelta = new Vector2(iconH, iconH);
             icon.anchoredPosition = new Vector2(0f, -UITheme.S2);
 
-            // 장식 골드 스트립(하단) — "가격 버튼" 외형, 별도 Button 금지
+            // 골드 스트립(하단) — 가격표. 카드 전체가 구매 버튼이므로 여기에 별도 Button 은 두지 않는다
             var strip = FindOrCreateChild(rootRT, "PriceStrip");
             var stripImg = strip.GetComponent<Image>();
             ApplyProcedural(strip.gameObject, false, UITheme.RadSm, 0, UITheme.Accent, UITheme.Accent);
@@ -278,6 +278,28 @@ public static class ShopUIGenerator
             strip.pivot = new Vector2(0.5f, 0f);
             strip.sizeDelta = new Vector2(-UITheme.S3 * 2f, stripH);
             strip.anchoredPosition = new Vector2(0f, UITheme.S2);
+
+            // 가격 텍스트 — 골드 배경 위라 어두운 글자. UI_ShopItemCell._priceLabel 로 배선
+            // Image 를 붙이는 FindOrCreateChild 를 쓰지 않는다 — 한 오브젝트에 Graphic 은 하나만
+            var priceTr = strip.Find("PriceLabel") as RectTransform;
+            if (priceTr == null)
+            {
+                var pgo = new GameObject("PriceLabel", typeof(RectTransform), typeof(TextMeshProUGUI));
+                priceTr = (RectTransform)pgo.transform;
+                priceTr.SetParent(strip, false);
+            }
+            var priceRT = priceTr;
+            var priceLabel = priceRT.GetComponent<TMP_Text>();
+            priceLabel.font = font != null ? font : priceLabel.font;
+            priceLabel.fontSize = UITheme.Button;
+            priceLabel.fontStyle = FontStyles.Bold;
+            priceLabel.color = UITheme.Outline;
+            priceLabel.alignment = TextAlignmentOptions.Center;
+            priceLabel.raycastTarget = false;
+            priceRT.anchorMin = Vector2.zero;
+            priceRT.anchorMax = Vector2.one;
+            priceRT.offsetMin = Vector2.zero;
+            priceRT.offsetMax = Vector2.zero;
 
             // 라벨(아이콘 슬롯과 스트립 사이로 인셋)
             if (label != null)
@@ -295,6 +317,9 @@ public static class ShopUIGenerator
                 lrt.offsetMax = new Vector2(-UITheme.S2, -(iconH + UITheme.S2 * 2f));
                 label.transform.SetAsLastSibling(); // 장식 위에 텍스트
             }
+
+            cso.FindProperty("_priceLabel").objectReferenceValue = priceLabel;
+            cso.ApplyModifiedProperties();
 
             PrefabUtility.SaveAsPrefabAsset(root, CellPrefabPath);
         }

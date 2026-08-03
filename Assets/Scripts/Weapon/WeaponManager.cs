@@ -20,6 +20,9 @@ public class WeaponManager : MonoBehaviour
 
         m = ShopService.FireRateMult();
         if (m != 1f) UpgradeFireRate(m);
+
+        m = ShopService.RangeMult();
+        if (m != 1f) UpgradeRange(m);
     }
 
     public WeaponBase AddWeapon(WeaponData data)

@@ -63,6 +63,7 @@ public class RewindManager : MonoBehaviour
     {
         _rewindDuration = ShopService.RewindDuration();
         _rewindCooldown = ShopService.RewindCooldown();
+        _autoRewindCharges = ShopService.AutoRewindCharges();
         _bufferSize = Mathf.CeilToInt(_rewindDuration / _recordInterval);
         _buffer     = new FrameSnapshot[_bufferSize];
 
@@ -265,6 +266,11 @@ public class RewindManager : MonoBehaviour
         _head  = 0;
         _tail  = 0;
         _cooldownTimer = _rewindCooldown;
+
+        // Playing 복귀 직전이라야 유효하다 — PlayerController.Update는 Playing이 아니면 조기 return이라
+        // 되감기 중에는 무적 타이머가 줄지 않는다
+        float grace = ShopService.RewindGraceDuration();
+        if (grace > 0f) _player.GrantInvincible(grace);
 
         Managers.Game.State = GameState.Playing;
     }
