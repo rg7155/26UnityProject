@@ -20,6 +20,7 @@ public static class TreasurePopupGenerator
 {
     const string Tag = "TreasurePopupGenerator";
     const string FontPath = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
+    const string ChestSpritePath = "Assets/Art/Sprites/Generated/TreasureChestSciFi.png";
 
     // ── 레이아웃 튜닝값 — GameScene 메인 Canvas 좌표계 기준 ──
     // 이 씬의 CanvasScaler 는 Reference 800×600 / match 0.5 라, 1080×1920 화면에서 캔버스 좌표계가
@@ -33,7 +34,7 @@ public static class TreasurePopupGenerator
     const float CellSize = 64f;
     const float CellSpacing = UITheme.S2;
     const float MarkerPad = UITheme.S1;  // 마커가 이웃 칸을 침범하지 않는 최대 여유(= spacing/2)
-    const float EmblemSize = 120f;
+    const float EmblemSize = 152f;   // CenterSize(208) 안에서 여백을 남기는 최대치
 
     static readonly float RingSize = GridSide * CellSize + (GridSide - 1) * CellSpacing;
     static readonly float CenterSize = 3f * CellSize + 2f * CellSpacing;
@@ -214,24 +215,23 @@ public static class TreasurePopupGenerator
         centerArt.anchoredPosition = new Vector2(0f, -(HeaderH + UITheme.S4 + (RingSize - CenterSize) * 0.5f));
 
         var emblem = FindOrCreateChild(centerArt, "Emblem");
-        var emblemSprite = emblem.GetComponent<UIProceduralSprite>();
-        if (emblemSprite == null) emblemSprite = emblem.gameObject.AddComponent<UIProceduralSprite>();
-        emblemSprite.ConfigureRing(Mathf.RoundToInt(EmblemSize * 0.5f), UITheme.OutlineWidth, UITheme.Gold);
+        // 임포트된 에셋이라 sprite 를 직접 대입해도 직렬화된다 — 흰 박스 문제는 런타임 생성
+        // 스프라이트에만 해당하므로 여기선 UIProceduralSprite 를 쓰지 않는다(있으면 덮어써서 제거)
+        var staleEmblemSprite = emblem.GetComponent<UIProceduralSprite>();
+        if (staleEmblemSprite != null) Object.DestroyImmediate(staleEmblemSprite);
         var emblemImg = emblem.GetComponent<Image>();
+        emblemImg.sprite = LoadFirstSprite(ChestSpritePath);
+        emblemImg.type = Image.Type.Simple;
+        emblemImg.preserveAspect = true;
         emblemImg.color = Color.white;
         emblemImg.raycastTarget = false;
         emblem.anchorMin = emblem.anchorMax = emblem.pivot = new Vector2(0.5f, 0.5f);
         emblem.sizeDelta = new Vector2(EmblemSize, EmblemSize);
         emblem.anchoredPosition = Vector2.zero;
 
-        var emblemLabel = FindOrCreateLabel(centerArt, "Label", font);
-        emblemLabel.text = "VAULT";
-        emblemLabel.fontSize = UITheme.Caption;
-        emblemLabel.fontStyle = FontStyles.Bold;
-        emblemLabel.color = UITheme.Gold;
-        emblemLabel.alignment = TextAlignmentOptions.Center;
-        emblemLabel.raycastTarget = false;
-        Stretch(emblemLabel.rectTransform);
+        // 상자 이미지가 가운데를 채우므로 "VAULT" 캡션은 중복이다
+        var staleEmblemLabel = centerArt.Find("Label");
+        if (staleEmblemLabel != null) Object.DestroyImmediate(staleEmblemLabel.gameObject);
 
         // ── 8) ResultText — "+120 G" (초기 빈 문자열) ──
         var result = FindOrCreateLabel(popup, "ResultText", font);
@@ -312,6 +312,16 @@ public static class TreasurePopupGenerator
         var ps = go.GetComponent<UIProceduralSprite>();
         if (ps == null) ps = go.AddComponent<UIProceduralSprite>();
         ps.Configure(outlined, radius, outlineWidth, fill, line);
+    }
+
+    // 텍스처가 Sprite Mode = Multiple 이면 Sprite 는 서브에셋이라 LoadAssetAtPath<Sprite> 로는 못 잡는다
+    static Sprite LoadFirstSprite(string path)
+    {
+        foreach (var asset in AssetDatabase.LoadAllAssetsAtPath(path))
+            if (asset is Sprite sprite) return sprite;
+
+        Debug.LogWarning($"[{Tag}] 스프라이트를 찾지 못했습니다: {path}");
+        return null;
     }
 
     static RectTransform FindOrCreateChild(RectTransform parent, string name)

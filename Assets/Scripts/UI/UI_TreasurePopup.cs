@@ -6,11 +6,12 @@ using static Define;
 // 보물상자 슬롯 룰렛 팝업 — 연출만 담당한다. 결과는 TreasureReward.Roll이 먼저 뽑아 인자로 넘어온다
 public class UI_TreasurePopup : MonoBehaviour
 {
-    enum SpinPhase { Hidden, Fast, Decel, Highlight }
+    enum SpinPhase { Hidden, Intro, Fast, Decel, Highlight }
 
-    const float FastDuration = 0.6f;
-    const float DecelDuration = 1.0f;
-    const float HighlightDuration = 0.6f;
+    const float IntroDuration = 0.5f;       // 팝업이 뜨자마자 돌기 시작하면 무엇이 도는지 읽을 틈이 없다
+    const float FastDuration = 0.8f;
+    const float DecelDuration = 1.2f;
+    const float HighlightDuration = 1.4f;   // 당첨 칸과 획득 골드를 눈으로 확인할 시간
     const float FastCellsPerSec = 20f;
     const int DecelLaps = 2;
 
@@ -64,8 +65,7 @@ public class UI_TreasurePopup : MonoBehaviour
 
         _result = result;
         _elapsed = 0f;
-        _phase = SpinPhase.Fast;
-        _spinStartIndex = _markerIndex;
+        _phase = SpinPhase.Intro;
 
         if (_resultText != null)
             _resultText.text = string.Empty;
@@ -90,6 +90,11 @@ public class UI_TreasurePopup : MonoBehaviour
 
         switch (_phase)
         {
+            case SpinPhase.Intro:
+                if (_elapsed >= IntroDuration)
+                    BeginFast();
+                break;
+
             case SpinPhase.Fast:
                 SetMarkerIndex((_spinStartIndex + (int)(FastCellsPerSec * _elapsed)) % TreasureReward.SlotCount, true);
                 if (_elapsed >= FastDuration)
@@ -111,6 +116,13 @@ public class UI_TreasurePopup : MonoBehaviour
                     Close();
                 break;
         }
+    }
+
+    void BeginFast()
+    {
+        _spinStartIndex = _markerIndex;
+        _elapsed = 0f;
+        _phase = SpinPhase.Fast;
     }
 
     void BeginDecel()
@@ -150,11 +162,15 @@ public class UI_TreasurePopup : MonoBehaviour
         Managers.Game.State = GameState.Playing;
     }
 
-    // Decel/Highlight 중 스킵은 무시 — 착지 순간을 못 보면 연출이 무의미하다
+    // Decel 중 스킵만 무시한다 — 착지 순간을 못 보면 연출이 무의미하다
     void OnClickSkip()
     {
-        if (_phase == SpinPhase.Fast)
-            BeginDecel();
+        switch (_phase)
+        {
+            case SpinPhase.Intro: BeginFast(); break;
+            case SpinPhase.Fast: BeginDecel(); break;
+            case SpinPhase.Highlight: Close(); break;   // 결과를 이미 봤으면 기다릴 이유가 없다
+        }
     }
 
     void SetMarkerIndex(int index, bool playTick)
