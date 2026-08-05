@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #0b0d14; overflow: hidden; }
+      #unity-container { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+
+      /* 9:16 을 유지한 채 창 높이에 맞춘다. 기본 템플릿처럼 px 을 고정하면 창보다 커져 상단 HUD 가 잘린다.
+         창이 좁을 때는 너비 기준으로 접히도록 min() 을 쓴다. */
+      #unity-canvas { aspect-ratio: {{{ WIDTH }}} / {{{ HEIGHT }}}; height: min(100dvh, calc(100vw * {{{ HEIGHT }}} / {{{ WIDTH }}})); width: auto; display: block; outline: none; }
+
+      #unity-loading-bar { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 200px; }
+      #unity-progress-bar-empty { height: 6px; background: #1c2130; border-radius: 3px; overflow: hidden; }
+      #unity-progress-bar-full { height: 100%; width: 0%; background: #38bdf8; }
+      #unity-warning { position: absolute; left: 50%; top: 12px; transform: translateX(-50%); color: #fff; font: 13px sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-progress-bar-empty"><div id="unity-progress-bar-full"></div></div>
+      </div>
+      <div id="unity-warning"></div>
+    </div>
+    <script>
+      var canvas = document.querySelector("#unity-canvas");
+
+      function unityShowBanner(msg, type) {
+        var banner = document.querySelector("#unity-warning");
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        banner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else setTimeout(function () { banner.removeChild(div); }, 5000);
+      }
+
+      var buildUrl = "Build";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+        frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+        codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "{{{ COMPANY_NAME }}}",
+        productName: "{{{ PRODUCT_NAME }}}",
+        productVersion: "{{{ PRODUCT_VERSION }}}",
+        showBanner: unityShowBanner,
+      };
+
+      // 키 입력이 게임으로 가야 하므로 로드 직후 캔버스에 포커스를 준다.
+      var script = document.createElement("script");
+      script.src = buildUrl + "/{{{ LOADER_FILENAME }}}";
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+        }).then(() => {
+          document.querySelector("#unity-loading-bar").style.display = "none";
+          canvas.focus();
+        }).catch((message) => { alert(message); });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
