@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir -p \"c:/Users/rg715/My project/.claude/agents\" \"c:/Users/rg715/My project/.claude/skills/unity-dev\")"
+      "Bash(mkdir -p \"c:/Users/rg715/My project/.claude/agents\" \"c:/Users/rg715/My project/.claude/skills/unity-dev\")",
+      "Bash(exist _workspace_prev rmdir /s /q _workspace_prev)",
+      "Bash(exist _workspace move _workspace _workspace_prev)",
+      "Bash(powershell -Command \"if \\(Test-Path '_workspace_prev'\\) { Remove-Item '_workspace_prev' -Recurse -Force }; if \\(Test-Path '_workspace'\\) { Rename-Item '_workspace' '_workspace_prev' }\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(ls \"C:/Users/rg715/.claude/projects/\" | head -20)",
+      "Read(//c/Users/rg715/.claude/projects/**)",
+      "Bash(powershell -Command \"Get-ChildItem 'c:\\\\Users\\\\rg715\\\\My project\\\\_workspace' -ErrorAction SilentlyContinue | Select-Object Name\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\rg715\\\\My project\\\\_workspace\\\\interview\\\\csharp\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\rg715\\My project\\.claude"

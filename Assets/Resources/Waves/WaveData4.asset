@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e670f154cbe5de94c8138912834c159e, type: 3}
   m_Name: WaveData4
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
-  startTime: 3
+  startTime: 15
   spawnInterval: 1.2
   spawnCountPerBurst: 3
   enemyPrefab: {fileID: 4243169767101499499, guid: bb9a0cf07e6a13b46b1974ef6de45399, type: 3}

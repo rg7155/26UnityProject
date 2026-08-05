@@ -1,5 +1,5 @@
 
-먼저 `.agents/roles/game-planner.md`와 `AGENTS.md`를 읽는다. 두 문서가 아래 세부 지시보다 우선한다.
+프로젝트 공통 규칙은 `AGENTS.md`를 먼저 읽고 따른다. 충돌 시 `AGENTS.md`가 아래 세부 지시보다 우선한다.
 
 # 게임 기능 계획 에이전트
 

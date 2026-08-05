@@ -1,6 +1,8 @@
 # Rewind Survivors — Claude Code Adapter
 
-모든 프로젝트 규칙·기술 결정·코딩 스타일·커밋 규칙은 루트의 `AGENTS.md`가 단일 원본이다. 작업을 시작하기 전에 반드시 읽고 따른다.
+모든 프로젝트 규칙·기술 결정·코딩 스타일·커밋 규칙은 루트의 `AGENTS.md`가 단일 원본이다. 아래 import로 자동 로드된다.
+
+@AGENTS.md
 
 - 공통 스킬의 원본은 `.agents/skills/`이다.
 - Claude가 인식하는 `.claude/skills/`는 동기화 사본이다. 공통 스킬을 수정한 뒤에는 프로젝트 루트에서 `powershell -ExecutionPolicy Bypass -File .\.agents\Sync-ClaudeSkills.ps1`를 실행한다.

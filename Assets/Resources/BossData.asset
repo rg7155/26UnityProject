@@ -20,7 +20,7 @@ MonoBehaviour:
   contactDamage: 25
   contactInterval: 1
   phase1Color: {r: 1, g: 1, b: 1, a: 1}
-  phase2Color: {r: 1, g: 0.3066038, b: 0.3066038, a: 1}
+  phase2Color: {r: 1, g: 0.504717, b: 0.504717, a: 1}
   patternSequence: 000000000100000002000000
   slamTelegraph: 1
   slamRadius: 2.5
