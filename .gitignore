@@ -3,6 +3,9 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+# 위 규칙은 경로 깊이와 무관하게 Build 폴더를 전부 무시한다. 웹 배포본은 Pages 가 실제로
+# 서빙해야 하는 산출물이므로 docs/Build 만 되살린다 — 빠지면 로더 404 로 로딩 바에서 멈춘다.
+!/docs/Build/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 
