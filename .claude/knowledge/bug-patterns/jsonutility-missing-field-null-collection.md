@@ -32,6 +32,8 @@ if (_gameData.Purchases == null)
 → `JsonUtility.FromJson` 은 필드 초기화식을 실행하지 않는다. 로드 직후 **null 가드**로
    기본값을 보장하라. (필드 초기화나 생성자에 의존하지 말 것.)
 값 타입(int/bool)은 0/false로 안전하지만 **List·배열·클래스 참조는 반드시 가드**.
+단 **0이 유효한 값인 값 타입(볼륨·배율 등)은 안전하지 않다** — 가드가 원리적으로 불가능하므로
+[[jsonutility-value-type-needs-schema-version]] 의 스키마 버전 방식을 쓸 것.
 
 ## 관련
 - 세이브 스키마 변경 시 항상 마이그레이션 관점으로 로드 경로를 점검할 것.

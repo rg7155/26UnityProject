@@ -23,12 +23,14 @@ public class QuestProgress
 [Serializable]
 public class GameData
 {
+    public int SchemaVersion = GameManagerEx.CurrentSchemaVersion;
+
     public int Score;
     public float PlayTime;
     public int BestScore;
     public float BestTime;
-    public bool BGMOn = true;
-    public bool EffectSoundOn = true;
+    public float BgmVolume = GameManagerEx.DefaultBgmVolume;
+    public float EffectVolume = GameManagerEx.DefaultEffectVolume;
 
     public int TotalGold;
     public List<ShopPurchase> Purchases = new List<ShopPurchase>();
@@ -42,6 +44,10 @@ public class GameData
 
 public class GameManagerEx
 {
+    public const int CurrentSchemaVersion = 1;
+    public const float DefaultBgmVolume = 0.5f;
+    public const float DefaultEffectVolume = 0.8f;
+
     GameData _gameData = new GameData();
     public GameData SaveData { get { return _gameData; } set { _gameData = value; } }
 
@@ -77,16 +83,16 @@ public class GameManagerEx
     public void SpendGold(int amount) { _gameData.TotalGold -= amount; }
     public void AddGold(int amount) { _gameData.TotalGold += amount; }
 
-    public bool BGMOn
+    public float BgmVolume
     {
-        get { return _gameData.BGMOn; }
-        set { _gameData.BGMOn = value; }
+        get { return _gameData.BgmVolume; }
+        set { _gameData.BgmVolume = Mathf.Clamp01(value); }
     }
 
-    public bool EffectSoundOn
+    public float EffectVolume
     {
-        get { return _gameData.EffectSoundOn; }
-        set { _gameData.EffectSoundOn = value; }
+        get { return _gameData.EffectVolume; }
+        set { _gameData.EffectVolume = Mathf.Clamp01(value); }
     }
 
     string _path;
@@ -130,6 +136,14 @@ public class GameManagerEx
             _gameData.Purchases = new List<ShopPurchase>();
         if (_gameData.QuestClaims == null)
             _gameData.QuestClaims = new List<QuestProgress>();
+
+        // 볼륨 키가 없는 구버전 세이브는 float가 0으로 남아 전 게임 무음이 된다. null 가드로는 못 잡음
+        if (_gameData.SchemaVersion < 1)
+        {
+            _gameData.BgmVolume = DefaultBgmVolume;
+            _gameData.EffectVolume = DefaultEffectVolume;
+            _gameData.SchemaVersion = 1;
+        }
 
         return true;
     }

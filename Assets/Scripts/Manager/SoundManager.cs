@@ -11,6 +11,9 @@ public class SoundManager
     public const string EnemyDeath = "EnemyDeath";
     public const string Explosion  = "Explosion";
 
+    // 파일명에 공백이 있어 오타가 나기 쉽다 — 조회 경로는 Sounds/Neon Static Loop
+    public const string MainBgm = "BGM";
+
     private AudioSource[] _audioSources = new AudioSource[(int)Define.Sound.Max];
     private Dictionary<string, AudioClip> _audioClips = new Dictionary<string, AudioClip>();
     private Dictionary<string, float> _lastEffectTime = new Dictionary<string, float>();
@@ -37,6 +40,8 @@ public class SoundManager
 
 				_audioSources[(int)Define.Sound.Bgm].loop = true;
 				_audioSources[(int)Define.Sound.SubBgm].loop = true;
+
+				_soundRoot.AddComponent<BgmStarter>();
 			}
 			else
 			{
@@ -49,6 +54,32 @@ public class SoundManager
 				}
 			}
 		}
+	}
+
+	public void ApplyVolume()
+	{
+		AudioSource bgm = _audioSources[(int)Define.Sound.Bgm];
+		if (bgm != null) bgm.volume = Managers.Game.BgmVolume;
+
+		AudioSource subBgm = _audioSources[(int)Define.Sound.SubBgm];
+		if (subBgm != null) subBgm.volume = Managers.Game.EffectVolume;
+
+		AudioSource effect = _audioSources[(int)Define.Sound.Effect];
+		if (effect != null) effect.volume = Managers.Game.EffectVolume;
+	}
+
+	// 볼륨 0은 Stop이 아니라 volume 0 — 슬라이더를 다시 올렸을 때 같은 지점에서 이어지게 하려면 소스가 계속 Play 상태여야 한다
+	public void PlayBgm()
+	{
+		AudioSource audioSource = _audioSources[(int)Define.Sound.Bgm];
+		if (audioSource == null) return;
+		if (audioSource.isPlaying) return;
+
+		Play(Define.Sound.Bgm, MainBgm);
+		ApplyVolume();
+
+		if (audioSource.clip == null)
+			Debug.LogError($"[SoundManager] BGM 클립 로드 실패 — Resources/Sounds/{MainBgm}");
 	}
 
     public void Clear()
@@ -78,8 +109,8 @@ public class SoundManager
 					audioSource.Stop();
 
 				audioSource.clip = audioClip;
-				if(Managers.Game.BGMOn)
-					audioSource.Play();
+				audioSource.volume = Managers.Game.BgmVolume;
+				audioSource.Play();
 			});
         }
 		else if (type == Define.Sound.SubBgm)
@@ -90,8 +121,8 @@ public class SoundManager
                     audioSource.Stop();
 
                 audioSource.clip = audioClip;
-				if(Managers.Game.EffectSoundOn)
-					audioSource.Play();
+				audioSource.volume = Managers.Game.EffectVolume;
+				audioSource.Play();
             });
         }
         else
@@ -99,8 +130,8 @@ public class SoundManager
             LoadAudioClip(key, (audioClip) =>
 			{
 				audioSource.pitch = pitch;
-				if (Managers.Game.EffectSoundOn)
-					audioSource.PlayOneShot(audioClip);
+				audioSource.volume = Managers.Game.EffectVolume;
+				audioSource.PlayOneShot(audioClip);
 			});
         }
 	}
@@ -126,8 +157,8 @@ public class SoundManager
 				audioSource.Stop();
 
 			audioSource.clip = audioClip;
-			if (Managers.Game.BGMOn)
-				audioSource.Play();
+			audioSource.volume = Managers.Game.BgmVolume;
+			audioSource.Play();
 		}
 		else if(type == Define.Sound.SubBgm)
         {
@@ -135,14 +166,14 @@ public class SoundManager
                 audioSource.Stop();
 
             audioSource.clip = audioClip;
-			if (Managers.Game.EffectSoundOn)
-				audioSource.Play();
+			audioSource.volume = Managers.Game.EffectVolume;
+			audioSource.Play();
         }
 		else
 		{
 			audioSource.pitch = pitch;
-			if (Managers.Game.EffectSoundOn)
-				audioSource.PlayOneShot(audioClip);
+			audioSource.volume = Managers.Game.EffectVolume;
+			audioSource.PlayOneShot(audioClip);
 		}
 	}
 
