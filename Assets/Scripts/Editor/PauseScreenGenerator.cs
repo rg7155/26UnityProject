@@ -22,6 +22,7 @@ public static class PauseScreenGenerator
     const float CardTopGap = UITheme.S6;
     const float CardWidth = 760f;
     const float StatRowH = 68f;
+    const float VolumeRowH = 88f; // 모바일 터치 타깃 하한 — 트랙보다 훨씬 높게 잡아 행 어디를 눌러도 잡힌다
     const float BottomBarH = 320f;
     const float ResumeButtonH = 128f;
     const float TitleButtonH = 96f;
@@ -124,6 +125,46 @@ public static class PauseScreenGenerator
             WireIfNull(svo, StatRows[i].Field, valueLabels[i]);
         svo.ApplyModifiedProperties();
 
+        // ── 사운드 카드(BGM/SFX 볼륨) ──
+        // StatsCard 는 ContentSizeFitter 로 높이가 런타임 결정이라 그 아래로 쌓으면 행 수가 바뀔 때 겹친다.
+        // 그래서 위에서 내려오지 않고 SafeArea 하단(BottomBar 위)을 기준으로 올려 붙인다.
+        var soundCard = FindOrCreateChild(safeArea, "SoundCard");
+        ApplyProcedural(soundCard.gameObject, true, UITheme.RadLg, UITheme.OutlineWidth, UITheme.PanelBase, UITheme.Outline);
+        var soundCardImg = soundCard.GetComponent<Image>();
+        soundCardImg.color = Color.white;
+        soundCardImg.raycastTarget = false;
+        soundCard.anchorMin = soundCard.anchorMax = soundCard.pivot = new Vector2(0.5f, 0f);
+        soundCard.sizeDelta = new Vector2(CardWidth, 0f); // 높이는 ContentSizeFitter 가 내용에 맞춰 계산
+        soundCard.anchoredPosition = new Vector2(0f, BottomBarH + UITheme.S6);
+
+        var soundVlg = soundCard.GetComponent<VerticalLayoutGroup>();
+        if (soundVlg == null) soundVlg = soundCard.gameObject.AddComponent<VerticalLayoutGroup>();
+        soundVlg.padding = new RectOffset((int)UITheme.S5, (int)UITheme.S5, (int)UITheme.S5, (int)UITheme.S5);
+        soundVlg.spacing = UITheme.S3;
+        soundVlg.childAlignment = TextAnchor.UpperCenter;
+        soundVlg.childControlWidth = true;
+        soundVlg.childControlHeight = true;
+        soundVlg.childForceExpandWidth = true;
+        soundVlg.childForceExpandHeight = false;
+
+        var soundCsf = soundCard.GetComponent<ContentSizeFitter>();
+        if (soundCsf == null) soundCsf = soundCard.gameObject.AddComponent<ContentSizeFitter>();
+        soundCsf.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
+        soundCsf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var soundHeader = FindOrCreateLabel(soundCard, "Header", font);
+        StyleLabel(soundHeader, "SOUND", UITheme.Header, FontStyles.Bold, UITheme.TextSecondary, TextAlignmentOptions.Left);
+
+        var bgmSlider = BuildVolumeRow(soundCard, "BgmRow", "BGM", UITheme.Accent, font);
+        var effectSlider = BuildVolumeRow(soundCard, "EffectRow", "SFX", UITheme.Cyan, font);
+
+        var volumeView = soundCard.GetComponent<PauseVolumeView>();
+        if (volumeView == null) volumeView = soundCard.gameObject.AddComponent<PauseVolumeView>();
+        var vvo = new SerializedObject(volumeView);
+        WireIfNull(vvo, "_bgmSlider", bgmSlider);
+        WireIfNull(vvo, "_effectSlider", effectSlider);
+        vvo.ApplyModifiedProperties();
+
         // ── 하단 버튼 2개 ──
         var bottom = FindOrCreateChild(safeArea, "BottomBar");
         ClearImage(bottom);
@@ -210,6 +251,7 @@ public static class PauseScreenGenerator
 
         EditorUtility.SetDirty(controller);
         EditorUtility.SetDirty(statsView);
+        EditorUtility.SetDirty(volumeView);
         EditorSceneManager.MarkSceneDirty(canvas.gameObject.scene);
         Selection.activeGameObject = pauseRoot.gameObject;
         Debug.Log("[PauseScreenGenerator] Pause 화면 생성 + 배선 완료. 필요 시 에디터에서 미세조정.");
@@ -266,6 +308,91 @@ public static class PauseScreenGenerator
         valueRT.offsetMax = Vector2.zero;
 
         return valueLabel;
+    }
+
+    // 볼륨 행 한 줄: 왼쪽 이름 + 오른쪽 조작 가능한 슬라이더(트랙 + Fill + 원형 핸들). Slider 반환.
+    static Slider BuildVolumeRow(RectTransform card, string rowName, string labelText, Color fillColor, TMP_FontAsset font)
+    {
+        var row = FindOrCreateChild(card, rowName);
+        ClearImage(row);
+        var le = row.GetComponent<LayoutElement>();
+        if (le == null) le = row.gameObject.AddComponent<LayoutElement>();
+        le.minHeight = VolumeRowH;
+        le.preferredHeight = VolumeRowH;
+        le.flexibleHeight = 0f;
+
+        var nameLabel = FindOrCreateLabel(row, "Name", font);
+        StyleLabel(nameLabel, labelText, UITheme.Body, FontStyles.Bold, UITheme.TextSecondary, TextAlignmentOptions.MidlineLeft);
+        FracRow(nameLabel.rectTransform, 0f, 0.35f);
+
+        var sliderRT = FindOrCreateChild(row, "Slider");
+        FracRow(sliderRT, 0.35f, 1f);
+        // 얇은 트랙이 아니라 행 전체(88px)가 눌리도록 투명 raycast 타깃으로 남긴다 — ClearImage 를 쓰면 raycast 가 꺼진다
+        var sliderImg = sliderRT.GetComponent<Image>();
+        sliderImg.sprite = null;
+        sliderImg.color = Color.clear;
+        sliderImg.raycastTarget = true;
+
+        // 트랙은 카드(PanelBase)보다 어두운 리세스 — 백드롭<패널<리세스 깊이 표현
+        var track = FindOrCreateChild(sliderRT, "Background");
+        ApplyProcedural(track.gameObject, false, UITheme.RadSm, 0, UITheme.Outline, UITheme.Outline);
+        var trackImg = track.GetComponent<Image>();
+        trackImg.color = Color.white;
+        trackImg.raycastTarget = false;
+        CenterStrip(track, UITheme.S5, 0f);
+
+        var fillArea = FindOrCreateChild(sliderRT, "Fill Area");
+        ClearImage(fillArea);
+        CenterStrip(fillArea, UITheme.S5 - UITheme.S1 * 2f, UITheme.S1);
+
+        var fill = FindOrCreateChild(fillArea, "Fill");
+        ApplyProcedural(fill.gameObject, false, UITheme.RadSm, 0, fillColor, fillColor);
+        var fillImg = fill.GetComponent<Image>();
+        fillImg.color = Color.white;
+        fillImg.raycastTarget = false;
+        Stretch(fill); // 앵커는 Slider 가 value 에 맞춰 덮어쓴다
+
+        // 좌우 인셋 = 핸들 반지름. 없으면 0/1 끝값에서 핸들이 트랙 밖으로 반쯤 튀어나간다.
+        var slideArea = FindOrCreateChild(sliderRT, "Handle Slide Area");
+        ClearImage(slideArea);
+        CenterStrip(slideArea, UITheme.S7, UITheme.S7 * 0.5f);
+
+        var handle = FindOrCreateChild(slideArea, "Handle");
+        var handlePs = handle.GetComponent<UIProceduralSprite>();
+        if (handlePs == null) handlePs = handle.gameObject.AddComponent<UIProceduralSprite>();
+        handlePs.ConfigureCircle((int)(UITheme.S7 * 0.5f), UITheme.TextPrimary);
+        var handleImg = handle.GetComponent<Image>();
+        handleImg.color = Color.white;
+        handleImg.raycastTarget = true;
+        handle.anchorMin = new Vector2(0f, 0f); // Slider 가 x 앵커만 value 로 덮어쓰고 y 는 0~1 로 강제한다
+        handle.anchorMax = new Vector2(0f, 1f); // → 슬라이드 영역 높이가 곧 핸들 높이(= S7 정사각)
+        handle.pivot = new Vector2(0.5f, 0.5f);
+        handle.sizeDelta = new Vector2(UITheme.S7, 0f);
+        handle.anchoredPosition = Vector2.zero;
+
+        var slider = sliderRT.GetComponent<Slider>();
+        if (slider == null) slider = sliderRT.gameObject.AddComponent<Slider>();
+        slider.direction = Slider.Direction.LeftToRight;
+        slider.wholeNumbers = false;
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.interactable = true;
+        slider.navigation = new Navigation { mode = Navigation.Mode.None };
+        slider.transition = Selectable.Transition.ColorTint;
+        slider.targetGraphic = handleImg;
+        var colors = slider.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = Color.white;
+        colors.pressedColor = UITheme.Accent;
+        colors.selectedColor = Color.white;
+        colors.disabledColor = UITheme.TextDisabled;
+        colors.fadeDuration = UITheme.FadeDuration;
+        slider.colors = colors;
+        slider.fillRect = fill;
+        slider.handleRect = handle;
+        // value 는 세팅하지 않는다 — PauseVolumeView.Start() 가 세이브 값으로 채운다
+
+        return slider;
     }
 
     // ── 헬퍼 ──
@@ -339,6 +466,26 @@ public static class PauseScreenGenerator
             img.color = Color.clear;
             img.raycastTarget = false;
         }
+    }
+
+    // 부모 행을 가로 비율로 나눠 채운다.
+    static void FracRow(RectTransform rt, float xMin, float xMax)
+    {
+        rt.anchorMin = new Vector2(xMin, 0f);
+        rt.anchorMax = new Vector2(xMax, 1f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+    }
+
+    // 부모 세로 중앙에 놓는 가로 스트립 — 좌우 sidePad 인셋, 높이 고정.
+    static void CenterStrip(RectTransform rt, float height, float sidePad)
+    {
+        rt.anchorMin = new Vector2(0f, 0.5f);
+        rt.anchorMax = new Vector2(1f, 0.5f);
+        rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(-sidePad * 2f, height);
+        rt.anchoredPosition = Vector2.zero;
     }
 
     static void Stretch(RectTransform rt, float pad = 0f)
