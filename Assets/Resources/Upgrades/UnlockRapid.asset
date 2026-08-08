@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: UnlockRapid
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: 'RapidUnlock '
+  upgradeName: Rapid Unlock
   description: Rapid Shoot
   type: 5
   value: 0

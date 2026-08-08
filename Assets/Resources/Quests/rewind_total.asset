@@ -15,5 +15,5 @@ MonoBehaviour:
   id: rewind_total
   displayName: TIME TRAVELER
   stat: 2
-  targets: 0a00000064000000f4010000
+  targets: 030000001e00000096000000
   rewards: c8000000e803000088130000

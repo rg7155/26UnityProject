@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: Upgrade_Speed
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: "Move Speed Up\t"
-  description: 'Speed x1.2
-
-'
+  upgradeName: Move Speed Up
+  description: Speed x1.2
   type: 0
   value: 1.2

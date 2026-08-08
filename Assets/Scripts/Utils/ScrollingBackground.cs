@@ -29,6 +29,11 @@ public class ScrollingBackground : MonoBehaviour
             quad.transform.localScale = new Vector3(w, h, 1f);
         }
 
+        // sortingOrder 는 깊이보다 우선한다 — 기본값 0 이면 음수 Order 인 보스 예고원(-20/-19)을
+        // 통째로 가린다. MeshRenderer 는 Inspector 에 이 필드가 없어 코드로만 지정할 수 있다.
+        _baseQuad.sortingOrder   = -100;
+        _detailQuad.sortingOrder = -99;
+
         // sharedMaterial을 쓰면 에디터에서 .mat 에셋이 오염된다
         _baseMat = _baseQuad.material;
         _detailMat = _detailQuad.material;

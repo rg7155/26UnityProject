@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: BossData
   m_EditorClassIdentifier: Assembly-CSharp::BossData
   bossName: MONOLITH
-  hp: 3000
+  hp: 2400
   moveSpeed: 1.6
   expReward: 100
-  goldReward: 150
+  goldReward: 400
   contactDamage: 25
   contactInterval: 1
   phase1Color: {r: 1, g: 1, b: 1, a: 1}
@@ -25,7 +25,7 @@ MonoBehaviour:
   slamTelegraph: 1
   slamRadius: 2.5
   slamDamage: 35
-  slamCooldown: 5
+  slamCooldown: 3
   radialProjectilePrefab: {fileID: 7557212559957221932, guid: 784cef2a3c6c9f846b0e52664d8e297e, type: 3}
   radialTelegraph: 0.6
   radialCount: 12
@@ -33,12 +33,12 @@ MonoBehaviour:
   radialDamage: 20
   radialSpeed: 4.5
   radialLifetime: 3
-  radialCooldown: 6
+  radialCooldown: 3.5
   chargeTelegraph: 0.8
   chargeSpeed: 12
   chargeDuration: 1.2
   chargeDamage: 30
-  chargeCooldown: 8
+  chargeCooldown: 5
   phase2HpRatio: 0.5
   phase2CooldownMult: 0.7
   phase2SpeedMult: 1.5

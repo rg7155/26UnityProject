@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ProjectileWeaponData
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileWeaponData
   weaponName: BaseWeapon
-  damage: 20
+  damage: 15
   projectilePrefab: {fileID: 2087712369979334790, guid: 46c1355d5b0501544aada246ced30c68, type: 3}
-  fireRate: 1
+  fireRate: 2
   range: 8
   detectRange: 10

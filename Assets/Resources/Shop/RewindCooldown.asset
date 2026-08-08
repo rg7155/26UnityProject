@@ -15,5 +15,5 @@ MonoBehaviour:
   id: rewind_cooldown
   displayName: Rewind Cooldown
   effect: 2
-  costs: 58020000b004000060090000
-  valuePerTier: 3
+  costs: 5e01000084030000d0070000
+  valuePerTier: 5

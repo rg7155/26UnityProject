@@ -15,5 +15,5 @@ MonoBehaviour:
   id: rewind_charge
   displayName: Rewind Charge
   effect: 7
-  costs: dc050000b80b0000
+  costs: fa000000b0040000
   valuePerTier: 1

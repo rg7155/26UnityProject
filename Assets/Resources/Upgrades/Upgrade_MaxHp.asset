@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: Upgrade_MaxHp
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: "Max HP Up\t"
-  description: 'Max HP +20
-
-'
+  upgradeName: Max HP Up
+  description: Max HP +20
   type: 3
   value: 20

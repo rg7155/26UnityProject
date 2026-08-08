@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
-  m_Name: UnlockBomb
+  m_Name: UnlockOrbit
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: Bomb Unlock
-  description: Periodically explodes nearby enemies
+  upgradeName: Orbit Unlock
+  description: Orbiting blades damage on contact
   type: 5
   value: 0
-  weaponToAcquire: {fileID: 11400000, guid: 340bf32f6a1f88546bdd1a26800b3ace, type: 2}
+  weaponToAcquire: {fileID: 11400000, guid: f8cddbd9a4a7b0d4fbb472b7f45ef581, type: 2}

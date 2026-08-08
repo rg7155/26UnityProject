@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: Upgrade_FireRate
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: "Fire Rate Up\t"
-  description: 'Fire Rate x1.3
-
-'
+  upgradeName: Fire Rate Up
+  description: Fire Rate x1.3
   type: 1
   value: 1.3

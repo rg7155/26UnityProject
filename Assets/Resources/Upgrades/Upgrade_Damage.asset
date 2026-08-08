@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4950aa206fd6b9f41aff7754c75baab1, type: 3}
   m_Name: Upgrade_Damage
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
-  upgradeName: "Damage Up\t\t"
-  description: Damage x1.5
+  upgradeName: Damage Up
+  description: Damage x1.25
   type: 2
   value: 1.25
