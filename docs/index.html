@@ -29,6 +29,12 @@
     <script>
       var canvas = document.querySelector("#unity-canvas");
 
+      // F1 은 게임의 디버그 오버레이 토글인데 브라우저가 고객센터 페이지를 연다.
+      // capture 단계에서 기본 동작만 막고 이벤트는 그대로 흘려 Unity 입력은 유지한다.
+      addEventListener("keydown", function (e) {
+        if (e.key === "F1") e.preventDefault();
+      }, true);
+
       function unityShowBanner(msg, type) {
         var banner = document.querySelector("#unity-warning");
         var div = document.createElement('div');
