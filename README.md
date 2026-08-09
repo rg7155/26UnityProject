@@ -2,8 +2,9 @@
 
 시간을 되돌려 죽음마저 되감는 탑다운 2D 서바이버. 탕탕특공대 스타일에 시간 되돌리기를 더한 1인 개발 포트폴리오.
 
-<!-- TODO: 대표 GIF (플레이 + 다중 무기 탄막). docs/gameplay.gif 로 저장 후 경로 연결 -->
-![gameplay](docs/gameplay.gif)
+**▶ [브라우저에서 바로 플레이](https://rg7155.github.io/26UnityProject/)** · **[플레이 영상 (50초)](https://youtu.be/oo_amdaKNRk)**
+
+<img src="screenshots/title.png" width="240"> <img src="screenshots/boss.png" width="240"> <img src="screenshots/shop.png" width="240">
 
 Unity 6 · URP · C# (New Input System) — 클라이언트 게임플레이 프로그래머 포트폴리오
 
@@ -42,6 +43,10 @@ Unity 6 · URP · C# (New Input System) — 클라이언트 게임플레이 프�
 | 2000 | 측정 불가 | ~40 FPS | → 1.6ms |
 
 최적화했다가 아니라 측정하고 최적화했다. ProfilerMarker로 핫패스를 수치화한 뒤 개선했다.
+
+> 위 수치는 **에디터(멀티스레드) 측정값**이다. 웹 빌드는 Job System이 단일 스레드로 동작해
+> 동일 수치가 나오지 않는다. 웹 데모에서 대규모 군중을 확인하려면 `F1`(계측 표시) 후
+> `K`(적 20마리 즉시 스폰)를 반복하면 된다.
 
 ### 3. 데이터 주도 무기 시스템 — 에셋만으로 무기 추가
 

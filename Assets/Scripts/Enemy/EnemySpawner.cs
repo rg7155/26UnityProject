@@ -8,8 +8,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] float _fallbackRadius = 12f; // 직교 카메라가 없을 때 폴백
 
     // 후반 웨이브는 처치 속도보다 스폰이 빨라 개체가 무한히 쌓인다. 되감기 버퍼가 프레임당
-    // 전 개체를 복사하므로 상한이 없으면 메모리·프레임이 함께 무너진다.
-    const int MaxAliveEnemies = 300;
+    // 전 개체를 복사하므로 무제한은 위험하지만, 이 프로젝트가 증명하려는 규모(2000마리)를
+    // 상한이 막아서는 안 된다. 안전장치일 뿐 성능 목표가 아니다.
+    [SerializeField] int _maxAliveEnemies = 2000;
 
     Transform _player;
     Camera _cam;
@@ -25,7 +26,7 @@ public class EnemySpawner : MonoBehaviour
     public void Spawn(GameObject prefab, int hp, float speed)
     {
         if (_player == null || prefab == null) return;
-        if (EnemyBase.Registry.Count >= MaxAliveEnemies) return;
+        if (EnemyBase.Registry.Count >= _maxAliveEnemies) return;
 
         Vector2 randomDir = Random.insideUnitCircle.normalized;
         Vector3 spawnPos = _player.position + (Vector3)(randomDir * SpawnRadius());
