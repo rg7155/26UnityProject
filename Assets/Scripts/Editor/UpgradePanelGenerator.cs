@@ -105,7 +105,9 @@ public static class UpgradePanelGenerator
         var buttonsProp = so.FindProperty("_buttons");
         var namesProp = so.FindProperty("_nameTexts");
         var descsProp = so.FindProperty("_descTexts");
+        var highlightsProp = so.FindProperty("_weaponHighlights");
         int count = buttonsProp != null ? buttonsProp.arraySize : 0;
+        if (highlightsProp != null) highlightsProp.arraySize = count; // 카드와 1:1 — 인덱스가 어긋나면 엉뚱한 카드가 강조된다
         for (int i = 0; i < count; i++)
         {
             var button = buttonsProp.GetArrayElementAtIndex(i).objectReferenceValue as Button;
@@ -113,8 +115,12 @@ public static class UpgradePanelGenerator
             StyleCard(button, cards, font,
                 GetElement<TMP_Text>(namesProp, i),
                 GetElement<TMP_Text>(descsProp, i));
+
+            var highlight = BuildWeaponHighlight((RectTransform)button.transform, font);
+            if (highlightsProp != null)
+                highlightsProp.GetArrayElementAtIndex(i).objectReferenceValue = highlight;
         }
-        so.ApplyModifiedProperties(); // 배열은 변경하지 않음 — 보존 확인용
+        so.ApplyModifiedProperties(); // _buttons/_nameTexts/_descTexts 는 보존, _weaponHighlights 만 생성기가 소유
 
         EditorUtility.SetDirty(panel);
         EditorSceneManager.MarkSceneDirty(panel.gameObject.scene);
@@ -179,6 +185,64 @@ public static class UpgradePanelGenerator
         }
     }
 
+    // 무기 언락 카드 강조: 골드 테두리 + 우하단 "NEW WEAPON" 배지.
+    // 카드 rect 를 그대로 덮으므로 카드 크기·기존 텍스트 배치에 영향이 없다(3택 레이아웃 보존).
+    static GameObject BuildWeaponHighlight(RectTransform cardRT, TMP_FontAsset font)
+    {
+        var root = FindOrCreateChild(cardRT, "WeaponHighlight");
+        root.gameObject.SetActive(true); // 레이아웃 계산을 위해 잠시 켠다(끝에서 다시 끈다)
+        var rootImg = root.GetComponent<Image>();
+        if (rootImg != null) Object.DestroyImmediate(rootImg); // 컨테이너는 그래픽 불필요
+        Stretch(root);
+        root.SetAsFirstSibling(); // 카드 배경 위·이름/설명 텍스트 아래에 그린다
+
+        // 카드 자체 외곽선과 동일한 반경·두께로 겹쳐 어두운 테두리를 골드로 치환한다.
+        var frame = FindOrCreateChild(root, "Frame");
+        ApplyProcedural(frame.gameObject, true, UITheme.RadMd, UITheme.OutlineWidth, Transparent(UITheme.Gold), UITheme.Gold);
+        var frameImg = frame.GetComponent<Image>();
+        frameImg.color = Color.white;
+        frameImg.raycastTarget = false;
+        Stretch(frame);
+
+        var badge = FindOrCreateChild(root, "Badge");
+        ApplyProcedural(badge.gameObject, false, UITheme.RadSm, 0, UITheme.Gold, UITheme.Gold);
+        var badgeImg = badge.GetComponent<Image>();
+        badgeImg.color = Color.white;
+        badgeImg.raycastTarget = false;
+        badge.anchorMin = new Vector2(1f, 0f);
+        badge.anchorMax = new Vector2(1f, 0f);
+        badge.pivot = new Vector2(1f, 0f);
+        badge.anchoredPosition = new Vector2(-UITheme.S4, UITheme.S3);
+
+        var hlg = badge.GetComponent<HorizontalLayoutGroup>();
+        if (hlg == null) hlg = badge.gameObject.AddComponent<HorizontalLayoutGroup>();
+        hlg.padding = new RectOffset((int)UITheme.S3, (int)UITheme.S3, (int)UITheme.S1, (int)UITheme.S1);
+        hlg.childAlignment = TextAnchor.MiddleCenter;
+        hlg.childControlWidth = true;
+        hlg.childControlHeight = true;
+        hlg.childForceExpandWidth = false;
+        hlg.childForceExpandHeight = false;
+
+        // 라벨 길이에 배지 폭을 맞춘다 — 고정 폭을 쓰면 문구가 바뀔 때 잘린다.
+        var fitter = badge.GetComponent<ContentSizeFitter>();
+        if (fitter == null) fitter = badge.gameObject.AddComponent<ContentSizeFitter>();
+        fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        var label = FindOrCreateLabel(badge, "Label", font);
+        label.text = "NEW WEAPON";
+        label.fontSize = UITheme.Caption;
+        label.fontStyle = FontStyles.Bold;
+        label.color = UITheme.Outline; // 골드 배경 위 가독성
+        label.alignment = TextAlignmentOptions.Center;
+        label.textWrappingMode = TextWrappingModes.NoWrap;
+        label.raycastTarget = false;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(badge);
+        root.gameObject.SetActive(false); // 스탯 카드에선 꺼진 채로 시작 — 켜는 시점은 UI_UpgradePanel.Show 가 소유
+        return root.gameObject;
+    }
+
     // ── 헬퍼 ──
     // 스프라이트를 직접 굽지 않고 UIProceduralSprite 컴포넌트로 위임 — 저장 후에도 살아남는다.
     static void ApplyProcedural(GameObject go, bool outlined, int radius, int outlineWidth, Color fill, Color line)
@@ -220,6 +284,13 @@ public static class UpgradePanelGenerator
     {
         if (arrayProp == null || i >= arrayProp.arraySize) return null;
         return arrayProp.GetArrayElementAtIndex(i).objectReferenceValue as T;
+    }
+
+    // 토큰 색의 알파만 0 으로 — 외곽선만 남기는 프레임의 fill 로 쓴다(투명 fill 을 검정으로 두면 안쪽에 어두운 띠가 생긴다).
+    static Color Transparent(Color c)
+    {
+        c.a = 0f;
+        return c;
     }
 
     static void Stretch(RectTransform rt)

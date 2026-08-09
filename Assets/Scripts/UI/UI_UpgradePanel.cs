@@ -10,6 +10,9 @@ public class UI_UpgradePanel : MonoBehaviour
     [SerializeField] TMP_Text[] _nameTexts;     // 각 버튼의 업그레이드 이름
     [SerializeField] TMP_Text[] _descTexts;     // 각 버튼의 설명
 
+    // 무기 언락 카드의 강조 연출. 이 로직은 켜고 끄기만 하고 생김새는 전부 생성기가 소유한다
+    [SerializeField] GameObject[] _weaponHighlights;
+
     UpgradeManager _upgradeManager;
     UpgradeData[] _currentChoices;
 
@@ -54,6 +57,9 @@ public class UI_UpgradePanel : MonoBehaviour
                 _nameTexts[i].text = choices[i].upgradeName;
             if (_descTexts != null && i < _descTexts.Length)
                 _descTexts[i].text = choices[i].description;
+
+            if (_weaponHighlights != null && i < _weaponHighlights.Length && _weaponHighlights[i] != null)
+                _weaponHighlights[i].SetActive(choices[i].type == Define.UpgradeType.AcquireWeapon);
         }
     }
 

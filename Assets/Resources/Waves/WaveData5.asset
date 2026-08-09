@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: WaveData5
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   startTime: 90
-  spawnInterval: 1
-  spawnCountPerBurst: 4
+  spawnInterval: 0.9
+  spawnCountPerBurst: 6
   enemyPrefab: {fileID: 4243169767101499499, guid: bb9a0cf07e6a13b46b1974ef6de45399, type: 3}
-  enemyHp: 30
-  enemySpeed: 3.2
+  enemyHp: 45
+  enemySpeed: 2.4
   isBossWave: 0
   bossPrefab: {fileID: 0}
   warningLeadTime: 0

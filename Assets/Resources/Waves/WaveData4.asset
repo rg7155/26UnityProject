@@ -16,8 +16,8 @@ MonoBehaviour:
   spawnInterval: 1.2
   spawnCountPerBurst: 3
   enemyPrefab: {fileID: 4243169767101499499, guid: bb9a0cf07e6a13b46b1974ef6de45399, type: 3}
-  enemyHp: 8
-  enemySpeed: 3
+  enemyHp: 25
+  enemySpeed: 1.8
   isBossWave: 1
   bossPrefab: {fileID: 9151382190181105541, guid: f93bf89a01c5a1645bc308efe6f9cf9d, type: 3}
   warningLeadTime: 3
