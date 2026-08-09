@@ -97,13 +97,23 @@ public class DebugController : MonoBehaviour
         style.fontSize = 18;
         style.normal.textColor = Color.yellow;
 
+        // 세로 화면은 폭이 좁아 긴 한 줄이 자동 줄바꿈되며 아랫줄과 겹친다 — 치트 목록만 작게 두 줄로 나눈다
+        GUIStyle small = new GUIStyle(style);
+        small.fontSize = 13;
+
+        float w = Screen.width - 20;
+
         // timeScale=0인 Pause·Rewind 중 deltaTime이 0이 되어 FPS가 Infinity로 찍힌다
-        GUI.Label(new Rect(10, Screen.height - 180, 300, 30), $"Enemies: {EnemyBase.Registry.Count}", style);
-        GUI.Label(new Rect(10, Screen.height - 150, 300, 30), $"FPS: {(1f / Time.unscaledDeltaTime):F0}", style);
+        GUI.Label(new Rect(10, Screen.height - 190, 300, 26), $"Enemies: {EnemyBase.Registry.Count}", style);
+        GUI.Label(new Rect(10, Screen.height - 164, 300, 26), $"FPS: {(1f / Time.unscaledDeltaTime):F0}", style);
 
         string invincible = _player != null && _player.DebugInvincible ? "ON" : "OFF";
         string skipUpgrades = _upgradeManager != null && _upgradeManager.DebugSkipUpgrades ? "ON" : "OFF";
-        GUI.Label(new Rect(10, Screen.height - 120, 760, 30), "[Debug] F1: 숨기기  1~5: 무기  0: 전체무기  K: 적스폰  L: 레벨업  G: 무적  U: 업글패널  M: 골드+  T: 상자", style);
-        GUI.Label(new Rect(10, Screen.height - 90, 600, 30), $"[Debug] 무적: {invincible}   업글억제: {skipUpgrades}", style);
+
+        // OnGUI 내장 폰트에 한글 글리프가 없다 — 에디터는 시스템 폰트로 대체되지만
+        // WebGL 빌드에는 동봉되지 않아 빈 칸으로 나온다. 그래서 영문으로 고정한다.
+        GUI.Label(new Rect(10, Screen.height - 132, w, 22), "F1:Hide  1-5:Weapon  0:AllWeapons  K:Spawn", small);
+        GUI.Label(new Rect(10, Screen.height - 110, w, 22), "L:LevelUp  G:Godmode  U:UpgradePanel  M:Gold+  T:Chest", small);
+        GUI.Label(new Rect(10, Screen.height - 84, w, 26), $"Godmode: {invincible}   SkipUpgrades: {skipUpgrades}", style);
     }
 }
