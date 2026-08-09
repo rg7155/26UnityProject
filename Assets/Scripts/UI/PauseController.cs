@@ -56,6 +56,17 @@ public class PauseController : MonoBehaviour
 
     public void GoTitle()
     {
+        // 정산은 사망 경로에만 있어, 중간 퇴장 시 그 판의 골드·기록·퀘스트 진행이 통째로 버려졌다.
+        // Pause 는 Playing 중에만 열리므로 사망 정산과 겹쳐 이중 반영될 일은 없다.
+        // BossRush 제외와 PlayTime 갱신은 사망 경로(RewindManager)와 동일한 규칙이다 —
+        // PlayTime 은 여기서 넣지 않으면 이전 판의 낡은 값과 비교돼 최고 기록이 갱신되지 않는다.
+        if (!GameScene.BossRush)
+        {
+            WaveManager wave = FindObjectOfType<WaveManager>();
+            if (wave != null) Managers.Game.SaveData.PlayTime = wave.GameTime;
+            Managers.Game.CommitResult();
+        }
+
         Time.timeScale = 1f;  // SceneManagerEx.ChangeScene은 timeScale 복원 안 함
         Managers.Scene.ChangeScene(SceneType.Title);
     }
