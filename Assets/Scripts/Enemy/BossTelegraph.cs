@@ -7,7 +7,7 @@ public class BossTelegraph : MonoBehaviour
     [SerializeField] SpriteRenderer _ring;
     [SerializeField] SpriteRenderer _fill;
 
-    static readonly Color NeonRed = new Color(1f, 0.15f, 0.25f, 1f);
+    static readonly Color TelegraphColor = Color.white;
 
     const float LineWidth = 0.9f;
 
@@ -19,8 +19,8 @@ public class BossTelegraph : MonoBehaviour
         _point  = worldPoint;
         _radius = radius;
 
-        _ring.color = NeonRed;
-        _fill.color = NeonRed;
+        _ring.color = TelegraphColor;
+        _fill.color = TelegraphColor;
         _ring.gameObject.SetActive(true);
         _fill.gameObject.SetActive(true);
 
@@ -54,11 +54,11 @@ public class BossTelegraph : MonoBehaviour
         _fill.transform.localScale    = new Vector3(len * t, width, 1f);
         _fill.transform.localPosition = new Vector3(len * t * 0.5f, 0f, 0f);
 
-        Color ring = NeonRed;
+        Color ring = TelegraphColor;
         ring.a = 0.35f;
         _ring.color = ring;
 
-        Color c = NeonRed;
+        Color c = TelegraphColor;
         c.a = 0.25f + 0.5f * t;
         _fill.color = c;
     }
@@ -78,7 +78,7 @@ public class BossTelegraph : MonoBehaviour
         float fill = diameter * t;
         _fill.transform.localScale = new Vector3(fill, fill, 1f);
 
-        Color c = NeonRed;
+        Color c = TelegraphColor;
         c.a = 0.25f + 0.5f * t;
         _fill.color = c;
     }

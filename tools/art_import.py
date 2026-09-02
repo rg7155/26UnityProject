@@ -94,7 +94,11 @@ TARGETS = {
     "TankEnemyDroneSymmetric":  dict(frames=4, size=512,  symmetric=False),
 
     # D. 오브젝트 — 회전 대칭이어야 하는 것들만 검사한다
-    "OrbiterEnergyBlade":       dict(frames=4, size=512,  symmetric=True),
+    # 3개의 안정화 프롱은 의도적으로 3방향 실루엣이다. 180도 대칭 검사는 오탐이다.
+    "OrbiterEnergyBlade":       dict(frames=4, size=512,  symmetric=False),
+    "ExplosionPulse":           dict(frames=1, size=512,  symmetric=False),
+    "LightningSourceNode":      dict(frames=1, size=512,  symmetric=True),
+    "LightningHitSpark":        dict(frames=1, size=512,  symmetric=False),
     "Projectile":               dict(frames=1, size=512,  symmetric=True),
     "ProjectileRapid":          dict(frames=1, size=512,  symmetric=True),
     "BossRadialProjectile":     dict(frames=1, size=512,  symmetric=True),

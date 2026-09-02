@@ -8,8 +8,12 @@ public class LightningEffect : MonoBehaviour
     [SerializeField] Color _color = new Color(0.6f, 0.8f, 1f, 1f);
     [SerializeField] int _segmentsPerSpan = 6;
     [SerializeField] float _jitter = 0.4f;
+    [SerializeField] Sprite _sourceNodeSprite;
+    [SerializeField] Sprite _hitSparkSprite;
 
     LineRenderer _lr;
+    SpriteRenderer _sourceNode;
+    SpriteRenderer _hitSpark;
     float _elapsed;
 
     void Awake()
@@ -51,6 +55,9 @@ public class LightningEffect : MonoBehaviour
         _lr.positionCount = poly.Count;
         for (int i = 0; i < poly.Count; i++)
             _lr.SetPosition(i, poly[i]);
+
+        _sourceNode = CreateMarker("SourceNode", _sourceNodeSprite, points[0], 0.56f);
+        _hitSpark = CreateMarker("HitSpark", _hitSparkSprite, points[points.Count - 1], 0.76f);
     }
 
     void Update()
@@ -62,8 +69,33 @@ public class LightningEffect : MonoBehaviour
         c.a = 1f - t;
         _lr.startColor = c;
         _lr.endColor = c;
+        SetMarkerColor(_sourceNode, c);
+        SetMarkerColor(_hitSpark, c);
 
         if (t >= 1f)
             Destroy(gameObject);
+    }
+
+    SpriteRenderer CreateMarker(string markerName, Sprite sprite, Vector3 position, float scale)
+    {
+        if (sprite == null)
+            return null;
+
+        var marker = new GameObject(markerName);
+        marker.transform.SetParent(transform);
+        marker.transform.position = position;
+        marker.transform.localScale = Vector3.one * scale;
+
+        var renderer = marker.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        renderer.color = _color;
+        renderer.sortingOrder = 6;
+        return renderer;
+    }
+
+    void SetMarkerColor(SpriteRenderer marker, Color color)
+    {
+        if (marker != null)
+            marker.color = color;
     }
 }

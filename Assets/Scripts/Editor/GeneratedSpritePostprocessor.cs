@@ -20,6 +20,8 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
     const float DefaultPPU = 512f;
     // 기존 1254px / 577PPU 크기를 보존한다: 512 / (1254 / 577) = 235.5853, 정수 PPU로 반올림.
     const float PlayerPPU = 236f;
+    // Projectile 프리팹의 0.2 스케일과 Collider는 유지한다. 512 PPU보다 512 / 192 = 2.67배 크게 보인다.
+    const float ProjectilePPU = 192f;
 
     // 가로 스트립의 프레임 수. art_import.py 의 TARGETS 와 일치해야 한다.
     // 여기 없으면 단일 스프라이트로 본다.
@@ -47,7 +49,9 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
         importer.textureType = TextureImporterType.Sprite;
         importer.spritePixelsPerUnit = isPlayer
             ? PlayerPPU
-            : DefaultPPU;
+            : name == "Projectile"
+                ? ProjectilePPU
+                : DefaultPPU;
         importer.filterMode = FilterMode.Bilinear;
         importer.mipmapEnabled = false;
         importer.wrapMode = TextureWrapMode.Clamp;

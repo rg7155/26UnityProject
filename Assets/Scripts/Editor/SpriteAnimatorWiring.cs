@@ -31,6 +31,22 @@ public static class SpriteAnimatorWiring
         { "Assets/Material/Mat_Enemy_Tanker_Sprite.mat", "Assets/Art/Sprites/Generated/TankEnemyDroneSymmetric.png" },
     };
 
+    static readonly Dictionary<string, string> CombatEffectPrefabTargets = new Dictionary<string, string>
+    {
+        { "Assets/Prefabs/Weapon/Projectile.prefab", "Assets/Art/Sprites/Generated/Projectile.png" },
+        { "Assets/Prefabs/Weapon/Projectile_Rapid.prefab", "Assets/Art/Sprites/Generated/ProjectileRapid.png" },
+        { "Assets/Prefabs/Enemy/Boss_RadialProjectile.prefab", "Assets/Art/Sprites/Generated/BossRadialProjectile.png" },
+    };
+
+    const string BossPrefabPath = "Assets/Prefabs/Enemy/Boss_Monolith.prefab";
+    const string TelegraphRingTexturePath = "Assets/Art/Sprites/Generated/TelegraphRing.png";
+    const string TelegraphFillTexturePath = "Assets/Art/Sprites/Generated/TelegraphFill.png";
+    const string ExplosionEffectPrefabPath = "Assets/Prefabs/Weapon/ExplosionEffect.prefab";
+    const string ExplosionPulseTexturePath = "Assets/Art/Sprites/Generated/ExplosionPulse.png";
+    const string BoltPrefabPath = "Assets/Prefabs/Weapon/Bolt.prefab";
+    const string LightningSourceNodeTexturePath = "Assets/Art/Sprites/Generated/LightningSourceNode.png";
+    const string LightningHitSparkTexturePath = "Assets/Art/Sprites/Generated/LightningHitSpark.png";
+
     [MenuItem("Tools/Art/Wire Sprite Animators")]
     public static void Wire()
     {
@@ -95,6 +111,12 @@ public static class SpriteAnimatorWiring
                 so.ApplyModifiedPropertiesWithoutUndo();
 
                 sr.sprite = frames[0];
+                if (path == "Assets/Prefabs/Weapon/Orbiter.prefab")
+                {
+                    TrailRenderer trail = renderRoot.GetComponent<TrailRenderer>();
+                    if (trail != null)
+                        Object.DestroyImmediate(trail);
+                }
                 wired++;
                 Debug.Log($"[SpriteAnimatorWiring] {System.IO.Path.GetFileName(path)} — {frames.Length}프레임 배선");
             }
@@ -131,6 +153,127 @@ public static class SpriteAnimatorWiring
 
         AssetDatabase.SaveAssets();
         Debug.Log($"[SpriteAnimatorWiring] 인스턴싱 적 정지 프레임 배선 완료 — {wired}/{InstancedEnemyMaterialTargets.Count}건");
+    }
+
+    [MenuItem("Tools/Art/Wire Combat Effect Sprites")]
+    public static void WireCombatEffectSprites()
+    {
+        int wired = 0;
+
+        foreach (var target in CombatEffectPrefabTargets)
+        {
+            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(target.Value);
+            if (sprite == null)
+            {
+                Debug.LogWarning($"[SpriteAnimatorWiring] 스프라이트 없음: {target.Value}");
+                continue;
+            }
+
+            using (var scope = new PrefabUtility.EditPrefabContentsScope(target.Key))
+            {
+                SpriteRenderer renderer = scope.prefabContentsRoot.GetComponent<SpriteRenderer>();
+                if (renderer == null)
+                {
+                    Debug.LogWarning($"[SpriteAnimatorWiring] SpriteRenderer 없음: {target.Key}");
+                    continue;
+                }
+
+                renderer.sprite = sprite;
+                if (!target.Key.EndsWith("Projectile_Rapid.prefab"))
+                    renderer.color = Color.white;
+                wired++;
+            }
+        }
+
+        Sprite ring = AssetDatabase.LoadAssetAtPath<Sprite>(TelegraphRingTexturePath);
+        Sprite fill = AssetDatabase.LoadAssetAtPath<Sprite>(TelegraphFillTexturePath);
+        if (ring != null && fill != null)
+        {
+            using (var scope = new PrefabUtility.EditPrefabContentsScope(BossPrefabPath))
+            {
+                SpriteRenderer ringRenderer = FindChildRenderer(scope.prefabContentsRoot, "Telegraph_Ring");
+                SpriteRenderer fillRenderer = FindChildRenderer(scope.prefabContentsRoot, "Telegraph_Fill");
+                if (ringRenderer == null || fillRenderer == null)
+                {
+                    Debug.LogWarning("[SpriteAnimatorWiring] Boss_Monolith: Telegraph_Ring 또는 Telegraph_Fill이 없다");
+                }
+                else
+                {
+                    ringRenderer.sprite = ring;
+                    fillRenderer.sprite = fill;
+                    ringRenderer.color = Color.white;
+                    fillRenderer.color = Color.white;
+                    wired += 2;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[SpriteAnimatorWiring] 텔레그래프 스프라이트 없음");
+        }
+
+        Sprite explosion = AssetDatabase.LoadAssetAtPath<Sprite>(ExplosionPulseTexturePath);
+        if (explosion == null)
+        {
+            Debug.LogWarning($"[SpriteAnimatorWiring] 스프라이트 없음: {ExplosionPulseTexturePath}");
+        }
+        else
+        {
+            using (var scope = new PrefabUtility.EditPrefabContentsScope(ExplosionEffectPrefabPath))
+            {
+                GameObject root = scope.prefabContentsRoot;
+                LineRenderer line = root.GetComponent<LineRenderer>();
+                if (line != null)
+                    Object.DestroyImmediate(line);
+
+                SpriteRenderer renderer = root.GetComponent<SpriteRenderer>();
+                if (renderer == null)
+                    renderer = root.AddComponent<SpriteRenderer>();
+
+                renderer.sprite = explosion;
+                renderer.color = Color.white;
+                renderer.sortingOrder = 6;
+
+                ExplosionEffect effect = root.GetComponent<ExplosionEffect>();
+                if (effect != null)
+                {
+                    var so = new SerializedObject(effect);
+                    so.FindProperty("_color").colorValue = Color.white;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                }
+
+                wired++;
+            }
+        }
+
+        Sprite sourceNode = AssetDatabase.LoadAssetAtPath<Sprite>(LightningSourceNodeTexturePath);
+        Sprite hitSpark = AssetDatabase.LoadAssetAtPath<Sprite>(LightningHitSparkTexturePath);
+        if (sourceNode == null || hitSpark == null)
+        {
+            Debug.LogWarning("[SpriteAnimatorWiring] 라이트닝 노드 또는 타격 스파크 스프라이트 없음");
+        }
+        else
+        {
+            using (var scope = new PrefabUtility.EditPrefabContentsScope(BoltPrefabPath))
+            {
+                LightningEffect effect = scope.prefabContentsRoot.GetComponent<LightningEffect>();
+                if (effect == null)
+                {
+                    Debug.LogWarning("[SpriteAnimatorWiring] Bolt: LightningEffect가 없다");
+                }
+                else
+                {
+                    var so = new SerializedObject(effect);
+                    so.FindProperty("_sourceNodeSprite").objectReferenceValue = sourceNode;
+                    so.FindProperty("_hitSparkSprite").objectReferenceValue = hitSpark;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    wired++;
+                }
+            }
+        }
+
+        AssetDatabase.SaveAssets();
+        Debug.Log($"[SpriteAnimatorWiring] 전투 이펙트 스프라이트 배선 완료 — {wired}/7건");
     }
 
     static GameObject EnsurePlayerVisual(GameObject player)
@@ -210,6 +353,13 @@ public static class SpriteAnimatorWiring
         so.FindProperty("_moveFrames").arraySize = 0;
         so.FindProperty("_randomizePhase").boolValue = false;
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static SpriteRenderer FindChildRenderer(GameObject root, string name)
+    {
+        Transform child = root.GetComponentsInChildren<Transform>(true)
+            .FirstOrDefault(t => t.name == name);
+        return child != null ? child.GetComponent<SpriteRenderer>() : null;
     }
 
     // 지정한 텍스처의 서브스프라이트를 이름 순으로 모은다.

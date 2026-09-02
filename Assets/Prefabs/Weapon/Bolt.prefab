@@ -159,3 +159,5 @@ MonoBehaviour:
   _color: {r: 0.6, g: 0.8, b: 1, a: 1}
   _segmentsPerSpan: 6
   _jitter: 0.4
+  _sourceNodeSprite: {fileID: 21300000, guid: 56bd3659ffe0bb1428fabc50fb03bdd2, type: 3}
+  _hitSparkSprite: {fileID: 21300000, guid: 8546bd0580f03a94fb1d8172b8a4ea8f, type: 3}
