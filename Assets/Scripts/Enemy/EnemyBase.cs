@@ -25,6 +25,32 @@ public class EnemyBase : MonoBehaviour
     // 모든 적이 공유 — 1회만 Load
     static GameObject _damageTextPrefab;
 
+    // 피격 punch — 맞은 순간 살짝 부풀었다 돌아온다.
+    // 적은 GPU 인스턴싱이라 개체별 색을 못 바꾼다(per-instance 데이터가 행렬뿐).
+    // 크기는 행렬에 실리므로, 셰이더 없이 피격 피드백을 줄 수 있는 유일한 축이다.
+    //
+    // transform.localScale 을 쓰지 않는 이유가 둘이다.
+    //   1) Collider 가 함께 커진다 (문서/개발/에디터_설정.md 크기 조절 원칙)
+    //   2) 좌우 반전이 localScale.x 부호를 쓰고 있어 서로 덮어쓴다
+    // 그래서 EnemyInstanceRenderer 가 행렬을 만들 때만 곱한다 — 순수 연출이다.
+    //
+    // 타이머를 매 프레임 깎지 않고 종료 시각만 들고 있는다. EnemyBase 에 Update 를 넣으면
+    // 적 수만큼 MonoBehaviour Update 가 늘고, EnemyMover.Update 가 base 를 가려 동작하지도 않는다.
+    const float HitPunchDuration = 0.12f;
+    const float HitPunchAmount   = 0.22f;
+    float _hitPunchEndTime = -1f;
+
+    // 렌더 행렬에 곱할 배율. 평소 1, 피격 직후 잠깐 커졌다 돌아온다.
+    public float HitPunchScale
+    {
+        get
+        {
+            float remain = _hitPunchEndTime - Time.time;
+            if (remain <= 0f) return 1f;
+            return 1f + HitPunchAmount * (remain / HitPunchDuration);   // 맞은 순간이 가장 크다
+        }
+    }
+
     public int        Hp           { get { return _hp; } }
     public float      Speed        { get { return _speed; } }
     public GameObject OriginPrefab { get { return _originPrefab; } }
@@ -46,6 +72,8 @@ public class EnemyBase : MonoBehaviour
         if (_damageTextPrefab == null)
             _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
 
+        _hitPunchEndTime = -1f;   // 풀 재사용 — 직전 개체의 punch 가 남지 않게
+
         SpatialHashGrid.Instance?.Add(this);
         EnemyInstanceRenderer.Register(this, originPrefab);
     }
@@ -60,9 +88,12 @@ public class EnemyBase : MonoBehaviour
         }
 
         _hp -= damage;
-        // Rewind 리플레이 중 효과음 오발생 방지
+        // Rewind 리플레이 중 효과음·연출 오발생 방지
         if (Managers.Game.State == Define.GameState.Playing)
+        {
             Managers.Sound.PlayEffect(SoundManager.Hit);
+            _hitPunchEndTime = Time.time + HitPunchDuration;
+        }
         if (_hp <= 0) OnDead();
     }
 
@@ -103,6 +134,7 @@ public class EnemyBase : MonoBehaviour
         _target       = target;
         _originHp     = s.hp;
         _registry[EntityId] = this;
+        _hitPunchEndTime = -1f;
         RestoreSnapshot(s);
     }
 

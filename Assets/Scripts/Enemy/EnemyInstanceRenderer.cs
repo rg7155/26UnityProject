@@ -53,7 +53,13 @@ public class EnemyInstanceRenderer : MonoBehaviour
             {
                 if (enemy == null || !enemy.gameObject.activeSelf) continue;
                 if (count >= 1023) break;
-                _matrixBuffer[count++] = enemy.transform.localToWorldMatrix;
+
+                // 피격 punch 는 연출이라 transform 이 아니라 여기서만 곱한다
+                // (Collider 불변 + 좌우 반전의 localScale.x 부호와 충돌 없음)
+                float punch = enemy.HitPunchScale;
+                _matrixBuffer[count++] = punch == 1f
+                    ? enemy.transform.localToWorldMatrix
+                    : enemy.transform.localToWorldMatrix * Matrix4x4.Scale(new Vector3(punch, punch, 1f));
             }
         }
 

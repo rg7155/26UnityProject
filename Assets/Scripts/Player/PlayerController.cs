@@ -133,6 +133,7 @@ public class PlayerController : MonoBehaviour
 
         Hp -= damage;
         _invincibleTimer = _invincibleDuration;
+        CameraController.Instance?.Shake(0.18f, 0.22f);   // HitVignette 와 함께 피격을 체감시킨다
         Managers.Sound.PlayEffect(SoundManager.PlayerHit);
         OnHit?.Invoke();
 

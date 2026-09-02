@@ -2,12 +2,26 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    // 셰이크 호출부가 늘어나면서 FindObjectOfType 을 매번 도는 비용이 문제가 된다.
+    // 씬당 하나뿐인 카메라라 static 으로 잡아둔다.
+    public static CameraController Instance { get; private set; }
+
     Transform _target;
     float _smoothSpeed = 8f;
 
     float _shakeTimer;
     float _shakeDuration;
     float _shakeMagnitude;
+
+    void Awake()
+    {
+        Instance = this;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;   // 씬 전환 시 파괴된 참조가 남지 않게
+    }
 
     public void SetTarget(Transform target)
     {

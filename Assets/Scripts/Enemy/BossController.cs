@@ -128,7 +128,7 @@ public class BossController : EnemyBase
         SetPhase(phase);
 
         if (entering)
-            FindObjectOfType<CameraController>()?.Shake(0.4f, 0.4f);
+            CameraController.Instance?.Shake(0.4f, 0.4f);
     }
 
     void SetPhase(int phase)
@@ -273,7 +273,7 @@ public class BossController : EnemyBase
             player.OnDamaged(PhaseDamage(_data.slamDamage));
 
         Managers.Sound.PlayEffect(SoundManager.Explosion);
-        FindObjectOfType<CameraController>()?.Shake(0.25f, 0.3f);
+        CameraController.Instance?.Shake(0.25f, 0.3f);
     }
 
     void FireRadialBurst()

@@ -50,6 +50,7 @@ public class AoEWeapon : WeaponBase
         }
 
         Managers.Sound.PlayEffect(SoundManager.Explosion);
+        CameraController.Instance?.Shake(0.2f, 0.25f);
     }
 
     public override void UpgradeRadius(float multiplier)   { _radius *= multiplier; }
