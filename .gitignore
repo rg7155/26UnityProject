@@ -56,3 +56,6 @@ crashlytics-build.properties
 # AI 파이프라인 작업 폴더 — 매 실행마다 덮어써지는 스크래치.
 # 완료된 계획서는 _workspace_archive/ 로 옮겨 커밋한다(해커톤 AI 증거물).
 /_workspace/
+# 아트 반입 스크립트(tools/art_import.py)가 만드는 파이썬 캐시
+__pycache__/
+*.pyc
