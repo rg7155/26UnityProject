@@ -50,7 +50,7 @@ UI 아트는 이 역할이 아니라 `game-ui-artist`가 맡는다 — 그쪽은
   픽셀 단위 디테일로 반려하지 않는다. 어두운 배경(`#10131C`)에서 형태가 안 읽히면 반려한다
 - **애니메이션은 위치와 크기가 흔들리는 것만 문제다.** 프레임 간 디테일 차이는 문제가 아니다
 - 크기가 안 맞으면 `Player.prefab`의 Transform Scale이 아니라 **PPU**로 조정한다 —
-  Transform Scale은 Collider에 영향을 준다 (`에디터_설정.md` 크기 조절 원칙)
+  Transform Scale은 Collider에 영향을 준다 (`문서/개발/에디터_설정.md` 크기 조절 원칙)
 
 ## 산출물
 

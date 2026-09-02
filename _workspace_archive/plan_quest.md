@@ -1,50 +1,104 @@
-## 기능: 메타 상점 공속·이속 강화 추가
+# QUEST(퀘스트) 시스템 구현 계획 — Rewind Survivors
 
-### 변경·생성 파일 목록
+Unity 6 / URP / New Input System(Polling) / 모바일 세로. 기존 Shop(ShopService/ShopItemData) · GameData(JsonUtility) 패턴을 복제한다. DI·Action기반·과추상화 금지, 단순함 우선.
 
-- `Assets/Scripts/Shop/ShopItemData.cs` — 기존 직렬화 값이 바뀌지 않도록 enum 끝에 `FireRate`, `MoveSpeed` 효과를 추가한다.
-- `Assets/Scripts/Shop/ShopService.cs` — 두 효과의 누적 배율과 상점 표기용 퍼센트 값을 계산한다.
-- `Assets/Scripts/UI/UI_ShopItemCell.cs` — 공속·이속의 현재/다음 퍼센트 및 비용 표기를 추가한다.
-- `Assets/Scripts/Weapon/WeaponManager.cs` — 런 시작 시 메타 공속 배율을 모든 시작 무기에 적용한다.
-- `Assets/Scripts/Player/PlayerController.cs` — 런 시작 시 메타 이속 배율을 기본 이동속도에 적용한다.
-- `Assets/Resources/Shop/FireRate.asset` — 공속 4티어 상점 SO를 생성한다(Unity가 생성하는 `.meta` 포함).
-- `Assets/Resources/Shop/MoveSpeed.asset` — 이속 3티어 상점 SO를 생성한다(Unity가 생성하는 `.meta` 포함).
+## 0. 확정 기획 요약
+메타 누적 도전과제(Career Challenges) — 영구 티어형, **수동 수령**.
+- 매 판 종료 시 평생 스탯 누적: 총 처치 / 총 되감기 / 총 골드 / 최고 생존시간
+- 목표 티어 도달 → "수령" 버튼 클릭 시 골드 획득(자동 아님) → 상점으로 순환
+- 데이터 주도: `QuestData`(SO)를 `Resources/Quests/`에 넣으면 자동 등장
+- UI: 타이틀 로비 퀘스트 패널(읽기+수령), 기존 상점 셀 UI 패턴 재사용
+- 일일/리셋은 MVP 제외. `QuestData`만 나중에 `resetPeriod` 드롭인 가능하게 열어둠(구현은 안 함)
 
-### 단계별 구현 순서
+## 1. 코드 재검증 결과 (확정 시그니처)
+- 골드: `GameManagerEx.AddGold(int)` / `SpendGold(int)` / `TotalGold{get}` / `RunGold{get;set;}`(비직렬화). `CommitResult()`가 런 종료 정산 단일 지점 — `TotalGold += RunGold; SaveGame();`.
+- 저장: `GameData`(JsonUtility). `LoadGame()`에 null-guard 패턴 존재(`Purchases == null → new`).
+- 적 처치 단일 지점: `EnemyBase.OnDead()`. `if (State == Playing)` 가드 안에서 `RunGold += _goldReward` — Rewind 리플레이 중복 방지. 여기 옆에 `RunKills++`.
+- 되감기 단일 지점: `RewindManager.DoRewind()` 코루틴. 능동(`TryActiveRewind`)·자동부활(`OnPlayerDead`) 둘 다 진입. 현재 카운터 없음 → 신설. 코루틴 시작부에서 `RunRewinds++` 1회.
+- 생존시간: `WaveManager.GameTime` → `OnPlayerDead`에서 `PlayTime` 기록 → `CommitResult`가 `BestTime` 갱신. **생존 퀘스트는 `BestTime`(최고기록)을 stat 값으로 사용**.
+- SO 자동로드: `ShopService.Items` → `Resources.LoadAll<ShopItemData>("Shop")`. `QuestService`도 동형 `LoadAll<QuestData>("Quests")`.
+- Run 카운터 리셋: `GameScene.Awake()`에서 `Score = 0; RunGold = 0` 옆.
+- UI: `UI_ShopPanel`(자기등록, Start에서 Items 순회 셀 생성, RefreshAll) + `UI_ShopItemCell`(Bind/Refresh/버튼 interactable). 복제.
+- 타이틀 토글: `TitleScene` `_shopButton`/`_shopPanel` — 퀘스트도 `_questButton`/`_questPanel` 추가.
 
-1. **상점 효과·데이터 정의**
-   - 대상: `Assets/Scripts/Shop/ShopItemData.cs`, `Assets/Resources/Shop/FireRate.asset`, `Assets/Resources/Shop/MoveSpeed.asset`
-   - `ShopEffectType`의 마지막에 `FireRate`, `MoveSpeed`를 추가해 기존 `StartHp`/`Damage`/되감기 SO의 enum 직렬화 번호를 보존한다.
-   - `FireRate.asset`: `id: fire_rate`, 표시명 `Fire Rate`, `FireRate`, `costs: 120/240/480/960`, `valuePerTier: 0.06`으로 만든다.
-   - `MoveSpeed.asset`: `id: move_speed`, 표시명 `Move Speed`, `MoveSpeed`, `costs: 90/180/360`, `valuePerTier: 0.04`로 만든다.
-   - 두 SO는 `Resources/Shop`에 두므로 기존 `Resources.LoadAll`과 동적 셀 생성으로 상점에 자동 표시된다.
+## 2. 데이터 계약 (고정)
+- `GameData` 추가: `int LifetimeKills; int LifetimeRewinds; int LifetimeGold; List<QuestProgress> QuestClaims = new();`
+- `QuestProgress`(`[Serializable]`, ShopPurchase 옆): `string id; int claimedTier;`
+- `GameManagerEx` Run 카운터(비직렬화, RunGold 옆): `public int RunKills {get;set;}` / `public int RunRewinds {get;set;}`
+- `QuestStat` enum: `Kills, SurviveTime, Rewinds, Gold`
+- `QuestData`(SO): `string id; string displayName; QuestStat stat; int[] targets; int[] rewards;` (targets/rewards 동일 길이). `[CreateAssetMenu(fileName="Quest", menuName="Game/Quest")]`
+- `QuestService`(static, ShopService 형태):
+  - `Quests` → `Resources.LoadAll<QuestData>("Quests")` 지연 캐시
+  - `Current(QuestData)` → stat별 누적값(Kills→LifetimeKills, Rewinds→LifetimeRewinds, Gold→LifetimeGold, SurviveTime→`Mathf.RoundToInt(BestTime)`)
+  - `ReachedTier(QuestData)` → `targets` 중 `Current >= target` 개수
+  - `ClaimedTier(id)` → QuestClaims 조회(없으면 0)
+  - `Claimable(QuestData)` → `ReachedTier > ClaimedTier`
+  - `Claim(QuestData)` → 미수령 도달분 `rewards` 합산 `AddGold`, `claimedTier = ReachedTier`, `SaveGame()`. 반환 bool
+  - 표시 헬퍼: `NextTarget`, `IsMaxed`, `RewardOf`
 
-2. **저장 티어 기반 메타 배율 계산**
-   - 대상: `Assets/Scripts/Shop/ShopService.cs`
-   - 기존 `DamageMult()`와 같은 방식으로 `FireRateMult()`와 `MoveSpeedMult()`를 추가한다. 각각 `1 + (구매 티어 × valuePerTier)`이며, 최대 시 공속은 `1.24`, 이속은 `1.12`가 된다.
-   - UI 전용으로 각 효과의 `+N%` 현재/다음 값을 계산하는 파생 함수를 추가한다. 저장은 기존 `Purchases`의 `id`/`tier`와 `Buy()` 흐름을 그대로 사용한다.
+## 3. 퀘스트 에셋 4종
+`Resources/Quests/`에 배치. 3티어.
+| id | displayName | stat | targets | rewards |
+|---|---|---|---|---|
+| kills_total | 처치의 달인 | Kills | 100 / 1000 / 10000 | 200 / 1000 / 5000 |
+| survive_best | 생존 전문가 | SurviveTime | 60 / 180 / 300 | 200 / 1000 / 5000 |
+| rewind_total | 시간 여행자 | Rewinds | 10 / 100 / 500 | 200 / 1000 / 5000 |
+| gold_total | 수집가 | Gold | 1000 / 10000 / 50000 | 300 / 1500 / 7000 |
 
-3. **상점 셀 표기 확장**
-   - 대상: `Assets/Scripts/UI/UI_ShopItemCell.cs`
-   - `FireRate`, `MoveSpeed` case를 추가해 `[{tier}/{max}]`, `+현재% -> +다음%`, 비용을 표시하고, 최대 티어는 기존 형식대로 `MAX`와 최종 `+N%`만 표시한다.
-   - 별도 UI 프리팹·패널 변경은 하지 않는다. `UI_ShopPanel`이 모든 SO를 순회해 현재의 구매 후 전체 갱신 흐름을 유지한다.
+## 4. .asset 생성 방법 (결정: 에디터 [MenuItem] 생성기)
+`Assets/Scripts/Editor/QuestAssetGenerator.cs`에 `[MenuItem("Tools/Quests/Create Quest Assets")]`로 4종 코드 생성.
+- `ScriptableObject.CreateInstance<QuestData>()` → 필드 세팅 → `AssetDatabase.CreateAsset(so, "Assets/Resources/Quests/{id}.asset")`
+- 폴더 없으면 `CreateFolder`, 있으면 스킵(idempotent), 끝에 `SaveAssets`/`Refresh`
+- 근거: 프로젝트 에디터 [MenuItem] 생성기 관행. 재현·재실행 가능.
 
-4. **런 시작 보정 적용**
-   - 대상: `Assets/Scripts/Weapon/WeaponManager.cs`, `Assets/Scripts/Player/PlayerController.cs`
-   - `WeaponManager.Start()`에서 시작 무기 생성 뒤 `ShopService.FireRateMult()`가 1이 아닐 때 기존 `UpgradeFireRate()`를 호출한다. 이 경로는 현재 무기와 이후 레벨업으로 추가되는 무기 모두에 `_fireRateMult`를 적용한다.
-   - `PlayerController.Start()`에서 시작 HP 보정과 함께 `ShopService.MoveSpeedMult()`를 `_speed`에 한 번 곱한다. `RestoreSnapshot()`은 보정된 런 중 수치를 저장·복원하므로 별도 되감기 처리는 필요 없다.
-   - `UpgradeData`와 레벨업 선택지는 건드리지 않는다. 메타 상점은 작은 시작 배율만 주고, 레벨업의 큰 공속·이속 빌드 선택은 그대로 유지한다.
+## 5. 단계별 구현 (각 단계 검증 가능)
 
-### 주의사항
+### 단계 A — 데이터 계층 [game-coder]
+1. `GameManagerEx.cs`: `QuestProgress` 클래스 + `GameData`에 Lifetime 3필드 + `List<QuestProgress> QuestClaims`. `LoadGame()`에 `if (QuestClaims == null) QuestClaims = new()` null-guard.
+2. `RunKills`/`RunRewinds` 프로퍼티(RunGold 옆).
+3. `CommitResult()` 말미(SaveGame 전): `LifetimeKills += RunKills; LifetimeRewinds += RunRewinds; LifetimeGold += RunGold;`. Best 기존 유지.
+- 검증: 컴파일. 구버전 세이브 로드 시 새 필드 0/빈 리스트.
 
-- 기존 enum 사이에 값을 삽입하면 이미 저장된 되감기 상점 SO의 effect가 다른 효과로 해석되므로 반드시 끝에 추가한다.
-- 신규 배율은 `1.06`/`1.04`처럼 곱연산으로 기존 `WeaponManager.UpgradeFireRate()`와 `PlayerController.UpgradeSpeed()`의 의미를 따른다.
-- private 필드는 `_camelCase`, 공개 접근점은 PascalCase를 유지하고, DI·Action-based Input·불필요한 추상화는 추가하지 않는다.
-- 이번 변경은 신규 컬렉션이나 저장 필드를 만들지 않아 `Purchases` null 컬렉션 이슈의 KB 조치 대상이 아니다.
+### 단계 B — Run 카운터 리셋 & 후킹 [game-coder]
+4. `GameScene.Awake()`: `RunKills = 0; RunRewinds = 0;`
+5. `EnemyBase.OnDead()`: Playing 가드 안(RunGold 옆) `RunKills++;`
+6. `RewindManager.DoRewind()`: 코루틴 진입부 `RunRewinds++;` (능동·자동부활 모두 통과)
+- 검증: 처치/되감기 후 GameOver→CommitResult로 Lifetime 증가. 리플레이 중 처치는 미카운트.
 
-### 검증 방법
+### 단계 C — QuestData / QuestService [game-coder]
+7. `Assets/Scripts/Quest/QuestData.cs`: enum + SO.
+8. `Assets/Scripts/Quest/QuestService.cs`: 계약 API. Claim은 미수령 도달분만 지급+저장.
+- 검증: 컴파일. `QuestService.Quests` 로드.
 
-1. Unity에서 컴파일 후 기존 시작 HP·데미지·되감기 SO의 effect와 표기가 그대로인지 확인한다.
-2. 새 저장 데이터에서 Fire Rate 카드가 `0/4`, `+0% -> +6%`, `120G`로, Move Speed 카드가 `0/3`, `+0% -> +4%`, `90G`로 표시되는지 확인한다. 구매 뒤 골드, 티어, 다음 비용과 버튼 상태가 기존처럼 전체 갱신되는지 확인한다.
-3. 각 항목을 최대 구매해 재실행하고 Fire Rate가 `+24%`, Move Speed가 `+12%` 및 `MAX`로 표시되는지 확인한다.
-4. 게임 런에서 일시정지 스탯의 공속이 기본 대비 `124%`로, 플레이어 이동속도가 기본 `5.0` 기준 `5.6`으로 반영되는지 확인한다. 레벨업 공속/이속 선택 후에도 해당 배율이 기존 곱연산으로 추가 누적되고, 무기 추가·되감기 후에도 값이 유지되는지 확인한다.
+### 단계 D — 퀘스트 에셋 [game-coder]
+9. `Assets/Scripts/Editor/QuestAssetGenerator.cs` [MenuItem] → `Resources/Quests/*.asset` 4종.
+- 검증: 에셋 4개, `QuestService.Quests`가 4개 반환.
+
+### 단계 E — 타이틀 로비 퀘스트 패널 [game-ui-artist]
+10. `UI_QuestPanel.cs`(UI_ShopPanel 복제): Start에서 Quests 순회 셀 생성, RefreshAll, 닫기.
+11. `UI_QuestCell.cs`(UI_ShopItemCell 복제): 이름/진행바(Current vs NextTarget)/보상/**수령버튼**(interactable=Claimable, 클릭→Claim→onChanged→RefreshAll). MAX/미도달/수령가능 3상태.
+12. `TitleScene.cs`: `_questButton`/`_questPanel` 추가+토글+해제(_shopButton 복제). **coder 미터치.**
+13. `Assets/Scripts/Editor/QuestUIGenerator.cs` [MenuItem](ShopUIGenerator 패턴): ui-kit+UITheme+UIProceduralSprite로 타이틀 씬에 패널/셀 생성·리스킨(세로, 외부0). 로직 무수정.
+- 검증: 타이틀 퀘스트 버튼→패널. 도달 티어 수령버튼 활성→클릭 시 골드 증가+상점 반영, 재클릭 불가, 재시작 후 claimedTier 유지.
+
+## 6. 파일별 목록
+### game-coder
+- 수정 `Assets/Scripts/Manager/GameManagerEx.cs`
+- 수정 `Assets/Scripts/Scene/GameScene.cs`
+- 수정 `Assets/Scripts/Enemy/EnemyBase.cs`
+- 수정 `Assets/Scripts/Rewind/RewindManager.cs`
+- 신규 `Assets/Scripts/Quest/QuestData.cs`
+- 신규 `Assets/Scripts/Quest/QuestService.cs`
+- 신규 `Assets/Scripts/Editor/QuestAssetGenerator.cs` → `Assets/Resources/Quests/*.asset` 4종
+### game-ui-artist
+- 신규 `Assets/Scripts/UI/UI_QuestPanel.cs`
+- 신규 `Assets/Scripts/UI/UI_QuestCell.cs`
+- 수정 `Assets/Scripts/Scene/TitleScene.cs`
+- 신규 `Assets/Scripts/Editor/QuestUIGenerator.cs` → 타이틀 씬 퀘스트 패널/셀
+
+## 7. 충돌 방지
+공유 편집 파일 없음. 로직=coder 단독, TitleScene/UI_Quest*=artist 단독. 순서: A→B→C→D(coder) 완료 후 E(artist). QuestService API가 UI 선행 의존.
+
+## 8. 제약 준수
+네이밍/Polling/Resources.Load·FindObjectOfType/단순 static 서비스. 기존 스타일 유지.
+주의: `Resources/Shop/StartHp.asset`에 stale `weaponToUnlock` 필드 있으나 무해 — QuestData 에셋에 복제 금지.
