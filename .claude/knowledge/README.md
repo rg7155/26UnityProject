@@ -43,6 +43,7 @@ LLM은 매 세션 컨텍스트를 새로 읽는다. 과거에 이 프로젝트�
 ## 인덱스
 
 ### bug-patterns
+- [parent-scale-flip-mirrors-children](bug-patterns/parent-scale-flip-mirrors-children.md) — 부모 localScale.x 반전이 자식까지 미러링해 궤도 위성이 순간이동
 - [orbit-tick-hit-gap](bug-patterns/orbit-tick-hit-gap.md) — 틱 방식 판정이 빠른 이동체를 건너뛰는 틈
 - [jobsystem-uninitialized-slot-ghost](bug-patterns/jobsystem-uninitialized-slot-ghost.md) — NativeArray 전체 용량 순회 시 (0,0) 유령 슬롯이 가짜 이웃으로 작동
 - [separation-overpowers-target-drift](bug-patterns/separation-overpowers-target-drift.md) — steering 가중치가 목표 추적을 압도해 반대로 드리프트

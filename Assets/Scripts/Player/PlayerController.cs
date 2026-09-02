@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     VirtualJoystick _joystick;
     SpriteFrameAnimator _spriteAnimator;
+    SpriteRenderer _sprite;
 
     public bool DebugInvincible;
 
@@ -57,6 +58,7 @@ public class PlayerController : MonoBehaviour
         _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
         _joystick = FindObjectOfType<VirtualJoystick>();
         _spriteAnimator = GetComponent<SpriteFrameAnimator>();
+        _sprite = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -99,16 +101,14 @@ public class PlayerController : MonoBehaviour
         {
             _state = CreatureState.Moving;
 
-            if (input.x != 0f)
-            {
-                Vector3 scale = transform.localScale;
-                float scaleX = Mathf.Sign(input.x) * Mathf.Abs(scale.x);
-                if (scale.x != scaleX)
-                {
-                    scale.x = scaleX;
-                    transform.localScale = scale;
-                }
-            }
+            // 좌우 반전은 transform.localScale 이 아니라 SpriteRenderer.flipX 로 한다.
+            // 스케일 반전은 자식까지 미러링해서, 플레이어 자식으로 붙는 Orbit 위성이
+            // (OrbitWeapon.cs:44) 반전 순간 반대편으로 순간이동하고 회전 방향도 뒤집힌다.
+            // flipX 는 스프라이트 렌더링에만 적용돼 transform 계층을 건드리지 않는다.
+            // 적은 SpriteRenderer 가 없어(인스턴싱) localScale 을 쓸 수밖에 없지만,
+            // 적 프리팹에는 자식이 없어 같은 문제가 생기지 않는다.
+            if (input.x != 0f && _sprite != null)
+                _sprite.flipX = input.x < 0f;   // 아트는 오른쪽을 보는 것이 기본이다
 
             transform.position += (Vector3)(input * _speed * Time.deltaTime);
         }
