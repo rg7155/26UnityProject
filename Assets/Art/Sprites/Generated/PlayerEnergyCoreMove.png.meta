@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-guid: 0d4a7f3960ec8094f80467bfa627251a
+guid: 17622c96b3aa21c4bb997863ff78af66
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 8663953720583127512
-    second: PlayerEnergyCoreSymmetric_0
-  - first:
-      213: -4477049262213120354
-    second: PlayerEnergyCoreSymmetric_1
-  - first:
-      213: 8289448488167443518
-    second: PlayerEnergyCoreSymmetric_2
-  - first:
-      213: -1537956858922000576
-    second: PlayerEnergyCoreSymmetric_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -57,7 +45,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 236
@@ -84,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: PlayerEnergyCoreSymmetric_0
+      name: PlayerEnergyCoreMove_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +125,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8d108c9510c8c3870800000000000000
-      internalID: 8663953720583127512
+      spriteID: c23e64a359a4790a0800000000000000
+      internalID: -6874944301369466068
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerEnergyCoreSymmetric_1
+      name: PlayerEnergyCoreMove_1
       rect:
         serializedVersion: 2
         x: 512
@@ -159,14 +147,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e9ebcdb9a635ed1c0800000000000000
-      internalID: -4477049262213120354
+      spriteID: c36f3e09043c0af50800000000000000
+      internalID: 6890722111953040956
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerEnergyCoreSymmetric_2
+      name: PlayerEnergyCoreMove_2
       rect:
         serializedVersion: 2
         x: 1024
@@ -181,14 +169,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e3c8e190b790a0370800000000000000
-      internalID: 8289448488167443518
+      spriteID: f11bab865baeab230800000000000000
+      internalID: 3655492112431624479
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: PlayerEnergyCoreSymmetric_3
+      name: PlayerEnergyCoreMove_3
       rect:
         serializedVersion: 2
         x: 1536
@@ -203,8 +191,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 04f1410a26418aae0800000000000000
-      internalID: -1537956858922000576
+      spriteID: 86a4cb28c7ce7d7c0800000000000000
+      internalID: -4046505720655623576
       vertices: []
       indices: 
       edges: []
@@ -213,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +211,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      PlayerEnergyCoreSymmetric_0: 8663953720583127512
-      PlayerEnergyCoreSymmetric_1: -4477049262213120354
-      PlayerEnergyCoreSymmetric_2: 8289448488167443518
-      PlayerEnergyCoreSymmetric_3: -1537956858922000576
+      PlayerEnergyCoreMove_0: -6874944301369466068
+      PlayerEnergyCoreMove_1: 6890722111953040956
+      PlayerEnergyCoreMove_2: 3655492112431624479
+      PlayerEnergyCoreMove_3: -4046505720655623576
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

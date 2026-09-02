@@ -54,6 +54,8 @@ LLM은 매 세션 컨텍스트를 새로 읽는다. 과거에 이 프로젝트�
 - [dual-pause-timer-leak](bug-patterns/dual-pause-timer-leak.md) — 정지 경로가 GameState/timeScale 두 갈래라, 상태 가드 위에 있던 되감기 쿨타임이 업그레이드 패널에서만 계속 흐름. 시간 누적을 가드 아래로
 - [instanced-enemy-prefab-lacks-components](bug-patterns/instanced-enemy-prefab-lacks-components.md) — GPU 인스턴싱용 적 프리팹엔 SpriteRenderer·Rigidbody2D가 없어, 복제해 만든 보스가 안 보이거나(그리는 주체 없음) 중력에 낙하
 
+- [sprite-slicing-applied-after-import](bug-patterns/sprite-slicing-applied-after-import.md) — `OnPostprocessTexture`에서 슬라이스를 써 meta는 정상이지만 실제 Sprite가 이전 세로 조각으로 한 사이클 남음
+
 ### lessons-learned
 - [steering-weight-clamping](lessons-learned/steering-weight-clamping.md) — 여러 steering 힘 합성 시 상한 클램프 원칙
 - [design-values-vs-portrait-screen](lessons-learned/design-values-vs-portrait-screen.md) — 거리 기획값은 화면 비율에 종속. 세로 9:16에서 화면 반대각선 ≈11.5보다 큰 "근접" 수치는 화면 밖을 가리킨다

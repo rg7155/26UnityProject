@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2315461314833508747}
   - component: {fileID: 8734602322663757394}
   - component: {fileID: 1095838648164513327}
+  - component: {fileID: 4687140117937773504}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -86,12 +87,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
+  m_Sprite: {fileID: 8663953720583127512, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.5423729, y: 2.1694915}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -203,3 +204,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerIdlePulse
   _frequency: 2.2
   _amplitude: 0.25
+--- !u!114 &4687140117937773504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2617008679965262774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db940659d8cd763448ea9b22313a8e16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFrameAnimator
+  _frames:
+  - {fileID: 8663953720583127512, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
+  - {fileID: -4477049262213120354, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
+  - {fileID: 8289448488167443518, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
+  - {fileID: -1537956858922000576, guid: 0d4a7f3960ec8094f80467bfa627251a, type: 3}
+  _fps: 4
+  _moveFrames:
+  - {fileID: -6874944301369466068, guid: 17622c96b3aa21c4bb997863ff78af66, type: 3}
+  - {fileID: 6890722111953040956, guid: 17622c96b3aa21c4bb997863ff78af66, type: 3}
+  - {fileID: 3655492112431624479, guid: 17622c96b3aa21c4bb997863ff78af66, type: 3}
+  - {fileID: -4046505720655623576, guid: 17622c96b3aa21c4bb997863ff78af66, type: 3}
+  _moveFps: 8
+  _randomizePhase: 1

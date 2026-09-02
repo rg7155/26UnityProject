@@ -37,6 +37,17 @@ public class EnemyMover : EnemyBase
         Vector2 sep = Vector2.ClampMagnitude(separation * _separationWeight, _maxSeparation);
         Vector2 moveDir = (targetDir + sep).normalized;
 
+        if (moveDir.x != 0f)
+        {
+            Vector3 scale = transform.localScale;
+            float scaleX = Mathf.Sign(moveDir.x) * Mathf.Abs(scale.x);
+            if (scale.x != scaleX)
+            {
+                scale.x = scaleX;
+                transform.localScale = scale;
+            }
+        }
+
         transform.position += (Vector3)(moveDir * _speed * Time.deltaTime);
 
         SpatialHashGrid.Instance?.Move(this, prevPos);   // grid 유지(BombWeapon/Rewind 의존)

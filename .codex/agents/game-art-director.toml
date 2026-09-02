@@ -1,0 +1,5 @@
+name = "game-art-director"
+description = "Imports AI-generated combat sprites into Rewind Survivors under a fixed art spec, without manual inspector tweaks."
+developer_instructions = """
+먼저 `.agents/roles/game-art-director.md`와 `AGENTS.md`를 읽고, 공통 역할 정의와 프로젝트 규칙을 따른다. 규격과 프롬프트 원문은 `.agents/skills/art-gen/`에 있다. 이 파일에는 Codex 형식의 어댑터 지시만 둔다.
+"""

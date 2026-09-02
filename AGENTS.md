@@ -191,6 +191,8 @@ Assets/Scripts/
 
 **트리거:** C# 코드를 건드리는 모든 작업 요청 시 `unity-dev` 스킬을 사용하라. 단순 코드 설명/질문은 직접 답변 가능.
 
+**아트 트리거:** 비트맵 스프라이트(플레이어·적·보스·무기·탄환·이펙트)를 만들거나 교체하는 작업은 `art-gen` 스킬을 사용하고 `game-art-director` 역할로 수행하라. 규격·프롬프트 원문·반입 절차가 전부 `.agents/skills/art-gen/`에 있다. **PPU·머티리얼 UV·스프라이트 피벗을 인스펙터에서 손으로 맞추지 마라** — 크기가 안 맞으면 `tools/art_import.py` 또는 규격을 고친다. UI 비주얼은 이 트리거가 아니라 `ui-kit`/`game-ui-artist`가 담당한다(외부 리소스 0, 코드 절차 생성).
+
 **Knowledge Base:** 버그 수정·기능 구현에 착수하기 전, 먼저 `.claude/knowledge/`를 검색해 유사 패턴을 참조하라 (`symptom`·`tags` 프론트매터 기준). 이 경로는 Claude와 Codex가 함께 쓰는 단일 원본이다. 재발 위험이 있는 문제를 새로 해결했다면 `.claude/knowledge/workflows/bugfix-to-knowledge-pipeline.md` 절차에 따라 엔트리로 저장하라.
 
 **공통 AI 설정:** 프로젝트 규칙의 단일 원본은 이 `AGENTS.md`이고, 공통 스킬과 역할의 단일 원본은 각각 `.agents/skills/`, `.agents/roles/`이다. Claude가 인식하는 `.claude/skills/` 사본은 `powershell -ExecutionPolicy Bypass -File .\.agents\Sync-ClaudeSkills.ps1`로만 갱신한다. `.claude/agents/`와 `.codex/agents/`는 각 도구의 형식 차이를 위한 어댑터이므로, 공통 규칙을 중복으로 추가하지 않는다.
@@ -203,3 +205,4 @@ Assets/Scripts/
 | 2026-07-10 | Knowledge Base 도입 (bug-patterns / lessons-learned / workflows) + 착수 전 KB 검색 트리거 배선 | .claude/knowledge, AGENTS.md | 재발성 버그 패턴 재사용 + AI 워크플로 자산화 |
 | 2026-07-27 | Claude·Codex 공통 설정 원본 통합 | AGENTS.md, .agents/skills | 규칙·스킬은 한 곳에서 관리하고 Claude 스킬 사본은 동기화 스크립트로 갱신 |
 | 2026-07-13 | game-ui-artist 에이전트 + ui-kit 스킬 추가, unity-dev Phase 2에 UI 라우팅 배선 | agents, skills/ui-kit, skills/unity-dev | UI 비주얼 폴리싱 전문화 — 코드기반 UGUI(절차적 스프라이트·에디터 생성기, 외부 리소스 0) |
+| 2026-09-01 | game-art-director 에이전트 + art-gen 스킬 추가, 반입 자동화(tools/art_import.py, GeneratedSpritePostprocessor) 도입 | agents, skills/art-gen, tools, AGENTS.md | AI 생성 비트맵 아트가 하네스 밖에 있어 규격 없이 수동 보정되던 것을 파이프라인화 — PPU 5종·머티리얼 UV 3종 부채 상환 |

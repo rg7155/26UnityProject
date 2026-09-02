@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     float _invincibleTimer;
 
     VirtualJoystick _joystick;
+    SpriteFrameAnimator _spriteAnimator;
 
     public bool DebugInvincible;
 
@@ -55,6 +56,7 @@ public class PlayerController : MonoBehaviour
         Hp = _maxHp;
         _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
         _joystick = FindObjectOfType<VirtualJoystick>();
+        _spriteAnimator = GetComponent<SpriteFrameAnimator>();
     }
 
     void Update()
@@ -90,9 +92,24 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (input != Vector2.zero)
+        bool isMoving = input.sqrMagnitude > 0.0001f;  // 아날로그 조이스틱 미세 드리프트는 정지로 본다
+        _spriteAnimator?.SetMoving(isMoving);
+
+        if (isMoving)
         {
             _state = CreatureState.Moving;
+
+            if (input.x != 0f)
+            {
+                Vector3 scale = transform.localScale;
+                float scaleX = Mathf.Sign(input.x) * Mathf.Abs(scale.x);
+                if (scale.x != scaleX)
+                {
+                    scale.x = scaleX;
+                    transform.localScale = scale;
+                }
+            }
+
             transform.position += (Vector3)(input * _speed * Time.deltaTime);
         }
         else
