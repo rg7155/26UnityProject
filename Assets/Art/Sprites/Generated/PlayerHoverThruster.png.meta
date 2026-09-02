@@ -1,19 +1,7 @@
 fileFormatVersion: 2
-guid: 4cb8467c9cedb9c42b85a55b058272c2
+guid: 350abeecb924523419fd2537705f108b
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: 4067305731127783996
-    second: FastEnemyDroneSymmetric_0
-  - first:
-      213: -876764644928827441
-    second: FastEnemyDroneSymmetric_1
-  - first:
-      213: -5012868614804445241
-    second: FastEnemyDroneSymmetric_2
-  - first:
-      213: -3596389406279258432
-    second: FastEnemyDroneSymmetric_3
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -57,10 +45,10 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 0
+  spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 512
+  spritePixelsToUnits: 236
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -84,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -122,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: FastEnemyDroneSymmetric_0
+      name: PlayerHoverThruster_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +125,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c3238c05309f17830800000000000000
-      internalID: 4067305731127783996
+      spriteID: 501e77a9e4c0b6740800000000000000
+      internalID: 5146220530939453701
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: FastEnemyDroneSymmetric_1
+      name: PlayerHoverThruster_1
       rect:
         serializedVersion: 2
         x: 512
@@ -159,14 +147,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fcf4563633b15d3f0800000000000000
-      internalID: -876764644928827441
+      spriteID: 919a74a0046945c90800000000000000
+      internalID: -7181950303954556647
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: FastEnemyDroneSymmetric_2
+      name: PlayerHoverThruster_2
       rect:
         serializedVersion: 2
         x: 1024
@@ -181,14 +169,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7c760ecdd86be6ab0800000000000000
-      internalID: -5012868614804445241
+      spriteID: b5e7b2e5f18713090800000000000000
+      internalID: -8056526182269878693
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: FastEnemyDroneSymmetric_3
+      name: PlayerHoverThruster_3
       rect:
         serializedVersion: 2
         x: 1536
@@ -203,8 +191,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0ce2fb4b3ee071ec0800000000000000
-      internalID: -3596389406279258432
+      spriteID: cfda60c54b037a8e0800000000000000
+      internalID: -1682322384603402756
       vertices: []
       indices: 
       edges: []
@@ -213,7 +201,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +211,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      FastEnemyDroneSymmetric_0: 4067305731127783996
-      FastEnemyDroneSymmetric_1: -876764644928827441
-      FastEnemyDroneSymmetric_2: -5012868614804445241
-      FastEnemyDroneSymmetric_3: -3596389406279258432
+      PlayerHoverThruster_0: 5146220530939453701
+      PlayerHoverThruster_1: -7181950303954556647
+      PlayerHoverThruster_2: -8056526182269878693
+      PlayerHoverThruster_3: -1682322384603402756
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -25,8 +25,8 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
     // 여기 없으면 단일 스프라이트로 본다.
     static readonly Dictionary<string, int> FrameCounts = new Dictionary<string, int>
     {
-        { "PlayerEnergyCoreSymmetric", 4 },
         { "PlayerEnergyCoreMove",      4 },
+        { "PlayerHoverThruster",        4 },
         { "BossMonolithSymmetric",     4 },
         { "OrbiterEnergyBlade",        4 },
         { "BasicEnemyDroneSymmetric",  4 },
@@ -40,7 +40,9 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
 
         TextureImporter importer = (TextureImporter)assetImporter;
         string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
-        bool isPlayer = name == "PlayerEnergyCoreSymmetric" || name == "PlayerEnergyCoreMove";
+        bool isPlayer = name == "PlayerEnergyCoreSymmetric"
+            || name == "PlayerEnergyCoreMove"
+            || name == "PlayerHoverThruster";
 
         importer.textureType = TextureImporterType.Sprite;
         importer.spritePixelsPerUnit = isPlayer

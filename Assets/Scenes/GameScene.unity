@@ -9616,6 +9616,7 @@ MonoBehaviour:
   _targetPrefab: {fileID: 9151382190181105541, guid: 5f902d44f680db24584f4d9e4bd2e76a, type: 3}
   _mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: cb39975245248f249bb646519b80eb1f, type: 2}
+  _visualScale: 2
 --- !u!1 &750165052
 GameObject:
   m_ObjectHideFlags: 0
@@ -10485,6 +10486,7 @@ MonoBehaviour:
   _targetPrefab: {fileID: 4243169767101499499, guid: bb9a0cf07e6a13b46b1974ef6de45399, type: 3}
   _mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: d252530efbbbf694cb1f4f6ba2326183, type: 2}
+  _visualScale: 1.4
 --- !u!1 &814889454
 GameObject:
   m_ObjectHideFlags: 0
@@ -17734,6 +17736,7 @@ MonoBehaviour:
   _targetPrefab: {fileID: 4243169767101499499, guid: ec34b518074a64b4db8959a76fc57ad5, type: 3}
   _mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   _material: {fileID: 2100000, guid: fb8c54ef318ae4a42981f2c98b455f31, type: 2}
+  _visualScale: 3
 --- !u!1 &1324908711
 GameObject:
   m_ObjectHideFlags: 0

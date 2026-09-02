@@ -243,6 +243,7 @@ GameObject:
   - component: {fileID: 7954178070804362467}
   - component: {fileID: 5845916218510287992}
   - component: {fileID: 864874265664269333}
+  - component: {fileID: 2904766293324556533}
   m_Layer: 6
   m_Name: Boss_Monolith
   m_TagString: Untagged
@@ -399,13 +400,34 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
+  m_Sprite: {fileID: -7577528194369311860, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1.0904348, y: 1.0904348}
+  m_Size: {x: 2, y: 2}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2904766293324556533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151382190181105541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db940659d8cd763448ea9b22313a8e16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFrameAnimator
+  _frames:
+  - {fileID: -7577528194369311860, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
+  - {fileID: 4860618508780325063, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
+  - {fileID: -5007234991687842615, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
+  - {fileID: -5643684238545393447, guid: 9f4396b86b0ffbe4e9d3516a372d9c05, type: 3}
+  _fps: 8
+  _moveFrames: []
+  _moveFps: 8
+  _randomizePhase: 1

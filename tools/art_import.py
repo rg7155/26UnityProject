@@ -75,20 +75,23 @@ SIZE_VARIATION_LIMIT = 0.03
 #
 # 대칭 검사는 원형이어야 하는 오브젝트에만 건다. 캐릭터는 정면 뷰라 대칭이 아니고,
 # 검사를 걸면 매번 무의미한 경고가 뜬다.
-DEFAULT = dict(frames=1, size=512, symmetric=False, humanoid=False)
+DEFAULT = dict(frames=1, size=512, symmetric=False, humanoid=False, force_frames=False)
 
 TARGETS = {
     # A. 플레이어 — 스타일 기준점
     "PlayerEnergyCoreSymmetric":dict(frames=4, size=512,  symmetric=False, humanoid=True),
     "PlayerEnergyCoreMove":     dict(frames=4, size=512,  symmetric=False, humanoid=True),
+    # 생성기가 2:1 캔버스에 4개의 세로 효과 셀을 배치한다. 이 대상만 레퍼런스의 시각적
+    # 셀 수를 신뢰해 4등분한다. 공통 크롭 뒤에는 정사각 4프레임으로 정규화된다.
+    "PlayerHoverThruster":       dict(frames=4, size=512,  symmetric=False, force_frames=True),
 
     # B. 보스
     "BossMonolithSymmetric":    dict(frames=4, size=1024, symmetric=False, humanoid=True),
 
     # C. 적 3종 (기존 파일명 유지 — guid 보존)
-    "BasicEnemyDroneSymmetric": dict(frames=4, size=512,  symmetric=False, humanoid=True),
-    "FastEnemyDroneSymmetric":  dict(frames=4, size=512,  symmetric=False, humanoid=True),
-    "TankEnemyDroneSymmetric":  dict(frames=4, size=512,  symmetric=False, humanoid=True),
+    "BasicEnemyDroneSymmetric": dict(frames=4, size=512,  symmetric=False),
+    "FastEnemyDroneSymmetric":  dict(frames=4, size=512,  symmetric=False),
+    "TankEnemyDroneSymmetric":  dict(frames=4, size=512,  symmetric=False),
 
     # D. 오브젝트 — 회전 대칭이어야 하는 것들만 검사한다
     "OrbiterEnergyBlade":       dict(frames=4, size=512,  symmetric=True),
@@ -289,9 +292,10 @@ def process(src_path, dry_run=False):
 
     img = Image.open(src_path)
 
-    # 설정은 '의도한' 프레임 수이고, 실제 프레임 수는 파일의 가로세로비가 결정한다.
-    # 스트립을 아직 안 만든 대상(정지 1장)을 4등분해 버리는 사고를 막는다.
-    frames = resolve_frames(img, cfg["frames"])
+    # 설정은 '의도한' 프레임 수이고, 실제 프레임 수는 보통 파일의 가로세로비가 결정한다.
+    # 다만 PlayerHoverThruster 는 생성기가 2:1 캔버스 안에 4개 셀을 배치하는 예외다.
+    # 이 이름에서만 명시적으로 4등분해, 공통 크롭 뒤 정사각 프레임으로 정규화한다.
+    frames = cfg["frames"] if cfg["force_frames"] else resolve_frames(img, cfg["frames"])
     if frames != cfg["frames"]:
         print(f"[{name}]  설정 frames={cfg['frames']} 이지만 가로세로비가 "
               f"{img.size[0]/img.size[1]:.2f} 라 frames={frames} 로 처리한다")

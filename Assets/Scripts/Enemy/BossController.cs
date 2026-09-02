@@ -95,6 +95,8 @@ public class BossController : EnemyBase
 
         // separation을 조회하지 않는다 — Job 결과는 프레임 순서에 의존해 되감기 재현성을 깨뜨린다
         float speed = (_leashing ? _speed * _data.leashSpeedMult : _speed) * PhaseSpeedMult;
+        if (toTarget.x != 0f && _sprite != null)
+            _sprite.flipX = toTarget.x < 0f;
         transform.position += (Vector3)(toTarget.normalized * speed * Time.deltaTime);
 
         SpatialHashGrid.Instance?.Move(this, prevPos);
@@ -104,6 +106,8 @@ public class BossController : EnemyBase
     void ChargeMove()
     {
         Vector2 prevPos = transform.position;
+        if (_lockedDir.x != 0f && _sprite != null)
+            _sprite.flipX = _lockedDir.x < 0f;
         transform.position += (Vector3)(_lockedDir * _data.chargeSpeed * Time.deltaTime);
 
         SpatialHashGrid.Instance?.Move(this, prevPos);

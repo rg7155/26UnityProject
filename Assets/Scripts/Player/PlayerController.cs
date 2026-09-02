@@ -57,8 +57,13 @@ public class PlayerController : MonoBehaviour
         Hp = _maxHp;
         _damageTextPrefab = Resources.Load<GameObject>("UI/DamageText");
         _joystick = FindObjectOfType<VirtualJoystick>();
-        _spriteAnimator = GetComponent<SpriteFrameAnimator>();
-        _sprite = GetComponent<SpriteRenderer>();
+        Transform visual = transform.Find("PlayerVisual");
+        _spriteAnimator = visual != null
+            ? visual.GetComponent<SpriteFrameAnimator>()
+            : GetComponent<SpriteFrameAnimator>();
+        _sprite = visual != null
+            ? visual.GetComponent<SpriteRenderer>()
+            : GetComponent<SpriteRenderer>();
     }
 
     void Update()

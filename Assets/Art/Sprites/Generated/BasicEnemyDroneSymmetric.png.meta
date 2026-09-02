@@ -5,6 +5,15 @@ TextureImporter:
   - first:
       213: 3446058715967347121
     second: BasicEnemyDroneSymmetric_0
+  - first:
+      213: 2306372424423767123
+    second: BasicEnemyDroneSymmetric_1
+  - first:
+      213: 2326245376950416083
+    second: BasicEnemyDroneSymmetric_2
+  - first:
+      213: 6909755111730930566
+    second: BasicEnemyDroneSymmetric_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +55,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
@@ -72,7 +81,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 1024
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -118,8 +127,8 @@ TextureImporter:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 256
-        height: 1024
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +137,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 
-      internalID: 0
+      spriteID: 1b95f58e42cd2df20800000000000000
+      internalID: 3446058715967347121
       vertices: []
       indices: 
       edges: []
@@ -138,10 +147,10 @@ TextureImporter:
       name: BasicEnemyDroneSymmetric_1
       rect:
         serializedVersion: 2
-        x: 256
+        x: 512
         y: 0
-        width: 256
-        height: 1024
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -150,8 +159,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 
-      internalID: 0
+      spriteID: 35cf8851081e10020800000000000000
+      internalID: 2306372424423767123
       vertices: []
       indices: 
       edges: []
@@ -160,10 +169,10 @@ TextureImporter:
       name: BasicEnemyDroneSymmetric_2
       rect:
         serializedVersion: 2
-        x: 512
+        x: 1024
         y: 0
-        width: 256
-        height: 1024
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -172,8 +181,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 
-      internalID: 0
+      spriteID: 3d2368968db784020800000000000000
+      internalID: 2326245376950416083
       vertices: []
       indices: 
       edges: []
@@ -182,10 +191,10 @@ TextureImporter:
       name: BasicEnemyDroneSymmetric_3
       rect:
         serializedVersion: 2
-        x: 768
+        x: 1536
         y: 0
-        width: 256
-        height: 1024
+        width: 512
+        height: 512
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,8 +203,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 
-      internalID: 0
+      spriteID: 68369a72aa164ef50800000000000000
+      internalID: 6909755111730930566
       vertices: []
       indices: 
       edges: []
@@ -215,6 +224,9 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       BasicEnemyDroneSymmetric_0: 3446058715967347121
+      BasicEnemyDroneSymmetric_1: 2306372424423767123
+      BasicEnemyDroneSymmetric_2: 2326245376950416083
+      BasicEnemyDroneSymmetric_3: 6909755111730930566
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

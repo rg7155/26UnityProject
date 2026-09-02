@@ -9,6 +9,7 @@ public class EnemyInstanceRenderer : MonoBehaviour
     [SerializeField] GameObject _targetPrefab;  // 담당할 적 프리팹
     [SerializeField] Mesh _mesh;
     [SerializeField] Material _material;        // GPU Instancing 활성화 필요
+    [SerializeField] float _visualScale = 1f;
 
     static readonly ProfilerMarker _buildMatricesMarker = new ProfilerMarker("EnemyInstanceRenderer.BuildMatrices");
     static readonly ProfilerMarker _drawMarker = new ProfilerMarker("EnemyInstanceRenderer.Draw");
@@ -56,10 +57,10 @@ public class EnemyInstanceRenderer : MonoBehaviour
 
                 // 피격 punch 는 연출이라 transform 이 아니라 여기서만 곱한다
                 // (Collider 불변 + 좌우 반전의 localScale.x 부호와 충돌 없음)
-                float punch = enemy.HitPunchScale;
-                _matrixBuffer[count++] = punch == 1f
+                float scale = _visualScale * enemy.HitPunchScale;
+                _matrixBuffer[count++] = scale == 1f
                     ? enemy.transform.localToWorldMatrix
-                    : enemy.transform.localToWorldMatrix * Matrix4x4.Scale(new Vector3(punch, punch, 1f));
+                    : enemy.transform.localToWorldMatrix * Matrix4x4.Scale(new Vector3(scale, scale, 1f));
             }
         }
 
