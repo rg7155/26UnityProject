@@ -51,11 +51,11 @@ The ONLY light source is a neon emissive element inside the scene — no sun,
 no sky light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
-IMPORTANT — although the scene is dark, the main structures in the upper 60%
-must stay clearly readable as silhouettes. Their edges and planes should sit
-around 20-30% brightness against the near-black background, NOT fade into it.
-This will be viewed on a phone screen in daylight. Do not crush everything to
-pure black.
+IMPORTANT — the structures in the upper 60% must stay readable, lit only by
+the in-scene light source described above. Brightness follows that light: a
+large glowing object lights the scene well, a single small indicator lights
+it barely. Keep the structure edges distinguishable from the background even
+where the light is faint.
 No text, no logo, no watermark, no border or frame, no vignette, no depth of
 field.
 ```
@@ -72,6 +72,43 @@ field.
 > 오프닝의 보스를 마젠타로 그리면 **플레이어가 실제로 만나는 보스와 다른 물건이 된다.**
 
 ---
+
+## 밝기 기준 — 광원의 크기가 결정한다
+
+**초안은 5장 전부에 "구조물 20~30% 밝기"를 균일하게 걸었다. 그 규격이 틀렸다.**
+장면마다 광원의 크기가 다른데 결과 밝기를 같게 요구한 것이라, P1처럼 광원이
+LED 점 하나인 장면은 원리적으로 만족할 수 없다.
+
+### 실측 (1차본)
+
+| 장 | 광원 | 상단 구조물 밝기 | 판정 |
+|---|---|---|---|
+| P1 죽은 서버실 | LED 점 하나 | **11%** | ✅ 통과 — 아래 주광 검증 참고 |
+| P2 캡슐 | 거대한 발광 캡슐 | **49%** | ✅ 통과 |
+
+수치가 4배 넘게 벌어졌지만 **결함이 아니라 장면의 차이다.** 그리고 서사적으로도
+`죽은 어둠 → 빛이 켜진다`가 맞는 진행이다. P1만 유독 어둡고 그 뒤로는 계속 빛이 있는 구조가 된다.
+
+### 예상 밝기 (참고용, 강제 아님)
+
+| 장 | 광원 | 대략 |
+|---|---|---|
+| P1 | LED 점 하나 | 가장 어둡다 |
+| P2 | 발광 캡슐 | 밝다 |
+| P3 | 커다란 시간 눈금 링 | P2 수준 |
+| P4 | 요새 주황 코어 | P1 과 P2 사이 |
+| P5 | 지평선 골드 띠 | P4 와 비슷 |
+
+### 어두운 장면은 폰에서 오히려 잘 읽힌다
+
+"어두우면 밝은 곳에서 검은 화면으로 보인다"는 우려로 밝기 하한을 넣었는데, **반대였다.**
+
+주변광이 얹히면 화면의 검정이 **묻히는 게 아니라 들뜬다.** P1을 주광 환경으로 시뮬레이션한
+결과(원본에 `v*0.82 + 18` 적용) 서버랙·천장 그리드·바닥 잔해가 **원본보다 더 잘 읽혔다.**
+하단 40%도 회색으로 뜨지만 30/255 수준이라 흰 텍스트 가독성에는 영향이 없다.
+
+→ **어두운 것 자체를 반려 사유로 삼지 않는다.** 판정 기준은 "구조물의 윤곽이
+배경과 구분되는가" 하나뿐이다.
 
 ## 캐릭터 규격 — 파일럿
 
@@ -120,8 +157,9 @@ Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png
 
 ## Opening01_DeadArchive — 붕괴
 
-> **1차본이 반려됐다** — 너무 어두워 서버랙이 배경에 묻혔다.
-> 재생성 시 **`Opening02` 채택본을 톤 레퍼런스로 첨부**하고 밝기를 맞춘다.
+> **채택됨.** 구조물 밝기 11%로 초안 규격(20~30%)에는 미달했지만,
+> 주광 시뮬레이션에서 서버랙·천장 그리드가 원본보다 오히려 잘 읽혔다.
+> **틀린 것은 이미지가 아니라 균일 밝기 규격이었다**(「밝기 기준」 절 참고).
 > 이 장에는 캐릭터가 없다. 아직 깨어나기 전이라 서사와 맞다.
 
 ```
@@ -140,11 +178,11 @@ The ONLY light source is a neon emissive element inside the scene — no sun,
 no sky light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
-IMPORTANT — although the scene is dark, the main structures in the upper 60%
-must stay clearly readable as silhouettes. Their edges and planes should sit
-around 20-30% brightness against the near-black background, NOT fade into it.
-This will be viewed on a phone screen in daylight. Do not crush everything to
-pure black.
+IMPORTANT — the structures in the upper 60% must stay readable, lit only by
+the in-scene light source described above. Brightness follows that light: a
+large glowing object lights the scene well, a single small indicator lights
+it barely. Keep the structure edges distinguishable from the background even
+where the light is faint.
 No text, no logo, no watermark, no border or frame, no vignette, no depth of
 field.
 ```
@@ -173,8 +211,8 @@ Vertical 9:16 composition. Flat cel-shaded vector style — no photorealism,
 no texture, no film grain, no noise.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no readable detail. Text will be placed there.
-IMPORTANT — although dark, the subject must stay clearly readable as a
-silhouette at 20-30% brightness. Do not crush it to pure black.
+IMPORTANT — the subject must stay readable, lit only by the in-scene light
+source. Keep its edges distinguishable from the background.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
@@ -207,8 +245,8 @@ Vertical 9:16 composition. Flat cel-shaded vector style — no photorealism,
 no texture, no film grain, no noise.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no readable detail. Text will be placed there.
-IMPORTANT — although dark, the subject must stay clearly readable as a
-silhouette at 20-30% brightness. Do not crush it to pure black.
+IMPORTANT — the subject must stay readable, lit only by the in-scene light
+source. Keep its edges distinguishable from the background.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
@@ -245,8 +283,8 @@ Vertical 9:16 composition. Flat cel-shaded vector style — no photorealism,
 no texture, no film grain, no noise.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no readable detail. Text will be placed there.
-IMPORTANT — although dark, the subject must stay clearly readable as a
-silhouette at 20-30% brightness. Do not crush it to pure black.
+IMPORTANT — the subject must stay readable, lit only by the in-scene light
+source. Keep its edges distinguishable from the background.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
@@ -278,8 +316,8 @@ Vertical 9:16 composition. Flat cel-shaded vector style — no photorealism,
 no texture, no film grain, no noise.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no readable detail. Text will be placed there.
-IMPORTANT — although dark, the subject must stay clearly readable as a
-silhouette at 20-30% brightness. Do not crush it to pure black.
+IMPORTANT — the subject must stay readable, lit only by the in-scene light
+source. Keep its edges distinguishable from the background.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
@@ -295,8 +333,8 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 4. 지평선/소실점 높이가 명세와 크게 어긋나는가
 5. 5장을 나란히 놓았을 때 **한 세트로 보이는가** — 톤·디테일 밀도가 튀는 장이 있으면 그 장만 재생성
 6. (Opening03 한정) **켜진 눈금이 정확히 다섯 개로 읽히는가**
-7. **구조물이 근접 검정에 묻히지 않는가** — 폰 화면 밝기에서 실루엣이 읽혀야 한다.
-   1차본이 이 항목에서 걸렸다(모델이 규격의 "near-black"을 끝까지 밀어붙였다)
+7. **구조물의 윤곽이 배경과 구분되는가** — 절대 밝기는 보지 않는다.
+   광원이 작은 장면은 어두운 것이 정답이다(「밝기 기준」 절 참고)
 8. (Opening04 한정) **보스가 원형 기어 구조에 주황 코어인가** — 인게임 보스와 같은 물건이어야 한다
 9. (P2~P5) **파일럿이 같은 사람으로 읽히는가** — 바이저 슬릿 하나 / 시안 트림 / 가슴 코어.
    비율은 달라도 되지만 이 셋이 바뀌면 반려
