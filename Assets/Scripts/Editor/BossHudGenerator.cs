@@ -45,7 +45,7 @@ public static class BossHudGenerator
 
         // ── (1) 보스 HP 바 ──
         var hpRoot = FindOrCreateChild(bossHud, "BossHpRoot");
-        ApplyProcedural(hpRoot.gameObject, true, UITheme.RadMd, UITheme.OutlineWidth, UITheme.CardSurface, UITheme.Danger);
+        ApplyProcedural(hpRoot.gameObject, true, UITheme.RadMd, UITheme.OutlineWidth, UITheme.BossReactorSurface, UITheme.BossReactorOutline);
         var hpRootImg = hpRoot.GetComponent<Image>();
         hpRootImg.color = Color.white;
         hpRootImg.raycastTarget = false; // 조이스틱 드래그를 막지 않도록 HUD 전 요소 raycast 해제
@@ -60,7 +60,7 @@ public static class BossHudGenerator
         FracRow(nameText.rectTransform, 0f, 0.6f);
 
         var hpText = FindOrCreateLabel(nameRow, "BossHpText", font);
-        StyleLabel(hpText, "0 / 0", UITheme.Caption, FontStyles.Bold, UITheme.TextSecondary, TextAlignmentOptions.MidlineRight);
+        StyleLabel(hpText, "0 / 0", UITheme.Caption, FontStyles.Bold, UITheme.BossReactorText, TextAlignmentOptions.MidlineRight);
         FracRow(hpText.rectTransform, 0.6f, 1f);
 
         var sliderRT = FindOrCreateChild(hpRoot, "BossHpSlider");
@@ -69,7 +69,7 @@ public static class BossHudGenerator
 
         // 트랙은 프레임(CardSurface)보다 더 어두운 리세스 — 백드롭<패널<리세스 깊이 표현
         var track = FindOrCreateChild(sliderRT, "Background");
-        ApplyProcedural(track.gameObject, false, UITheme.RadSm, 0, UITheme.Outline, UITheme.Outline);
+        ApplyProcedural(track.gameObject, false, UITheme.RadSm, 0, UITheme.BossReactorTrack, UITheme.BossReactorTrack);
         track.GetComponent<Image>().color = Color.white;
         track.GetComponent<Image>().raycastTarget = false;
         Stretch(track);
@@ -79,7 +79,7 @@ public static class BossHudGenerator
         Stretch(fillArea, FillInset);
 
         var fill = FindOrCreateChild(fillArea, "Fill");
-        ApplyProcedural(fill.gameObject, false, UITheme.RadSm, 0, UITheme.Danger, UITheme.Danger);
+        ApplyProcedural(fill.gameObject, false, UITheme.RadSm, 0, UITheme.BossReactorFill, UITheme.BossReactorFill);
         var fillImg = fill.GetComponent<Image>();
         fillImg.color = Color.white;
         fillImg.raycastTarget = false;
@@ -120,16 +120,16 @@ public static class BossHudGenerator
         var bossHpBar = bossHud.GetComponent<BossHpBar>();
         if (bossHpBar == null) bossHpBar = bossHud.gameObject.AddComponent<BossHpBar>();
         var hb = new SerializedObject(bossHpBar);
-        WireIfNull(hb, "_root", hpRoot.gameObject);
-        WireIfNull(hb, "_slider", slider);
-        WireIfNull(hb, "_nameText", nameText);
-        WireIfNull(hb, "_hpText", hpText);
+        WireReference(hb, "_root", hpRoot.gameObject);
+        WireReference(hb, "_slider", slider);
+        WireReference(hb, "_nameText", nameText);
+        WireReference(hb, "_hpText", hpText);
         hb.ApplyModifiedProperties();
 
         var warningUI = bossHud.GetComponent<BossWarningUI>();
         if (warningUI == null) warningUI = bossHud.gameObject.AddComponent<BossWarningUI>();
         var wu = new SerializedObject(warningUI);
-        WireIfNull(wu, "_root", warnRoot.gameObject);
+        WireReference(wu, "_root", warnRoot.gameObject);
         wu.ApplyModifiedProperties();
 
         // 잘못된 캔버스에 생긴 BossHud 제거 — 자기가 만드는 것만 치운다.
@@ -232,10 +232,10 @@ public static class BossHudGenerator
         rt.offsetMax = new Vector2(-pad, -pad);
     }
 
-    static void WireIfNull(SerializedObject so, string prop, Object value)
+    static void WireReference(SerializedObject so, string prop, Object value)
     {
         var p = so.FindProperty(prop);
-        if (p != null && p.objectReferenceValue == null && value != null)
+        if (p != null && value != null)
             p.objectReferenceValue = value;
     }
 }

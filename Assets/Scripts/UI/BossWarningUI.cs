@@ -8,15 +8,11 @@ public class BossWarningUI : MonoBehaviour
 
     WaveManager _wave;
 
-    void Start()
-    {
-        _wave = FindObjectOfType<WaveManager>();
-        if (_wave == null)
-            Debug.LogError("[BossWarningUI] WaveManager not found");
-    }
-
     void Update()
     {
+        if (_wave == null)
+            _wave = FindObjectOfType<WaveManager>();
+
         if (_wave == null || _root == null) return;
 
         _root.SetActive(_wave.BossWarningActive);
