@@ -170,6 +170,9 @@ Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png
 > **틀린 것은 이미지가 아니라 균일 밝기 규격이었다**(「밝기 기준」 절 참고).
 > 이 장에는 캐릭터가 없다. 아직 깨어나기 전이라 서사와 맞다.
 
+> ### 📎 첨부할 레퍼런스 1장
+> 1. `ArtSource/Opening/Opening02_LastBackup_Source.png`  ← 채택본 (톤)
+
 ```
 A dead server hall after total power loss, seen in one-point perspective.
 Rows of collapsed server racks recede from both sides toward a vanishing
@@ -197,8 +200,13 @@ field.
 
 ## Opening02_LastBackup — 기동
 
+> ✅ **채택 완료.** 아래 프롬프트는 재생성이 필요할 때만 쓴다.
 > **파일럿이 처음 등장하는 장이다.** 초안은 그림자만 있었는데, 깨어나는 순간에
 > 정작 사람이 없어 서사가 비었다.
+
+> ### 📎 첨부할 레퍼런스 2장
+> 1. `ArtSource/Opening/Opening02_LastBackup_Source.png`  ← 채택본 (톤)
+> 2. `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png`  ← 플레이어 (캐릭터)
 
 ```
 A pilot waking inside a cracked-open hatching capsule, front view at eye
@@ -233,6 +241,10 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 > `ONLY FIVE`라고 대문자로 써도 소용없었다(가로 스캔 실측: 폭 83/78/78/83 덩어리 4개).
 > **개수를 시계 방향 위치로 바꿔 지정**하도록 고쳤다.
 > 앞으로 개수가 의미를 갖는 요소는 숫자가 아니라 위치로 지정할 것.
+
+> ### 📎 첨부할 레퍼런스 2장
+> 1. `ArtSource/Opening/Opening02_LastBackup_Source.png`  ← 채택본 (톤)
+> 2. `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png`  ← 플레이어 (캐릭터)
 
 ```
 A large circular time dial floating in the air above a dark circuit-board
@@ -271,6 +283,11 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 > ⚠️ **인게임 보스를 그대로 반영한 스펙이다.** 실제 MONOLITH 는 각진 요새가 아니라
 > **거대한 원형 기어/링 구조에 주황 코어가 타는 형태**다(`인게임/보스.png`).
 > 오프닝의 보스가 실제와 다르면 첫 대면의 인상이 깨진다.
+
+> ### 📎 첨부할 레퍼런스 3장
+> 1. `ArtSource/Opening/Opening02_LastBackup_Source.png`  ← 채택본 (톤)
+> 2. `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png`  ← 플레이어 (캐릭터)
+> 3. `ArtSource/Opening/REF_Boss_Frame0.png`  ← 보스 (P4 전용, 첫 프레임만 잘라둔 것)
 
 ```
 A colossal circular machine fortress on the horizon of a dark circuit plain,
@@ -315,6 +332,10 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 
 > 로고 `REWIND SURVIVORS`가 y 25~40% 구간에 얹힌다. **그 자리를 비워야 한다.**
 > **파일럿이 화면에 서 있는 유일한 장이자, 오프닝과 인게임을 잇는 다리다.**
+
+> ### 📎 첨부할 레퍼런스 2장
+> 1. `ArtSource/Opening/Opening02_LastBackup_Source.png`  ← 채택본 (톤)
+> 2. `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png`  ← 플레이어 (캐릭터)
 
 ```
 Dawn over a dark circuit-board plain, front view at eye level. The horizon
