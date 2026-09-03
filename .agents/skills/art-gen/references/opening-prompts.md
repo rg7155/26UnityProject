@@ -220,14 +220,22 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 
 > 이 한 장이 게임의 핵심 기믹(5초 버퍼)과 주제를 동시에 설명한다.
 > **다섯 칸만 켜져 있다는 게 한눈에 읽혀야 한다.** 시간이 없으면 이 장부터 만든다.
+>
+> ⚠️ **1차본이 4칸으로 나왔다.** 이미지 모델은 개수를 세지 못한다.
+> `ONLY FIVE`라고 대문자로 써도 소용없었다(가로 스캔 실측: 폭 83/78/78/83 덩어리 4개).
+> **개수를 시계 방향 위치로 바꿔 지정**하도록 고쳤다.
+> 앞으로 개수가 의미를 갖는 요소는 숫자가 아니라 위치로 지정할 것.
 
 ```
 A large circular time dial floating in the air above a dark circuit-board
 city, low angle looking up. The ring spans about 70% of the frame width and
 its center sits at 35% from the top. The dial is divided into many equal tick
-segments around its circumference, but ONLY FIVE adjacent segments are lit in
-bright cyan (#35D9F5) — every other segment is dark and unlit. The count of
-five must be immediately readable.
+segments around its circumference. Five of them are lit in bright cyan
+(#35D9F5); every other segment is dark and unlit.
+The lit segments sit at the 10, 11, 12, 1 and 2 o'clock positions on the ring
+— two panels left of top center, one at top center, two to the right. Count
+them as you draw: ten, eleven, twelve, one, two. Five lit panels, no more and
+no fewer.
 In the lower middle of the upper 60%, a lone pilot stands with his back to
 the viewer, head tilted up toward the dial, about 25% of the frame height —
 small against the ring but clearly a person, not a speck. He carries no
