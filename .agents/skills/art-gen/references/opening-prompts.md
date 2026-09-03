@@ -46,6 +46,11 @@ The ONLY light source is a neon emissive element inside the scene — no sun,
 no sky light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
+IMPORTANT — although the scene is dark, the main structures in the upper 60%
+must stay clearly readable as silhouettes. Their edges and planes should sit
+around 20-30% brightness against the near-black background, NOT fade into it.
+This will be viewed on a phone screen in daylight. Do not crush everything to
+pure black.
 No text, no logo, no watermark, no border or frame, no vignette, no depth of
 field. Any human figure is a plain silhouette, no face, no fingers, under 15%
 of frame height.
@@ -54,8 +59,13 @@ of frame height.
 **팔레트** — 이 hex 밖의 색을 쓰지 않는다.
 ```
 배경   #10131C      시안 #35D9F5      마젠타 #FF5488
-레드   #FF1E1E      골드 #FFC23C
+레드   #FF1E1E      골드 #FFC23C      보스 오렌지 #F08000
 ```
+
+> **보스 오렌지 `#F08000`은 UITheme 토큰이 아니라 실제 인게임 화면에서 측정한 값이다.**
+> `인게임/보스.png`의 밝은 픽셀 분포는 마젠타 `#F03060` 42% / 시안 `#30C0F0` 16.5% /
+> 오렌지 `#F06000~F09000` 7.4% 였다. MONOLITH 본체가 이 오렌지다.
+> 오프닝의 보스를 마젠타로 그리면 **플레이어가 실제로 만나는 보스와 다른 물건이 된다.**
 
 **하단 40%를 비우는 이유**: 그 자리에 대사가 올라간다. 배경이 밝거나 복잡하면 글자가 안 읽힌다.
 검수에서 **하단 40%에 밝은 점이나 강한 엣지가 있으면 반려**한다. 이게 1차 기준이다.
@@ -83,6 +93,11 @@ The ONLY light source is a neon emissive element inside the scene — no sun,
 no sky light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
+IMPORTANT — although the scene is dark, the main structures in the upper 60%
+must stay clearly readable as silhouettes. Their edges and planes should sit
+around 20-30% brightness against the near-black background, NOT fade into it.
+This will be viewed on a phone screen in daylight. Do not crush everything to
+pure black.
 No text, no logo, no watermark, no border or frame, no vignette, no depth of
 field. Any human figure is a plain silhouette, no face, no fingers, under 15%
 of frame height.
@@ -105,6 +120,8 @@ The ONLY light source is a neon emissive element inside the scene — no sun,
 no sky light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
+IMPORTANT — although dark, the structures in the upper 60% must stay clearly
+readable as silhouettes at 20-30% brightness. Do not crush them to pure black.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
@@ -129,28 +146,41 @@ The ONLY light source is the glowing dial itself — no sun, no sky light, no
 rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — no bright elements, no
 high-contrast edges, no detail. All subject matter sits in the upper 60%.
+IMPORTANT — although dark, the structures in the upper 60% must stay clearly
+readable as silhouettes at 20-30% brightness. Do not crush them to pure black.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
 ```
 
 ## Opening04_Monolith — 적대
 
+> ⚠️ **인게임 보스를 그대로 반영한 스펙이다.** 실제 MONOLITH 는 각진 요새가 아니라
+> **거대한 원형 기어/링 구조에 주황 코어가 타는 형태**다(`인게임/보스.png`).
+> 오프닝의 보스가 실제와 다르면 첫 대면의 인상이 깨진다.
+
 ```
-A colossal machine fortress standing on the horizon of a dark circuit plain,
-low angle. The horizon line sits at 40% from the top. The fortress silhouette
-spans more than 60% of the frame width and blocks the upper half of the
-image, its outline glowing hot pink (#FF5488), with a single warning-red
-(#FF1E1E) core point at its center. On the near ridge stands one tiny pilot
-silhouette seen from behind, under 12% of the frame height, placed in the
-LEFT THIRD of the frame. Overwhelming — the size difference is the message.
+A colossal circular machine fortress standing on the horizon of a dark
+circuit plain, low angle. The horizon line sits at 40% from the top.
+The structure is a giant ring — a massive gear-like wheel of dark gray
+armored plates, segmented around its rim, more than 60% of the frame wide,
+blocking the upper half of the image. At its center burns a single large
+orange (#F08000) core, hotter and brighter toward the middle. Thin orange
+light seeps between the armor segments. The metal plates themselves are
+gray, not colored.
+On the near ridge below stand a few tiny hostile silhouettes glowing faint
+magenta (#FF5488), and one lone pilot silhouette seen from behind, under 12%
+of the frame height, placed in the LEFT THIRD of the frame. Overwhelming —
+the size difference is the message.
 
 Vertical 9:16 composition. Flat cel-shaded vector style — no photorealism,
 no texture, no film grain, no noise.
-The ONLY light source is the fortress's own neon emission — no sun, no sky
+The ONLY light source is the fortress's own orange core — no sun, no sky
 light, no rim light, no lens flare.
 The bottom 40% of the frame is empty flat darkness — the near plain is flat
 shadow with no readable detail. No bright elements there.
+IMPORTANT — although dark, the ring structure must stay clearly readable as a
+silhouette at 20-30% brightness. Do not crush it to pure black.
 No text, no logo, no watermark, no frame, no vignette, no depth of field.
-The pilot is a plain silhouette — no face, no fingers.
+The pilot and the small hostiles are plain silhouettes — no faces, no fingers.
 ```
 
 ## Opening05_Horizon — 결
@@ -186,6 +216,9 @@ No text, no logo, no watermark, no frame, no vignette, no depth of field.
 4. 지평선/소실점 높이가 명세와 크게 어긋나는가
 5. 5장을 나란히 놓았을 때 **한 세트로 보이는가** — 톤·디테일 밀도가 튀는 장이 있으면 그 장만 재생성
 6. (Opening03 한정) **켜진 눈금이 정확히 다섯 개로 읽히는가**
+7. **구조물이 근접 검정에 묻히지 않는가** — 폰 화면 밝기에서 실루엣이 읽혀야 한다.
+   1차본이 이 항목에서 걸렸다(모델이 규격의 "near-black"을 끝까지 밀어붙였다)
+8. (Opening04 한정) **보스가 원형 기어 구조에 주황 코어인가** — 인게임 보스와 같은 물건이어야 한다
 
 반려본은 `ArtSource/Generated/Archive/`로 보내고 `REJECTED.md`에 사유를 남긴다.
 
