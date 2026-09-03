@@ -16,30 +16,27 @@ ChatGPT 이미지 생성에 **그대로 복사해 사용**한다.
 
 ---
 
-## 순서 — Opening01을 먼저 확정한다
+## 순서 — Opening02가 톤 기준이다
 
-**`Opening01`을 먼저 뽑아 확정하고, 채택본을 나머지 4장 생성에 레퍼런스로 첨부한다.**
-`art-spec.md` 3-2절의 "플레이어 먼저"와 같은 방식이다.
+> **처음에는 Opening01을 기준으로 삼으려 했으나 바꿨다.**
+> P1 1차본이 너무 어두워 구조물이 배경에 묻혔고(밝기 하한을 안 적은 규격의 잘못),
+> 반면 **P2 1차본이 밝기·디테일·캐릭터를 전부 통과**했다.
+> 결과가 좋은 쪽을 기준으로 두는 것이 맞다. **P2가 톤 기준이다.**
 
-P1을 기준점으로 삼는 이유: **가장 단순해서 실패 원인 파악이 쉽고**, 여기서 정해지는
-암부 톤·시안 광원 세기·디테일 밀도가 나머지 4장에 그대로 승계된다.
-P3(링)이나 P4(요새)를 먼저 뽑으면 형태를 만드느라 톤이 흐려진다.
+**모든 장은 `Opening02` 채택본을 레퍼런스로 첨부한다. P1도 포함이다**(P1은 재생성 대상).
 
-**P2~P5는 레퍼런스를 2장 첨부한다.**
+| 첨부할 레퍼런스 | 무엇을 승계하는가 | 대상 |
+|---|---|---|
+| **`Opening02` 채택본** | 톤 — 팔레트, 암부 밝기, 광원 논리, 디테일 밀도 | **P1·P3·P4·P5 전부** |
+| `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png` | 캐릭터 — 헬멧·바이저·트림·코어 | P3·P4·P5 (P1은 캐릭터 없음) |
 
-| 레퍼런스 | 무엇을 승계하는가 |
-|---|---|
-| `Opening01` 채택본 | 톤 — 팔레트, 암부 밝기, 광원 논리, 디테일 밀도 |
-| `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png` | 캐릭터 — 헬멧·바이저·트림·코어 |
-
-톤 레퍼런스에 붙일 한 줄:
+톤 레퍼런스에 붙일 한 줄 — **프롬프트 끝에 그대로 추가한다**:
 ```
-Match the palette, lighting logic, detail density and flat shading of the
-first attached reference image exactly.
+Match the palette, lighting logic, ambient darkness level, detail density and
+flat cel shading of the attached tone reference image exactly.
 ```
-캐릭터 레퍼런스 지시는 각 프롬프트에 이미 포함돼 있다(「캐릭터 규격」 절 참고).
 
----
+캐릭터 레퍼런스 지시는 각 프롬프트 본문에 이미 들어 있다(「캐릭터 규격」 절 참고).
 
 ## 공통 규격 문단
 
@@ -123,7 +120,9 @@ Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png
 
 ## Opening01_DeadArchive — 붕괴
 
-★ **이것부터. 나머지 4장의 레퍼런스가 된다.**
+> **1차본이 반려됐다** — 너무 어두워 서버랙이 배경에 묻혔다.
+> 재생성 시 **`Opening02` 채택본을 톤 레퍼런스로 첨부**하고 밝기를 맞춘다.
+> 이 장에는 캐릭터가 없다. 아직 깨어나기 전이라 서사와 맞다.
 
 ```
 A dead server hall after total power loss, seen in one-point perspective.
