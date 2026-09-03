@@ -29,6 +29,14 @@ ChatGPT 이미지 생성에 **그대로 복사해 사용**한다.
 |---|---|---|
 | **`Opening02` 채택본** | 톤 — 팔레트, 암부 밝기, 광원 논리, 디테일 밀도 | **P1·P3·P4·P5 전부** |
 | `Assets/Art/Sprites/Generated/PlayerEnergyCoreSymmetric.png` | 캐릭터 — 헬멧·바이저·트림·코어 | P3·P4·P5 (P1은 캐릭터 없음) |
+| `Assets/Art/Sprites/Generated/BossMonolithSymmetric.png` | 보스 — 동심원 장갑판·주황 코어 | **P4만** |
+
+> **P4는 레퍼런스가 3장이다.** 보스 스프라이트는 4프레임 가로 스트립이므로
+> **첫 프레임만 잘라서 첨부**한다(전체를 넣으면 모델이 4개가 나란한 구조로 오해한다).
+>
+> 보스 스프라이트는 인게임 탑다운 시점이라 **바닥에 누운 원반**으로 그려져 있다.
+> P4는 지상 시점이므로 **같은 기계가 지평선에 똑바로 서 있는** 그림이어야 한다.
+> 디자인만 가져오고 방향은 바꾼다 — 프롬프트에 그 지시가 들어 있다.
 
 톤 레퍼런스에 붙일 한 줄 — **프롬프트 끝에 그대로 추가한다**:
 ```
@@ -278,12 +286,19 @@ low at his side. A few small hostile shapes glowing faint magenta (#FF5488)
 scatter across the ridge between him and the fortress. Overwhelming — the
 size difference is the message.
 
-The attached reference image is the in-game player sprite. Keep the SAME
-character identity — round full-face helmet with ONE wide horizontal cyan
-(#35D9F5) visor slit and no face, medium-gray armor plating with glowing cyan
-trim on chest, shoulders and boots, and a round glowing cyan energy core on
-the chest. Draw him at realistic proportions (about 6 heads tall), NOT the
-chibi proportions of the reference — only the design elements carry over.
+One attached reference is the in-game player sprite. Keep the SAME character
+identity — round full-face helmet with ONE wide horizontal cyan (#35D9F5)
+visor slit and no face, medium-gray armor plating with glowing cyan trim on
+chest, shoulders and boots, and a round glowing cyan energy core on the chest.
+Draw him at realistic proportions (about 6 heads tall), NOT the chibi
+proportions of the reference — only the design elements carry over.
+
+Another attached reference is the in-game boss sprite. The fortress must be
+recognisably THAT machine — concentric rings of dark gray armored plates,
+orange (#F08000) light bleeding between the segments, and a bright orange
+core at the very center. The reference is drawn as a flat disc seen from
+directly above; in this scene the same machine stands upright on the horizon,
+seen face-on from ground level. Keep the design, change only the orientation.
 
 The ONLY light source is the fortress's own orange core and the pilot's cyan
 trim — no sun, no sky light, no rim light, no lens flare.
