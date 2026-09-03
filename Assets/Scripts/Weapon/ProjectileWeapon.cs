@@ -7,6 +7,7 @@ public class ProjectileWeapon : WeaponBase
     float _fireRate;
     float _range;
     float _detectRange;
+    Transform _fireOrigin;
 
     float _fireCooldown;
 
@@ -18,6 +19,7 @@ public class ProjectileWeapon : WeaponBase
         _fireRate = d.fireRate;
         _range = d.range;
         _detectRange = d.detectRange;
+        _fireOrigin = transform.Find("PlayerVisual/FireOrigin");
     }
 
     void Update()
@@ -46,7 +48,7 @@ public class ProjectileWeapon : WeaponBase
         if (_projectilePrefab == null) return;
 
         GameObject go = Managers.Object.Get(_projectilePrefab);
-        go.transform.position = transform.position;
+        go.transform.position = _fireOrigin != null ? _fireOrigin.position : transform.position;
         go.transform.rotation = Quaternion.identity;
         Projectile proj = go.GetComponent<Projectile>();
         proj.Init(dir, _damage, _range, _projectilePrefab);
