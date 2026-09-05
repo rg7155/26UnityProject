@@ -5,7 +5,7 @@ AI를 "코드를 받아쓰는 도구"가 아니라 **규칙·역할·지식이 �
 | 저장소 | https://github.com/rg7155/26UnityProject |
 |---|---|
 | 웹 플레이 | https://rg7155.github.io/26UnityProject/ |
-| 플레이 영상 | https://youtu.be/oo_amdaKNRk |
+| 플레이 영상 | https://youtu.be/6QzcW7mtfzc |
 | 규모 | C# 106개 파일 / 약 10,100줄 · 커밋 90개 |
 | AI 자산 | 에이전트 5 · 스킬 2 · 지식 베이스 16건 |
 
@@ -30,6 +30,18 @@ AI를 "코드를 받아쓰는 도구"가 아니라 **규칙·역할·지식이 �
 | NotoSansKR | Google Fonts, SIL Open Font License 1.1 |
 | LiberationSans | Unity TextMesh Pro 기본 동봉 (SIL OFL) |
 | 엔진·패키지 | Unity 6, URP, Burst, Collections, Input System (Unity Companion License) |
+
+**이 파이프라인이 산출한 결과물의 기술 수준**
+
+| 시스템 | 내용 |
+|---|---|
+| Time Rewind | Circular Buffer 스냅샷 + EntityId 기반 풀 복원(3-케이스 diff) |
+| 성능 최적화 | Separation Steering을 IJobParallelFor + Burst로 병렬화 — 1000마리 **79ms → 0.6ms** (에디터 측정) |
+| 렌더링 | GPU Instancing — 타입별 단일 Draw Call |
+| 데이터 주도 | 무기·상점·퀘스트·웨이브를 **C# 0줄**로 추가 (SO 에셋만) |
+| UI | 절차적 9-slice 생성 — 외부 이미지 리소스 **0개** |
+
+상세 설계는 저장소의 `아키텍처.md`(20개 시스템)에 있다.
 
 ---
 
