@@ -18,9 +18,6 @@ public class TitleScene : MonoBehaviour
     [SerializeField] OpeningSequence _opening;
     [SerializeField] TMP_Text _statusText;
 
-    // 상태줄 구간. 기존 퀘스트 TIME TRAVELER 티어(30/150)를 그대로 쓴다 — 새 카운터를 만들지 않는다.
-    const int StatusMidTier  = 30;
-    const int StatusHighTier = 150;
 
     void Awake()
     {
@@ -101,16 +98,7 @@ public class TitleScene : MonoBehaviour
     {
         if (_statusText == null) return;
 
-        int n = Managers.Game.SaveData.LifetimeRewinds;
-        string line;
-        if (n < StatusMidTier)
-            line = "기동 대기. 버퍼 5초.";
-        else if (n < StatusHighTier)
-            line = $"되감기 {n}회 기록. 너는 매번 처음이라고 하더라.";
-        else
-            line = $"{n}회. 나는 아직 세고 있어.";
-
-        _statusText.text = line;
+        _statusText.text = OpeningStatusLines.For(Managers.Game.SaveData.LifetimeRewinds);
         _statusText.gameObject.SetActive(true);
     }
 

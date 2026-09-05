@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 // 오프닝 SO 를 Resources/Story/ 에 생성한다. 재실행 시 기존 에셋의 값을 갱신한다(GUID 유지).
 // QuestAssetGenerator 와 같은 방식 — 에이전트가 인스펙터를 못 만지므로 데이터도 코드로 만든다.
@@ -12,6 +13,7 @@ public static class OpeningAssetGenerator
     const string FolderPath = "Assets/Resources/Story";
     const string AssetPath  = FolderPath + "/Opening.asset";
     const string BgFolder   = "Assets/Resources/UI/Opening";
+    const string FontPath   = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
 
     [MenuItem("Tools/Story/Create Opening Assets")]
     public static void CreateOpeningAssets()
@@ -149,5 +151,34 @@ public static class OpeningAssetGenerator
         if (missing.Count > 0)
             Debug.LogWarning($"[OpeningAssetGenerator] 배경 미연결: {string.Join(", ", missing)} " +
                              $"— {BgFolder}/ 에 넣고 다시 실행할 것");
+
+        WarnMissingGlyphs(data);
+    }
+
+    // 대사를 고치고 폰트를 다시 굽지 않으면 새 글자가 화면에서 빈칸으로 나온다.
+    // 예외도 로그도 없이 조용히 사라지므로, 대사를 만드는 이 자리에서 잡는다.
+    static void WarnMissingGlyphs(OpeningData data)
+    {
+        var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
+        if (font == null) return;
+
+        var have = new HashSet<uint>();
+        foreach (TMP_Character c in font.characterTable) have.Add(c.unicode);
+
+        var missing = new SortedSet<char>();
+        foreach (OpeningPage page in data.pages)
+            foreach (OpeningLine line in page.lines)
+                foreach (char c in line.text)
+                    if (c > 127 && !have.Contains(c)) missing.Add(c);
+
+        foreach (char c in OpeningStatusLines.Low + OpeningStatusLines.Mid + OpeningStatusLines.High)
+            if (c > 127 && !have.Contains(c)) missing.Add(c);
+
+        if (missing.Count == 0) return;
+
+        Debug.LogError($"[OpeningAssetGenerator] 폰트에 없는 글자 {missing.Count}개: " +
+                       $"{string.Join("", missing)}
+" +
+                       "Tools/Font/한글 폰트 재생성 을 실행하세요 — 안 하면 화면에서 빈칸으로 나옵니다");
     }
 }

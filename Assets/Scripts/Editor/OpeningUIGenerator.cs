@@ -61,7 +61,13 @@ public static class OpeningUIGenerator
         // 루트 — 화면 전체를 덮고 탭을 받는다.
         RectTransform root = FindOrCreate((RectTransform)canvas.transform, RootName);
         Stretch(root);
-        root.SetAsLastSibling();   // 타이틀 UI 위에 덮는다. 기존 계층은 건드리지 않는다
+        // 타이틀 UI 위에 덮는다. 기존 계층은 건드리지 않는다.
+        //
+        // 형제 순서만으로는 안 된다 — 이 씬의 패널들은 UILayerCanvas(중첩 Canvas + overrideSorting)로
+        // 정렬되어 sortingOrder 가 형제 인덱스를 이긴다(TitleLobby 100, Shop/Quest 300).
+        // 오버레이가 형제 마지막이어도 TitleLobby 아래에 그려지는 이유다.
+        root.SetAsLastSibling();
+        UILayerAssign.AssignLayer(root.gameObject, UILayer.Cutscene);
 
         var group = Ensure<CanvasGroup>(root);
         group.alpha = 1f;
