@@ -71,6 +71,12 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
     {
         if (_finished || _body == null) return;
 
+        // 페이지 전환(암전) 중에는 진행하지 않는다.
+        // CrossFade 는 암전 절반이 지난 뒤에야 ShowLine 을 부르는데, 그 사이 _body 는
+        // 직전 줄을 끝낸 상태 그대로다. 막지 않으면 같은 조건이 계속 참이라 Advance 가
+        // 반복 호출되어, 줄을 건너뛰고 타자기가 도중에 처음부터 다시 찍힌다.
+        if (_fade != null) return;
+
         // 타자기가 끝난 뒤에만 자동 진행 타이머가 흐른다.
         if (!_body.IsComplete) return;
 
@@ -85,6 +91,7 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if (_finished || _body == null) return;
+        if (_fade != null) return;   // 암전 중 탭도 같은 이유로 막는다
 
         if (!_body.IsComplete)
         {
@@ -120,6 +127,7 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
     {
         _pageIndex = index;
         _lineIndex = 0;
+        _lineHoldTimer = 0f;   // 전환 직후 자동 진행이 곧바로 다시 걸리지 않게 한다
 
         UpdateDots();
 
