@@ -1,5 +1,4 @@
 using System.IO;
-using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,6 +12,10 @@ using UnityEngine;
 // 여기는 Editor 폴더라 빌드에 포함되지 않는다.
 public static class OpeningDebugMenu
 {
+    // JsonUtility 는 공백 없이 쓴다. 정규식을 쓸 만한 자리가 아니다.
+    const string SeenTrue  = "\"SeenOpening\":true";
+    const string SeenFalse = "\"SeenOpening\":false";
+
     static string SavePath { get { return Application.persistentDataPath + "/SaveData.json"; } }
 
     [MenuItem("Tools/Story/오프닝 다시 보기")]
@@ -25,7 +28,7 @@ public static class OpeningDebugMenu
         }
 
         string json = File.ReadAllText(SavePath);
-        string next = Regex.Replace(json, "\"SeenOpening\":\s*true", "\"SeenOpening\":false");
+        string next = json.Replace(SeenTrue, SeenFalse);
 
         if (next == json)
         {
