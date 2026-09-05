@@ -177,8 +177,7 @@ public static class OpeningAssetGenerator
         if (missing.Count == 0) return;
 
         Debug.LogError($"[OpeningAssetGenerator] 폰트에 없는 글자 {missing.Count}개: " +
-                       $"{string.Join("", missing)}
-" +
+                       $"{string.Join("", missing)} - " +
                        "Tools/Font/한글 폰트 재생성 을 실행하세요 — 안 하면 화면에서 빈칸으로 나옵니다");
     }
 }
