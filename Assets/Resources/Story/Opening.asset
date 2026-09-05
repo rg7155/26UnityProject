@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8232523ce30f1294da5c170c9df481f7, type: 3}
+  m_Name: Opening
+  m_EditorClassIdentifier: Assembly-CSharp::OpeningData
+  pages:
+  - id: Opening01_DeadArchive
+    background: {fileID: -1252231700535200858, guid: 2b8a261035ff8cb47871e014ef4f2beb, type: 3}
+    lines:
+    - speaker: 0
+      text: "\uC544\uCE74\uC774\uBE0C 12\uAD6C\uC5ED, \uC2E0\uD638 \uC5C6\uC74C."
+    - speaker: 0
+      text: "\uC0B4\uC544 \uC788\uB294 \uAC74 \uD504\uB85C\uC138\uC2A4\uBFD0\uC774\uB2E4."
+    zoomFrom: 1
+    zoomTo: 1.08
+    panFrom: {x: 0, y: 0}
+    panTo: {x: 0, y: -0.012}
+    blink: 1
+    blinkAnchor: {x: 0.5, y: 0.66}
+  - id: Opening02_LastBackup
+    background: {fileID: -5767246708377534396, guid: 7b5d9543a16d27f40ac171e36e65aefe, type: 3}
+    lines:
+    - speaker: 0
+      text: "\uB9C8\uC9C0\uB9C9 \uBC31\uC5C5\uC744 \uAEBC\uB0B8\uB2E4."
+    - speaker: 1
+      text: "\u2026\uC5EC\uAE34 \uC5B4\uB514\uC9C0."
+    - speaker: 0
+      text: "\uB124\uAC00 \uC8FD\uC740 \uACF3\uC774\uC57C."
+    zoomFrom: 1
+    zoomTo: 1.07
+    panFrom: {x: 0, y: 0}
+    panTo: {x: 0, y: 0}
+    blink: 0
+    blinkAnchor: {x: 0.5, y: 0.66}
+  - id: Opening03_FiveSeconds
+    background: {fileID: -6400996393275291798, guid: 4f3a089e99d64b849a92249cea72d677, type: 3}
+    lines:
+    - speaker: 0
+      text: "\uBC84\uD37C\uB294 5\uCD08. \uADF8\uB9CC\uD07C \uB418\uB3CC\uB9B4 \uC218
+        \uC788\uC5B4."
+    - speaker: 1
+      text: "5\uCD08. \uADF8\uAC8C \uB2E4\uC57C?"
+    - speaker: 0
+      text: "\uB418\uB3CC\uB9B0 5\uCD08\uB294 \uAE30\uC5B5\uC5D0\uC11C\uB3C4 \uC9C0\uC6CC\uC838."
+    zoomFrom: 1.06
+    zoomTo: 1
+    panFrom: {x: 0, y: 0}
+    panTo: {x: 0, y: 0}
+    blink: 0
+    blinkAnchor: {x: 0.5, y: 0.66}
+  - id: Opening04_Monolith
+    background: {fileID: -8042675834859017427, guid: c53f5cb822d76d64691a0350f6348f02, type: 3}
+    lines:
+    - speaker: 2
+      text: "\uAE30\uB85D \uBD88\uB7C9. \uB36E\uC5B4\uC4F4\uB2E4."
+    - speaker: 0
+      text: "\uAD00\uB9AC\uC790\uAC00 \uB110 \uD30C\uC77C\uB85C \uBCF8\uB2E4."
+    - speaker: 0
+      text: "\uC9C0\uC6CC\uC9C0\uAE30 \uC804\uC5D0 \uC9C0\uC6CC."
+    zoomFrom: 1
+    zoomTo: 1.09
+    panFrom: {x: 0, y: 0}
+    panTo: {x: 0, y: -0.01}
+    blink: 0
+    blinkAnchor: {x: 0.5, y: 0.66}
+  - id: Opening05_Horizon
+    background: {fileID: 3025874808048049906, guid: 3b91c00fc50988f499587100e23c3139, type: 3}
+    lines:
+    - speaker: 0
+      text: "\uB108\uB294 \uBA87 \uBC88\uC9F8\uC778\uC9C0 \uBAB0\uB77C\uB3C4 \uB3FC."
+    - speaker: 0
+      text: "\uC138\uB294 \uAC74 \uB0B4\uAC00 \uD560\uAC8C."
+    zoomFrom: 1.06
+    zoomTo: 1.06
+    panFrom: {x: 0, y: 0.02}
+    panTo: {x: 0, y: -0.02}
+    blink: 0
+    blinkAnchor: {x: 0.5, y: 0.66}
+  charsPerSecond: 30
+  autoAdvanceDelay: 2.2
+  pageFadeDuration: 0.35

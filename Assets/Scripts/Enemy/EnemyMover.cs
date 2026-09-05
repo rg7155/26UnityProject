@@ -4,7 +4,6 @@ using UnityEngine;
 public class EnemyMover : EnemyBase
 {
     [SerializeField] int _contactDamage = 10;
-    [SerializeField] float _separationRadius = 0.8f;
     [SerializeField] float _separationWeight = 1.5f;
     [SerializeField] float _maxSeparation = 0.8f;  // 가중 separation 상한 — target(1.0)보다 작게: 적이 항상 플레이어로 전진
     // _neighborBuf 제거 — 이웃 탐색은 EnemyJobScheduler가 담당

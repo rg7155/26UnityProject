@@ -10,7 +10,9 @@ using UnityEngine;
 // 결과를 EnemyMover가 조회해 이동에 사용. SpatialHashGrid는 건드리지 않음.
 public class EnemyJobScheduler : MonoBehaviour
 {
-    [SerializeField] float _separationRadius = 0.8f;  // EnemyMover와 동일 값
+    // 반경은 적마다 다르다(EnemyBase.BodyRadius) — 이유는 SeparationJob 주석 참고.
+    // 이 값은 전체를 한 번에 조이거나 푸는 손잡이다. 프리팹을 안 건드리고 간격만 조절할 때 쓴다.
+    [SerializeField] float _radiusScale = 1f;
     [SerializeField] int   _batchSize = 32;
 
     static readonly ProfilerMarker _gatherMarker   = new ProfilerMarker("EnemyJob.Gather");
@@ -18,6 +20,7 @@ public class EnemyJobScheduler : MonoBehaviour
 
     NativeArray<float2> _positions;
     NativeArray<int>    _entityIds;
+    NativeArray<float>  _radii;
     NativeArray<float2> _results;
     int _capacity;
     int _count;
@@ -74,6 +77,7 @@ public class EnemyJobScheduler : MonoBehaviour
                 Vector3 p = e.transform.position;
                 _positions[i] = new float2(p.x, p.y);
                 _entityIds[i] = e.EntityId;
+                _radii[i] = e.BodyRadius * _radiusScale;
                 _indexOf[e.EntityId] = i;
                 i++;
             }
@@ -87,11 +91,11 @@ public class EnemyJobScheduler : MonoBehaviour
         {
             var job = new SeparationJob
             {
-                Positions        = _positions,
-                EntityIds        = _entityIds,
-                Results          = _results,
-                SeparationRadius = _separationRadius,
-                Count            = _count,
+                Positions = _positions,
+                EntityIds = _entityIds,
+                Radii     = _radii,
+                Results   = _results,
+                Count     = _count,
             };
             JobHandle handle = job.Schedule(_count, _batchSize);
             handle.Complete();
@@ -110,6 +114,7 @@ public class EnemyJobScheduler : MonoBehaviour
 
         _positions = new NativeArray<float2>(newCap, Allocator.Persistent);
         _entityIds = new NativeArray<int>(newCap, Allocator.Persistent);
+        _radii     = new NativeArray<float>(newCap, Allocator.Persistent);
         _results   = new NativeArray<float2>(newCap, Allocator.Persistent);
         _capacity  = newCap;
     }
@@ -118,6 +123,7 @@ public class EnemyJobScheduler : MonoBehaviour
     {
         if (_positions.IsCreated) _positions.Dispose();
         if (_entityIds.IsCreated) _entityIds.Dispose();
+        if (_radii.IsCreated)     _radii.Dispose();
         if (_results.IsCreated)   _results.Dispose();
         _capacity = 0;
     }

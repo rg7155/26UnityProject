@@ -40,6 +40,12 @@ public class GameData
     public int LifetimeGold;
     public int LifetimeBossKills;
     public List<QuestProgress> QuestClaims = new List<QuestProgress>();
+
+    // 오프닝 시퀀스를 봤는지. 최초 1회만 재생한다.
+    // SchemaVersion 을 올리지 않는 이유: KB jsonutility-value-type-needs-schema-version 의 판단
+    // 기준은 "0/false 가 정상 값일 수 있는가" 다. 여기서는 구버전 세이브가 false 로 남는 것이
+    // 곧 "아직 안 봤음" 이고, 기존 플레이어도 오프닝을 한 번 보는 것이 의도한 동작이다.
+    public bool SeenOpening;
 }
 
 public class GameManagerEx
@@ -101,6 +107,19 @@ public class GameManagerEx
     {
         _path = Application.persistentDataPath + "/SaveData.json";
         LoadGame();
+    }
+
+    // 오프닝 재생 여부. 세터는 곧바로 저장한다 —
+    // 재생 도중 브라우저를 닫거나 오류가 나도 다시 갇히지 않게 하기 위함이다.
+    public bool SeenOpening
+    {
+        get { return _gameData.SeenOpening; }
+        set
+        {
+            if (_gameData.SeenOpening == value) return;
+            _gameData.SeenOpening = value;
+            SaveGame();
+        }
     }
 
     public void SaveGame()

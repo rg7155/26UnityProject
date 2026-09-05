@@ -55,6 +55,19 @@ public class EnemyBase : MonoBehaviour
     public float      Speed        { get { return _speed; } }
     public GameObject OriginPrefab { get { return _originPrefab; } }
 
+    // 화면에 보이는 몸통의 반지름(월드 단위). 분리 조향이 이 값을 쓴다.
+    //
+    // transform 만 봐서는 알 수 없다 — EnemyInstanceRenderer 가 _visualScale 을 렌더 행렬에만
+    // 곱하기 때문이다(HitPunchScale 과 같은 이유). 실제 크기는 localScale.x * _visualScale 이고
+    // 세 적의 배율 조합이 제각각이라 전역 상수 하나로는 맞출 수 없다.
+    //
+    // 0.425 = 프레임 절반(0.5) * art_import.py 의 FILL_RATIO(0.85).
+    // 스프라이트는 512px 프레임을 512 PPU 로 넣으므로 프레임 1장 = 월드 1유닛이고,
+    // 그 안에서 내용이 85% 를 채운다. art_import.py:42 가 바뀌면 이 값도 같이 바뀐다.
+    const float BodyRadiusPerUnit = 0.425f;
+
+    public float BodyRadius { get; private set; }
+
     // 접촉 쿨다운은 파생 클래스가 각자 들고 있다 — Rewind 캡처가 타입 분기 없이 읽기 위한 확장 지점
     public virtual float AttackCooldown { get { return 0f; } }
 
@@ -76,6 +89,18 @@ public class EnemyBase : MonoBehaviour
 
         SpatialHashGrid.Instance?.Add(this);
         EnemyInstanceRenderer.Register(this, originPrefab);
+
+        RecalcBodyRadius();
+    }
+
+    // Init 과 ForceRestore 양쪽에서 부른다. 되감기로 풀 개체를 복원하는 경로는 Init 을
+    // 타지 않으므로, 여기 한쪽만 두면 복원된 적의 반지름이 0 이 되어 서로 완전히 겹친다.
+    // 예외도 로그도 없이 조용히 깨지는 종류라 두 자리를 같이 봐야 한다.
+    void RecalcBodyRadius()
+    {
+        float visual = EnemyInstanceRenderer.VisualScaleOf(_originPrefab);
+        // localScale.x 는 좌우 반전(EnemyMover)에서 음수가 되므로 절댓값을 쓴다
+        BodyRadius = BodyRadiusPerUnit * Mathf.Abs(transform.localScale.x) * visual;
     }
 
     public virtual void OnDamaged(int damage)
@@ -135,6 +160,7 @@ public class EnemyBase : MonoBehaviour
         _originHp     = s.hp;
         _registry[EntityId] = this;
         _hitPunchEndTime = -1f;
+        RecalcBodyRadius();   // Init 을 타지 않는 경로 — 빠뜨리면 복원된 적이 서로 겹친다
         RestoreSnapshot(s);
     }
 

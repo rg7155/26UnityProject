@@ -43,6 +43,15 @@ public class EnemyInstanceRenderer : MonoBehaviour
             renderer._enemies.Remove(enemy);
     }
 
+    // _visualScale 은 transform 에 반영되지 않으므로 화면 크기를 알려면 이 값이 필요하다.
+    // 분리 조향(EnemyBase.BodyRadius)이 쓴다. 렌더러가 없는 타입은 배율 없음(1)으로 본다.
+    public static float VisualScaleOf(GameObject prefab)
+    {
+        if (prefab != null && _registry.TryGetValue(prefab, out EnemyInstanceRenderer renderer))
+            return renderer._visualScale;
+        return 1f;
+    }
+
     void LateUpdate()
     {
         if (_mesh == null || _material == null) return;
