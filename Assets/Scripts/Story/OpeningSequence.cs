@@ -48,6 +48,9 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
 
     public void Play()
     {
+        // 오버레이는 평소 꺼져 있다. 활성화가 먼저여야 Awake 가 돌아 _group 이 잡힌다.
+        gameObject.SetActive(true);
+
         if (_data == null || _data.pages == null || _data.pages.Length == 0)
         {
             Debug.LogWarning("[OpeningSequence] OpeningData 가 비어 있다. 즉시 종료한다");
@@ -60,7 +63,6 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
         _lineIndex = 0;
         _group.alpha = 1f;
         _group.blocksRaycasts = true;
-        gameObject.SetActive(true);
 
         ShowPage(0, instant: true);
     }

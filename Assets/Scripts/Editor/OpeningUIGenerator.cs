@@ -38,6 +38,12 @@ public static class OpeningUIGenerator
     // 조명처럼 번지지는 않는 크기다.
     const float BlinkSize   = 76f;
 
+    // 상태줄 — 로비의 RecordCard(중심 y -60, 높이 220) 아래 빈 구간에 놓는다.
+    // 캔버스 1080x1920 기준 BottomBar(높이 300)와 겹치지 않는 유일한 넓은 띠다.
+    const float StatusY      = -230f;
+    const float StatusWidth  = 900f;
+    const float StatusHeight = 60f;
+
     [MenuItem("Tools/UI/Build Opening Overlay")]
     public static void Build()
     {
@@ -146,6 +152,19 @@ public static class OpeningUIGenerator
         Stretch((RectTransform)skipLabel.transform);
         Style(skipLabel, "SKIP", SkipSize, FontStyles.Bold, UITheme.TextSecondary, TextAlignmentOptions.Center);
 
+        // 상태줄 — 오프닝이 끝난 뒤 타이틀에 남는 한 줄.
+        // 오버레이 안이 아니라 로비 계층에 둔다(오버레이는 재생이 끝나면 통째로 꺼진다).
+        var lobby = canvas.transform.Find("TitleLobby") as RectTransform;
+        RectTransform statusParent = lobby != null ? lobby : (RectTransform)canvas.transform;
+        TMP_Text status = FindOrCreateLabel(statusParent, "OpeningStatusLine", font);
+        var statusRt = (RectTransform)status.transform;
+        statusRt.anchorMin = statusRt.anchorMax = new Vector2(0.5f, 0.5f);
+        statusRt.pivot = new Vector2(0.5f, 0.5f);
+        statusRt.anchoredPosition = new Vector2(0f, StatusY);
+        statusRt.sizeDelta = new Vector2(StatusWidth, StatusHeight);
+        Style(status, "기동 대기. 버퍼 5초.", SpeakerSize, FontStyles.Normal,
+              UITheme.TextSecondary, TextAlignmentOptions.Center);
+
         // 시퀀스 배선
         var seq = Ensure<OpeningSequence>(root);
         var so = new SerializedObject(seq);
@@ -162,6 +181,21 @@ public static class OpeningUIGenerator
             dotsProp.GetArrayElementAtIndex(i).objectReferenceValue = dots[i];
         so.ApplyModifiedPropertiesWithoutUndo();
 
+        // 타이틀 배선 — 에이전트가 인스펙터를 드래그할 수 없으므로 참조도 코드로 건다.
+        var title = UnityEngine.Object.FindFirstObjectByType<TitleScene>(FindObjectsInactive.Include);
+        if (title != null)
+        {
+            var tso = new SerializedObject(title);
+            tso.FindProperty("_opening").objectReferenceValue = seq;
+            tso.FindProperty("_statusText").objectReferenceValue = status;
+            tso.ApplyModifiedPropertiesWithoutUndo();
+        }
+        else
+        {
+            Debug.LogWarning($"[{Tag}] 씬에서 TitleScene 을 찾지 못했습니다. " +
+                             "_opening / _statusText 를 인스펙터에서 직접 연결하세요");
+        }
+
         // 평소에는 꺼둔다. TitleScene 이 최초 1회 판정 후 켠다.
         root.gameObject.SetActive(false);
 
@@ -169,6 +203,7 @@ public static class OpeningUIGenerator
         EditorSceneManager.MarkSceneDirty(canvas.gameObject.scene);
 
         Debug.Log($"[{Tag}] 오프닝 오버레이 생성 완료 ({pageCount}페이지). " +
+                  $"상태줄은 '{statusParent.name}/OpeningStatusLine' 에 만들었습니다. " +
                   "씬을 저장하세요. Body 의 TMP Underlay 는 인스펙터에서 확인 필요");
     }
 
