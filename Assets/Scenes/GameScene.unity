@@ -10769,10 +10769,17 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 340bf32f6a1f88546bdd1a26800b3ace, type: 2}
   - {fileID: 11400000, guid: c010418d627a99641bb3e51860ac9074, type: 2}
   - {fileID: 11400000, guid: b5c7f603aeaa27f40927daa92aa0a7f2, type: 2}
-  _debugEnemyPrefab: {fileID: 4243169767101499499, guid: ec34b518074a64b4db8959a76fc57ad5, type: 3}
-  _debugSpawnCount: 20
-  _debugEnemyHp: 30
-  _debugEnemySpeed: 2
+  _debugEnemyTypes:
+  - prefab: {fileID: 9151382190181105541, guid: 5f902d44f680db24584f4d9e4bd2e76a, type: 3}
+    hp: 30
+    speed: 2
+  - prefab: {fileID: 4243169767101499499, guid: ec34b518074a64b4db8959a76fc57ad5, type: 3}
+    hp: 20
+    speed: 3
+  - prefab: {fileID: 4243169767101499499, guid: bb9a0cf07e6a13b46b1974ef6de45399, type: 3}
+    hp: 60
+    speed: 1.6
+  _debugSpawnCount: 100
   _debugLevelUpExp: 99999
   _debugGold: 1000
 --- !u!1 &841276222

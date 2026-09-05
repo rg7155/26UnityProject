@@ -7,11 +7,19 @@ using static Define;
 // 상단 HUD 밴드와 겹쳤다.
 public class DebugController : MonoBehaviour
 {
+    // K 키 스폰 대상. 종류마다 체력·속도가 다르므로 한 덩어리로 묶는다 —
+    // 스칼라 필드 하나로 전부 덮으면 탱커와 스피더가 같은 속도로 움직여 세 종류가 섞인 티가 안 난다.
+    [System.Serializable]
+    public class DebugEnemyType
+    {
+        public GameObject prefab;
+        public int hp = 30;
+        public float speed = 2f;
+    }
+
     [SerializeField] WeaponData[] _debugWeapons;       // 1~5 / 0 키
-    [SerializeField] GameObject _debugEnemyPrefab;     // K 키 스폰 대상
-    [SerializeField] int _debugSpawnCount = 20;
-    [SerializeField] int _debugEnemyHp = 30;
-    [SerializeField] float _debugEnemySpeed = 2f;
+    [SerializeField] DebugEnemyType[] _debugEnemyTypes;
+    [SerializeField] int _debugSpawnCount = 100;
     [SerializeField] int _debugLevelUpExp = 99999;
     [SerializeField] int _debugGold = 1000;
 
@@ -61,9 +69,17 @@ public class DebugController : MonoBehaviour
                     GiveWeapon(i);
         }
 
-        if (kb.kKey.wasPressedThisFrame && _spawner != null)
+        if (kb.kKey.wasPressedThisFrame && _spawner != null && _debugEnemyTypes != null && _debugEnemyTypes.Length > 0)
+        {
+            // 무작위가 아니라 순번으로 돌린다. 100마리를 한 번에 뿌릴 때 무작위는 종류가
+            // 치우쳐 나올 수 있고, 영상에서는 세 종류가 고르게 보여야 한다.
             for (int n = 0; n < _debugSpawnCount; n++)
-                _spawner.Spawn(_debugEnemyPrefab, _debugEnemyHp, _debugEnemySpeed);
+            {
+                DebugEnemyType type = _debugEnemyTypes[n % _debugEnemyTypes.Length];
+                if (type == null || type.prefab == null) continue;
+                _spawner.Spawn(type.prefab, type.hp, type.speed);
+            }
+        }
 
         if (kb.lKey.wasPressedThisFrame && _player != null)
             _player.AddExp(_debugLevelUpExp);
