@@ -34,6 +34,10 @@ public static class OpeningUIGenerator
     const float BodyMaxY    = 0.281f;  // 위에서 690
     const float DotsY       = 0.083f;  // 위에서 880
 
+    // 표시등 발광 지름(캔버스 1080 기준). 화면 폭의 약 7% — 배경의 점광을 덮되
+    // 조명처럼 번지지는 않는 크기다.
+    const float BlinkSize   = 76f;
+
     [MenuItem("Tools/UI/Build Opening Overlay")]
     public static void Build()
     {
@@ -69,6 +73,17 @@ public static class OpeningUIGenerator
         bg.color = Color.white;
         bg.preserveAspect = false;      // 세로 풀블리드. 9:16 로 생성하므로 왜곡되지 않는다
         bg.raycastTarget = false;
+        var kenBurns = Ensure<KenBurns>(bgRt);   // 정지 배경에 느린 줌/팬을 준다
+
+        // 표시등 발광 — 배경의 자식이라 줌/팬을 같이 받는다. 그래야 그림 위 제자리에 붙어 있다.
+        RectTransform blinkRt = FindOrCreate(bgRt, "BlinkDot");
+        blinkRt.anchorMin = blinkRt.anchorMax = new Vector2(0.5f, 0.66f);
+        blinkRt.pivot = new Vector2(0.5f, 0.5f);
+        blinkRt.anchoredPosition = Vector2.zero;
+        blinkRt.sizeDelta = new Vector2(BlinkSize, BlinkSize);
+        Ensure<Image>(blinkRt);
+        var blink = Ensure<OpeningBlinkDot>(blinkRt);
+        blinkRt.gameObject.SetActive(false);     // 페이지 데이터가 blink 를 켤 때만 나타난다
 
         // 스크림 — 하단 절반을 어둡게. 배경이 밝아도 텍스트가 읽히게 하는 2차 방어선
         RectTransform scrimRt = FindOrCreate(root, "Scrim");
@@ -139,6 +154,8 @@ public static class OpeningUIGenerator
         so.FindProperty("_speakerLabel").objectReferenceValue = speaker;
         so.FindProperty("_body").objectReferenceValue = typer;
         so.FindProperty("_skipButton").objectReferenceValue = skipBtn;
+        so.FindProperty("_kenBurns").objectReferenceValue = kenBurns;
+        so.FindProperty("_blinkDot").objectReferenceValue = blink;
         var dotsProp = so.FindProperty("_pageDots");
         dotsProp.arraySize = dots.Length;
         for (int i = 0; i < dots.Length; i++)

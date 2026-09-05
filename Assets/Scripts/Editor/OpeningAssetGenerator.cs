@@ -25,32 +25,46 @@ public static class OpeningAssetGenerator
 
         data.pages = new[]
         {
+            // 켄 번즈 방향은 각 장의 시선 유도와 같은 쪽으로 잡는다.
+            // 배율은 1.06~1.09 — 이보다 크면 "움직인다"가 인식돼 대사에서 시선이 떨어진다.
+
+            // 복도 안쪽 표시등으로 전진한다. 소실점이 화면 위쪽(y 67%)이라 이미지를 아래로 민다.
+            Motion(1.00f, 1.08f, new Vector2(0f, 0f), new Vector2(0f, -0.012f),
+            Blink(new Vector2(0.50f, 0.66f),
             Page("Opening01_DeadArchive",
                 L(Speaker.ARC,      "아카이브 12구역, 신호 없음."),
-                L(Speaker.ARC,      "살아 있는 건 프로세스뿐이다.")),
+                L(Speaker.ARC,      "살아 있는 건 프로세스뿐이다.")))),
 
+            // 캡슐로 다가간다. 순수 줌 — 파일럿이 깨어나는 장이라 시선을 옮기지 않는다.
+            Motion(1.00f, 1.07f, Vector2.zero, Vector2.zero,
             Page("Opening02_LastBackup",
                 L(Speaker.ARC,      "마지막 백업을 꺼낸다."),
                 L(Speaker.PILOT,    "…여긴 어디지."),
-                L(Speaker.ARC,      "네가 죽은 곳이야.")),
+                L(Speaker.ARC,      "네가 죽은 곳이야."))),
 
             // 이 페이지가 오프닝의 전부다 — 핵심 기믹(5초 버퍼)과 주제(되감기=삭제)를
             // 동시에 설명한다. 나머지 네 페이지는 이 세 줄을 위한 조립이다.
+            // 유일하게 뒤로 물러난다. 규칙을 설명하는 장이라 눈금 전체가 드러나야 한다.
+            Motion(1.06f, 1.00f, Vector2.zero, Vector2.zero,
             Page("Opening03_FiveSeconds",
                 L(Speaker.ARC,      "버퍼는 5초. 그만큼 되돌릴 수 있어."),
                 L(Speaker.PILOT,    "5초. 그게 다야?"),
-                L(Speaker.ARC,      "되돌린 5초는 기억에서도 지워져.")),
+                L(Speaker.ARC,      "되돌린 5초는 기억에서도 지워져."))),
 
+            // 요새로 압박해 들어간다. 다섯 장 중 가장 큰 배율 — 위협이 커지는 장이다.
+            Motion(1.00f, 1.09f, Vector2.zero, new Vector2(0f, -0.010f),
             Page("Opening04_Monolith",
                 L(Speaker.MONOLITH, "기록 불량. 덮어쓴다."),
                 L(Speaker.ARC,      "관리자가 널 파일로 본다."),
-                L(Speaker.ARC,      "지워지기 전에 지워.")),
+                L(Speaker.ARC,      "지워지기 전에 지워."))),
 
             // 마지막 두 줄이 결론이다. 파일럿은 세지 못하고 ARC 가 대신 센다.
             // 이 약속은 타이틀 상태줄(LifetimeRewinds 표시)에서 회수된다.
+            // 배율은 고정하고 위로만 훑는다. 여명이 드러나며 로고 자리로 시선이 올라간다.
+            Motion(1.06f, 1.06f, new Vector2(0f, 0.020f), new Vector2(0f, -0.020f),
             Page("Opening05_Horizon",
                 L(Speaker.ARC,      "너는 몇 번째인지 몰라도 돼."),
-                L(Speaker.ARC,      "세는 건 내가 할게.")),
+                L(Speaker.ARC,      "세는 건 내가 할게."))),
         };
 
         if (isNew) AssetDatabase.CreateAsset(data, AssetPath);
@@ -70,6 +84,26 @@ public static class OpeningAssetGenerator
             background = LoadBackground(id),
             lines = lines,
         };
+    }
+
+    // 페이지를 감싸 켄 번즈 값을 얹는다. 데이터가 코드에 있으므로 장면 의도를
+    // 주석과 같은 자리에서 읽을 수 있다.
+    static OpeningPage Motion(float zoomFrom, float zoomTo, Vector2 panFrom, Vector2 panTo, OpeningPage page)
+    {
+        page.zoomFrom = zoomFrom;
+        page.zoomTo   = zoomTo;
+        page.panFrom  = panFrom;
+        page.panTo    = panTo;
+        return page;
+    }
+
+    // 표시등 위치는 그림마다 다르다. 여기 값은 기획 구도 기준이고,
+    // 실제 생성물과 어긋나면 인스펙터에서 blinkAnchor 만 옮기면 된다.
+    static OpeningPage Blink(Vector2 anchor, OpeningPage page)
+    {
+        page.blink = true;
+        page.blinkAnchor = anchor;
+        return page;
     }
 
     static OpeningLine L(Speaker speaker, string text)

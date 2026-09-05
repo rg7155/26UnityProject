@@ -20,6 +20,8 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
     [SerializeField] TypewriterText _body;
     [SerializeField] Button _skipButton;
     [SerializeField] Image[] _pageDots;
+    [SerializeField] KenBurns _kenBurns;
+    [SerializeField] OpeningBlinkDot _blinkDot;
 
     // 재생이 끝났을 때(끝까지 봤든 스킵했든) 호출된다. 타이틀이 여기서 오버레이를 끈다.
     public System.Action OnFinished;
@@ -163,16 +165,44 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
         Color c = _background.color;
         c.a = a;
         _background.color = c;
+
+        // 표시등은 배경의 자식이지만 알파는 따로 계산하므로 암전에 같이 묻히지 않는다.
+        // 배경 알파를 그대로 넘겨 한 덩어리로 사라지게 한다.
+        if (_blinkDot != null) _blinkDot.MasterAlpha = a;
     }
 
     void ApplyBackground()
     {
         if (_background == null) return;
 
-        Sprite sprite = _data.pages[_pageIndex].background;
-        _background.sprite = sprite;
+        OpeningPage page = _data.pages[_pageIndex];
+
+        _background.sprite = page.background;
         // 배경이 아직 없어도(아트 생성 전) 대사와 흐름은 검증할 수 있어야 한다.
-        _background.enabled = sprite != null;
+        _background.enabled = page.background != null;
+
+        if (_kenBurns != null)
+            _kenBurns.Play(page.zoomFrom, page.zoomTo, page.panFrom, page.panTo, PageDuration(page));
+
+        if (_blinkDot != null)
+        {
+            if (page.blink && page.background != null) _blinkDot.Show(page.blinkAnchor);
+            else _blinkDot.Hide();
+        }
+    }
+
+    // 이 페이지가 화면에 머무는 예상 시간. 켄 번즈가 페이지가 넘어가는 순간에
+    // 정확히 끝나도록 맞춘다. 탭으로 먼저 넘기면 도중에 끊기는데, 그 편이
+    // 고정 길이를 써서 중간에 멈춰 버리는 것보다 낫다.
+    float PageDuration(OpeningPage page)
+    {
+        if (page.lines == null) return 1f;
+
+        float total = 0f;
+        foreach (OpeningLine line in page.lines)
+            total += line.text.Length / _data.charsPerSecond + _data.autoAdvanceDelay;
+
+        return Mathf.Max(1f, total);
     }
 
     void ShowLine()
@@ -217,6 +247,7 @@ public class OpeningSequence : MonoBehaviour, IPointerClickHandler
         _finished = true;
 
         if (_fade != null) { StopCoroutine(_fade); _fade = null; }
+        if (_kenBurns != null) _kenBurns.Stop();
 
         _group.alpha = 0f;
         _group.blocksRaycasts = false;
