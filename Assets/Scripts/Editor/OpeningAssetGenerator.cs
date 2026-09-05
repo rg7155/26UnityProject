@@ -13,7 +13,7 @@ public static class OpeningAssetGenerator
     const string FolderPath = "Assets/Resources/Story";
     const string AssetPath  = FolderPath + "/Opening.asset";
     const string BgFolder   = "Assets/Resources/UI/Opening";
-    const string FontPath   = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
+    const string FontPath   = KoreanFontGenerator.OutputPath;
 
     [MenuItem("Tools/Story/Create Opening Assets")]
     public static void CreateOpeningAssets()
@@ -160,7 +160,12 @@ public static class OpeningAssetGenerator
     static void WarnMissingGlyphs(OpeningData data)
     {
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
-        if (font == null) return;
+        if (font == null)
+        {
+            Debug.LogError($"[OpeningAssetGenerator] 한글 폰트가 없습니다: {FontPath} — " +
+                           "Tools/Font/한글 폰트 재생성 을 실행하세요");
+            return;
+        }
 
         var have = new HashSet<uint>();
         foreach (TMP_Character c in font.characterTable) have.Add(c.unicode);

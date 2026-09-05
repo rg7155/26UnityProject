@@ -17,7 +17,7 @@ using UnityEngine.UI;
 public static class OpeningUIGenerator
 {
     const string Tag = "OpeningUIGenerator";
-    const string FontPath = "Assets/Font/NotoSansKR-VariableFont_wght SDF.asset";
+    const string FontPath = KoreanFontGenerator.OutputPath;
     const string DataPath = "Assets/Resources/Story/Opening.asset";
     const string RootName = "OpeningOverlay";
 
@@ -52,7 +52,7 @@ public static class OpeningUIGenerator
 
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
         if (font == null)
-            Debug.LogWarning($"[{Tag}] 폰트를 찾지 못했습니다: {FontPath} (기본 폰트 유지)");
+            Debug.LogError($"[{Tag}] 한글 폰트가 없습니다: {FontPath} — Tools/Font/한글 폰트 재생성 을 먼저 실행하세요. 지금 만들면 한글이 빈칸으로 나옵니다");
 
         var data = AssetDatabase.LoadAssetAtPath<OpeningData>(DataPath);
         if (data == null)
