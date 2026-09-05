@@ -22,6 +22,9 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
     const float PlayerPPU = 236f;
     // Projectile 프리팹의 0.2 스케일과 Collider는 유지한다. 512 PPU보다 512 / 192 = 2.67배 크게 보인다.
     const float ProjectilePPU = 192f;
+    // 보물상자는 art_import.py 를 타지 않은 손수 만든 크롭이라 여백 규격이 다르다.
+    // 512 를 주면 화면에서 1.37배 커진다. 기존 크기(내용 877px / 700PPU = 1.25유닛)를 그대로 둔다.
+    const float ChestPPU = 700f;
 
     // 가로 스트립의 프레임 수. art_import.py 의 TARGETS 와 일치해야 한다.
     // 여기 없으면 단일 스프라이트로 본다.
@@ -51,7 +54,9 @@ public class GeneratedSpritePostprocessor : AssetPostprocessor
             ? PlayerPPU
             : name == "Projectile"
                 ? ProjectilePPU
-                : DefaultPPU;
+                : name == "TreasureChestSciFi"
+                    ? ChestPPU
+                    : DefaultPPU;
         importer.filterMode = FilterMode.Bilinear;
         importer.mipmapEnabled = false;
         importer.wrapMode = TextureWrapMode.Clamp;
