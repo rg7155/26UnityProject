@@ -2,7 +2,7 @@
 
 시간을 되돌려 죽음마저 되감는 탑다운 2D 서바이버. 탕탕특공대 스타일에 시간 되돌리기를 더한 1인 개발 포트폴리오.
 
-**▶ [브라우저에서 바로 플레이](https://rg7155.github.io/26UnityProject/)** · **[플레이 영상 (59초)](https://youtu.be/6QzcW7mtfzc)**
+**▶ [브라우저에서 바로 플레이](https://rg7155.github.io/26UnityProject/)** · **[플레이 영상 (1분 40초)](https://youtu.be/YXqxWRq8dmQ)**
 
 <img src="screenshots/title.png" width="240"> <img src="screenshots/boss.png" width="240"> <img src="screenshots/shop.png" width="240">
 

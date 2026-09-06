@@ -5,7 +5,7 @@ AI를 "코드를 받아쓰는 도구"가 아니라 **규칙·역할·지식이 �
 | 저장소 | https://github.com/rg7155/26UnityProject |
 |---|---|
 | 웹 플레이 | https://rg7155.github.io/26UnityProject/ |
-| 플레이 영상 | https://youtu.be/6QzcW7mtfzc |
+| 플레이 영상 | https://youtu.be/YXqxWRq8dmQ |
 | 규모 | C# 125개 파일 / 약 12,600줄 · 커밋 130개 |
 | AI 자산 | 에이전트 5 · 스킬 3 · 지식 베이스 17건 |
 
